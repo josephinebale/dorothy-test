@@ -24,7 +24,7 @@ export function Team({ data }: { data: HouseData }) {
   const workers = [...data.workers].sort((a, b) => a.name.localeCompare(b.name));
 
   return (
-    <div className="max-w-content">
+    <div className="width-main-column">
       <PageHeading
         title="Team"
         description="Manage the workers you book shifts with. They have access to your support plan so they can best provide the support you need."

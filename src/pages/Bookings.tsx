@@ -297,14 +297,16 @@ export function Bookings({ data }: { data: HouseData }) {
             Bookings I have created
           </label>
 
-          <div className="flex gap-2">
-            <Button type="button" variant="secondary" size="small" className="flex-1">
+          <div className="space-y-1">
+            <Button type="button" variant="secondary" size="small" className="w-full">
               Apply filters
             </Button>
             <Button
               type="button"
+              variant="ghost"
               onClick={resetFilters}
               size="small"
+              className="w-full"
             >
               Reset
             </Button>

@@ -86,7 +86,17 @@
 
   --header-identity-height: 3rem;
   --header-nav-height: 3.5rem;
-  --narrow-column-width: 16.25rem;
+  --narrow-column-width: 13.75rem;
+
+  /* Mirrors the page shell's px-8 and the Dashboard row's gap-6, so the derived
+     main column below stays correct if either utility changes. */
+  --page-inline-padding: calc(var(--spacing) * 8);
+  --main-column-gap: calc(var(--spacing) * 6);
+  --main-column-width: calc(
+    var(--container-page) - (2 * var(--page-inline-padding)) -
+      var(--narrow-column-width) - var(--main-column-gap)
+  );
+
   --panel-width: 24rem;
   --panel-max-height: 75vh;
   --messages-shell-min-height: 40rem;
@@ -283,6 +293,30 @@ body {
   z-index: 2;
 }
 
+/* The row already tints on hover, so a row action needs a deeper tint of its own
+   to read as a control rather than as text sitting on a highlighted row. */
+.ui-target-row__action.ui-button--ghost,
+.ui-target-row__action.ui-icon-button,
+.ui-target-row__action .ui-button--ghost,
+.ui-target-row__action .ui-icon-button {
+  color: var(--color-text-secondary);
+}
+
+.ui-target-row__action.ui-button--ghost:hover,
+.ui-target-row__action.ui-icon-button:hover,
+.ui-target-row__action .ui-button--ghost:hover,
+.ui-target-row__action .ui-button--secondary:hover,
+.ui-target-row__action .ui-icon-button:hover {
+  background: var(--color-surface-selected);
+  color: var(--color-text);
+}
+
+/* Rows keep their two lines tight, so the ring sits closer than the default 2px. */
+.ui-target-row__action:focus-visible,
+.ui-target-row__action :focus-visible {
+  outline-offset: 1px;
+}
+
 .ui-badge {
   display: inline-flex;
   min-width: 0.875rem;
@@ -343,6 +377,16 @@ body {
 
 .layout-content-aside > aside {
   width: var(--narrow-column-width);
+}
+
+/* Pages without an aside still sit on the Dashboard's main column, so the left
+   edge and the measure hold when you switch between them. */
+.width-main-column {
+  width: 100%;
+  max-width: min(
+    var(--main-column-width),
+    calc(100% - var(--narrow-column-width) - var(--main-column-gap))
+  );
 }
 
 .width-session-panel {

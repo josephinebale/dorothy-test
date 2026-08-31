@@ -16,10 +16,10 @@ export function ChooseHouse({ onSelect }: { onSelect: (houseId: string) => void 
       </header>
 
       <main className="mx-auto w-full max-w-page flex-1 px-8 py-8">
-        <div className="mx-auto max-w-content">
+        <div className="width-main-column">
         <PageHeading
           title="Choose your house"
-          description="Select the house you work in. You can change this at any time."
+          description="Select the house you manage supports for. You can change this at any time."
         />
 
         <Card divided>

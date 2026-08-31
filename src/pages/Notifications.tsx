@@ -56,7 +56,7 @@ export function Notifications({ data }: { data: HouseData }) {
   const items = buildItems(data);
 
   return (
-    <div className="mx-auto max-w-content">
+    <div className="width-main-column">
       <PageHeading title="Notifications" />
 
       {items.length === 0 ? (

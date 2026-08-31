@@ -32,7 +32,7 @@ export function Avatar({ name, size = 'md' }: AvatarProps) {
         width={pixels}
         height={pixels}
         style={{ width: dimension, height: dimension }}
-        className={`avatar avatar--${size} object-cover ring-1 ring-text-strong`}
+        className={`avatar avatar--${size} object-cover`}
       />
     );
   }

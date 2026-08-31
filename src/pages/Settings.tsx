@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from 'react';
-import { ChevronRight, MoreHorizontal } from 'lucide-react';
+import { MoreHorizontal } from 'lucide-react';
 import { Avatar } from '../components/Avatar';
 import { PageHeading } from '../components/PageHeading';
 import { Button } from '../components/ui/Button';
@@ -563,14 +563,13 @@ function SettingsPage({
               key={item.id}
               href={href(`${basePath}/${item.id}`)}
               aria-current={active ? 'page' : undefined}
-              className={`flex w-full items-center justify-between border-l-4 px-3 py-3 text-left text-sm ${
+              className={`flex w-full items-center border-l-4 px-2 py-3 text-left text-sm ${
                 active
                   ? 'border-brand font-medium text-text'
                   : 'border-transparent text-text-strong hover:bg-surface-subtle'
               }`}
             >
               {item.label}
-              <ChevronRight className="h-4 w-4 shrink-0 text-text-tertiary" />
             </a>
           );
         })}

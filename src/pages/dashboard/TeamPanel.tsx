@@ -1,4 +1,3 @@
-import { Calendar, MessageCircle } from 'lucide-react';
 import type { HouseData } from '../../data/houses';
 import { Avatar } from '../../components/Avatar';
 import { Button } from '../../components/ui/Button';
@@ -13,7 +12,7 @@ export function TeamPanel({ data }: { data: HouseData }) {
   return (
     <div>
       <div className="flex items-baseline justify-between gap-4">
-        <h2 className="text-md font-bold text-text">Team</h2>
+        <h2 className="text-md font-bold text-text">Most booked</h2>
         <a
           href={href(TEAM_ROUTE)}
           className="rounded text-sm text-brand underline hover:text-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
@@ -34,37 +33,37 @@ export function TeamPanel({ data }: { data: HouseData }) {
       ) : (
         <Card as="ul" divided className="mt-3">
           {workers.map((worker) => (
-            <li key={worker.id} className="ui-target-row flex gap-2 p-3">
-              <Avatar name={worker.name} size="sm" />
-              <div className="min-w-0 flex-1">
+            <li key={worker.id} className="ui-target-row p-3">
+              <div className="flex items-center gap-2">
+                <Avatar name={worker.name} size="sm" />
                 <EntityLink
                   href={href(TEAM_ROUTE)}
-                  className="ui-target-row__link block truncate"
+                  className="ui-target-row__link min-w-0 truncate"
                 >
                   {worker.name}
                 </EntityLink>
-                <div className="ui-target-row__action mt-1 flex items-center gap-1">
-                  <Button
-                    href={href('/messages')}
-                    variant="ghost"
-                    size="small"
-                    className="whitespace-nowrap"
-                    aria-label={`Message ${worker.name}`}
-                  >
-                    <MessageCircle className="h-4 w-4" />
-                    Message
-                  </Button>
-                  <Button
-                    href={href('/request-booking')}
-                    variant="ghost"
-                    size="small"
-                    className="whitespace-nowrap"
-                    aria-label={`Book ${worker.name}`}
-                  >
-                    <Calendar className="h-4 w-4" />
-                    Book
-                  </Button>
-                </div>
+              </div>
+
+              {/* Aligned to the row's content edge, not the name, so each row has one left edge. */}
+              <div className="ui-target-row__action mt-1 flex items-center gap-2">
+                <Button
+                  href={href('/messages')}
+                  variant="secondary"
+                  size="small"
+                  className="whitespace-nowrap"
+                  aria-label={`Message ${worker.name}`}
+                >
+                  Message
+                </Button>
+                <Button
+                  href={href('/request-booking')}
+                  variant="secondary"
+                  size="small"
+                  className="whitespace-nowrap"
+                  aria-label={`Book ${worker.name}`}
+                >
+                  Book
+                </Button>
               </div>
             </li>
           ))}

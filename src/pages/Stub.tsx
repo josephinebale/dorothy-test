@@ -22,7 +22,7 @@ type StubProps = {
 
 export function Stub({ title, house }: StubProps) {
   return (
-    <div className="mx-auto max-w-content">
+    <div className="width-main-column">
       <PageHeading title={title} />
       <Card className="p-6">
         <p className="text-sm text-text-strong">

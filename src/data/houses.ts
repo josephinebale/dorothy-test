@@ -106,7 +106,11 @@ function buildBookings(house: House, houseIndex: number, roster: string[]): Book
     const day = addDays(today, offset);
     const drawn = SHIFTS_PER_DAY[Math.floor(random() * SHIFTS_PER_DAY.length)];
     // Today always has shifts so the "Today" column is never blank during testing.
-    const count = offset === 0 ? Math.max(drawn, 2) : drawn;
+    // Yesterday always has one so the week shows a completed shift, unless today is
+    // Monday, when no earlier day falls inside the displayed week.
+    const guaranteesEndedShift = offset === -1 && today.getDay() !== 1;
+    const count =
+      offset === 0 ? Math.max(drawn, 2) : guaranteesEndedShift ? Math.max(drawn, 1) : drawn;
 
     for (let i = 0; i < count; i += 1) {
       const workerName = roster[Math.floor(random() * roster.length)];

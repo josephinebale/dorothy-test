@@ -57,7 +57,15 @@ export function NotificationStrip({ data }: { data: HouseData }) {
 
   return (
     <section>
-      <h2 className="mb-3 text-md font-bold text-text">Notifications</h2>
+      <div className="mb-3 flex items-baseline justify-between gap-4">
+        <h2 className="text-md font-bold text-text">Notifications</h2>
+        <a
+          href={href('/notifications')}
+          className="rounded text-sm text-brand underline hover:text-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+        >
+          View all
+        </a>
+      </div>
 
       <Card className="grid grid-cols-3 divide-x divide-border-subtle">
         {cards.map(({ title, description, Icon, path }) => (
