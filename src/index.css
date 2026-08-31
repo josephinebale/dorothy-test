@@ -1,0 +1,399 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-brand: #1424E0;
+  --color-brand-hover: #0F1CB8;
+  --color-badge: #D6244A;
+  --color-page: #eff1f5;
+  --color-surface: #ffffff;
+  --color-surface-subtle: var(--gray-50);
+  --color-surface-selected: var(--gray-100);
+  --color-border: var(--gray-300);
+  --color-border-subtle: var(--gray-200);
+  --color-text: #16181d;
+  --color-text-strong: var(--gray-800);
+  --color-text-secondary: var(--gray-600);
+  --color-text-tertiary: var(--gray-500);
+  --color-success: #146447;
+  --color-success-surface: #ddf3e9;
+  --color-pending: #704600;
+  --color-pending-surface: #f9e7c8;
+  --color-neutral: #4b5362;
+  --color-neutral-surface: #e8ebf0;
+  --color-info: #184e78;
+  --color-info-surface: #e2f0fa;
+  --color-house-indigo-surface: #E8EAFF;
+  --color-house-indigo-foreground: #29348F;
+  --color-house-teal-surface: #DDF4EE;
+  --color-house-teal-foreground: #195C4A;
+  --color-house-amber-surface: #FFF0CC;
+  --color-house-amber-foreground: #6A4600;
+  --color-house-rose-surface: #FBE4EC;
+  --color-house-rose-foreground: #84294A;
+  --color-house-violet-surface: #EEE7FA;
+  --color-house-violet-foreground: #5B3585;
+
+  --text-xs: 0.75rem;
+  --text-xs--line-height: 1rem;
+  --text-sm: 0.875rem;
+  --text-sm--line-height: 1.25rem;
+  --text-md: 1rem;
+  --text-md--line-height: 1.5rem;
+  --text-lg: 1.25rem;
+  --text-lg--line-height: 1.75rem;
+  --text-xl: 1.5rem;
+  --text-xl--line-height: 2rem;
+
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-bold: 700;
+
+  --radius-sm: var(--radius-control);
+  --radius-lg: var(--radius-surface);
+
+  --container-page: 67.5rem;
+  --container-content: 43.75rem;
+
+  --spacing: var(--space-1);
+}
+
+:root {
+  --gray-50: #F7F8FA;
+  --gray-100: #EEF0F4;
+  --gray-200: #D9DDE5;
+  --gray-300: #C5CAD4;
+  --gray-500: #656D7C;
+  --gray-600: #555D6D;
+  --gray-800: #2B303B;
+
+  --radius-control: 0.25rem;
+  --radius-surface: 0.5rem;
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 2.5rem;
+  --space-8: 3rem;
+
+  --avatar-sm: 1.75rem;
+  --avatar-md: 2.25rem;
+  --avatar-lg: 2.75rem;
+
+  --footer-gap: var(--space-7);
+
+  --header-identity-height: 3rem;
+  --header-nav-height: 3.5rem;
+  --narrow-column-width: 16.25rem;
+  --panel-width: 24rem;
+  --panel-max-height: 75vh;
+  --messages-shell-min-height: 40rem;
+  --booking-grid-min-height: 17.5rem;
+}
+
+body {
+  background-color: var(--color-page);
+  color: var(--color-text);
+  font-size: var(--text-sm);
+  line-height: var(--text-sm--line-height);
+  -webkit-font-smoothing: antialiased;
+}
+
+.ui-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+  line-height: var(--text-sm--line-height);
+  font-weight: var(--font-weight-medium);
+}
+
+.ui-button:focus-visible,
+.ui-icon-button:focus-visible,
+.ui-entity-link:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+}
+
+.ui-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.ui-button--default {
+  height: 2.25rem;
+  padding: 0 var(--space-4);
+}
+
+.ui-button--small {
+  height: 2rem;
+  padding: 0 var(--space-3);
+}
+
+.ui-button--primary {
+  border-color: var(--color-brand);
+  background: var(--color-brand);
+  color: var(--color-surface);
+}
+
+.ui-button--primary:hover {
+  border-color: var(--color-brand-hover);
+  background: var(--color-brand-hover);
+}
+
+.ui-button--secondary {
+  border-color: var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+.ui-button--secondary:hover,
+.ui-button--ghost:hover,
+.ui-icon-button:hover {
+  background: var(--color-surface-subtle);
+}
+
+.ui-button--ghost {
+  border-color: transparent;
+  background: transparent;
+  color: var(--color-text);
+}
+
+.ui-icon-button {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  color: var(--color-text);
+}
+
+.ui-icon-button--default {
+  width: 2.25rem;
+  height: 2.25rem;
+}
+
+.ui-icon-button--small {
+  width: 2rem;
+  height: 2rem;
+}
+
+.ui-icon-button--bordered {
+  border-color: var(--color-border);
+  background: var(--color-surface);
+}
+
+.ui-card {
+  overflow: hidden;
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+}
+
+.ui-card--divided > * + * {
+  border-top: 1px solid var(--color-border-subtle);
+}
+
+.ui-card--success {
+  border-color: var(--color-success);
+  background: var(--color-success-surface);
+}
+
+.ui-card--pending {
+  border-color: var(--color-pending);
+  background: var(--color-pending-surface);
+}
+
+.ui-card--neutral {
+  border-color: var(--color-border-subtle);
+  background: var(--color-surface);
+}
+
+.ui-card--subtle {
+  border-color: var(--color-border-subtle);
+  background: var(--color-surface-subtle);
+}
+
+.ui-entity-link {
+  color: var(--color-text-strong);
+  font-size: var(--text-sm);
+  line-height: var(--text-sm--line-height);
+  font-weight: var(--font-weight-bold);
+  text-decoration: none;
+}
+
+.ui-entity-link:hover {
+  color: var(--color-text);
+}
+
+.ui-target-row {
+  position: relative;
+}
+
+.ui-target-row:hover {
+  background: var(--color-surface-subtle);
+}
+
+.ui-target-row--active,
+.ui-target-row--active:hover {
+  background: var(--color-info-surface);
+}
+
+.ui-target-row__link {
+  color: var(--color-text-strong);
+  font-size: var(--text-sm);
+  line-height: var(--text-sm--line-height);
+  font-weight: var(--font-weight-bold);
+  text-decoration: none;
+}
+
+.ui-target-row__link--text {
+  color: var(--color-brand);
+  text-decoration: underline;
+}
+
+.ui-target-row__link--text:hover {
+  color: var(--color-brand-hover);
+}
+
+.ui-target-row__link::after {
+  position: absolute;
+  inset: 0;
+  content: '';
+}
+
+.ui-target-row__link:focus-visible {
+  outline: none;
+}
+
+.ui-target-row:has(.ui-target-row__link:focus-visible) {
+  z-index: 1;
+  outline: 2px solid var(--color-brand);
+  outline-offset: -2px;
+}
+
+.ui-target-row__action {
+  position: relative;
+  z-index: 2;
+}
+
+.ui-badge {
+  display: inline-flex;
+  min-width: 0.875rem;
+  height: 0.875rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  padding-inline: calc(var(--space-1) / 2);
+  font-size: var(--text-xs);
+  line-height: 1;
+  font-weight: var(--font-weight-medium);
+}
+
+.ui-badge--attention {
+  background: var(--color-badge);
+  color: var(--color-surface);
+}
+
+.ui-badge--neutral {
+  background: var(--color-neutral-surface);
+  color: var(--color-neutral);
+}
+
+.avatar {
+  flex: 0 0 auto;
+  border-radius: 9999px;
+}
+
+.avatar--sm {
+  width: var(--avatar-sm);
+  height: var(--avatar-sm);
+  font-size: var(--text-xs);
+  line-height: var(--text-xs--line-height);
+}
+
+.avatar--md {
+  width: var(--avatar-md);
+  height: var(--avatar-md);
+  font-size: var(--text-sm);
+  line-height: var(--text-sm--line-height);
+}
+
+.avatar--lg {
+  width: var(--avatar-lg);
+  height: var(--avatar-lg);
+  font-size: var(--text-md);
+  line-height: var(--text-md--line-height);
+}
+
+.layout-rail-content {
+  grid-template-columns: var(--narrow-column-width) minmax(0, 1fr);
+}
+
+.layout-master-detail {
+  display: grid;
+  grid-template-columns: var(--narrow-column-width) minmax(0, 1fr);
+}
+
+.layout-content-aside > aside {
+  width: var(--narrow-column-width);
+}
+
+.width-session-panel {
+  width: var(--panel-width);
+  max-width: calc(100vw - (2 * var(--space-4)));
+  max-height: var(--panel-max-height);
+}
+
+.header-identity {
+  height: var(--header-identity-height);
+}
+
+.header-navigation {
+  height: var(--header-nav-height);
+}
+
+.main-nav-link:focus-visible {
+  z-index: 10;
+  outline: 2px solid var(--color-brand);
+  outline-offset: calc(-1 * var(--space-1));
+}
+
+.messages-shell {
+  min-height: var(--messages-shell-min-height);
+}
+
+.booking-grid {
+  min-height: var(--booking-grid-min-height);
+}
+
+.message-composer-input {
+  min-height: var(--avatar-lg);
+}
+
+.page-footer {
+  margin-top: var(--footer-gap);
+}
+
+/* A zero-height line so the button takes no flow space. The line tracks the
+   footer gap; the button hangs into that gap and so clears the footer, or the
+   viewport edge while scrolling, by one spacing step. */
+.session-questions-dock {
+  bottom: var(--footer-gap);
+}
+
+.session-questions-button {
+  position: absolute;
+  right: var(--space-4);
+  bottom: calc(var(--space-4) - var(--footer-gap));
+}
+
+.entity-row {
+  min-height: calc(var(--space-8) + var(--space-4));
+}

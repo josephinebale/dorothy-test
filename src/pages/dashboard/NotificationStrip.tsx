@@ -1,0 +1,87 @@
+import { Briefcase, Calendar, CalendarCheck } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
+import type { HouseData } from '../../data/houses';
+import { NOTIFICATION_EMPTY_DESCRIPTIONS } from '../../lib/pageContent';
+import { href } from '../../lib/router';
+import { Card } from '../../components/ui/Card';
+
+type Card = {
+  title: string;
+  description: string;
+  Icon: LucideIcon;
+  path?: string;
+};
+
+function plural(count: number, singular: string, pluralForm: string): string {
+  return count === 1 ? singular : pluralForm;
+}
+
+function buildCards(data: HouseData): Card[] {
+  const { requestsToAccept, bookingsToApprove } = data;
+
+  return [
+    {
+      title:
+        requestsToAccept > 0
+          ? `${requestsToAccept} booking ${plural(requestsToAccept, 'request', 'requests')} waiting to be accepted`
+          : 'No booking requests waiting to be accepted',
+      description:
+        requestsToAccept > 0
+          ? 'Review and manage your booking requests.'
+          : NOTIFICATION_EMPTY_DESCRIPTIONS.requests,
+      Icon: Calendar,
+      path: requestsToAccept > 0 ? '/bookings' : undefined,
+    },
+    {
+      title:
+        bookingsToApprove > 0
+          ? `${bookingsToApprove} ${plural(bookingsToApprove, 'booking', 'bookings')} to approve`
+          : 'No bookings to approve',
+      description:
+        bookingsToApprove > 0
+          ? 'Approve the booking so that your support worker can be paid on time.'
+          : NOTIFICATION_EMPTY_DESCRIPTIONS.approvals,
+      Icon: CalendarCheck,
+      path: bookingsToApprove > 0 ? '/bookings' : undefined,
+    },
+    {
+      title: 'No new job applicants',
+      description: NOTIFICATION_EMPTY_DESCRIPTIONS.applicants,
+      Icon: Briefcase,
+    },
+  ];
+}
+
+export function NotificationStrip({ data }: { data: HouseData }) {
+  const cards = buildCards(data);
+
+  return (
+    <section>
+      <h2 className="mb-3 text-md font-bold text-text">Notifications</h2>
+
+      <Card className="grid grid-cols-3 divide-x divide-border-subtle">
+        {cards.map(({ title, description, Icon, path }) => (
+          <div
+            key={title}
+            className={`flex items-start justify-between gap-2 p-4 ${path ? 'ui-target-row' : ''}`}
+          >
+            <div className="min-w-0">
+              {path ? (
+                <a
+                  href={href(path)}
+                  className="ui-target-row__link ui-target-row__link--text block"
+                >
+                  {title}
+                </a>
+              ) : (
+                <p className="text-sm font-bold text-text-strong">{title}</p>
+              )}
+              <p className="mt-1 text-sm text-text-secondary">{description}</p>
+            </div>
+            <Icon className="mt-1 h-4 w-4 shrink-0 text-text-strong" />
+          </div>
+        ))}
+      </Card>
+    </section>
+  );
+}
