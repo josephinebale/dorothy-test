@@ -1,9 +1,9 @@
 import { Calendar, MessageCircle } from 'lucide-react';
 import type { HouseData } from '../../data/houses';
 import { Avatar } from '../../components/Avatar';
+import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
 import { EntityLink } from '../../components/ui/EntityLink';
-import { IconButton } from '../../components/ui/IconButton';
 import { EMPTY_STATES, TEAM_ROUTE } from '../../lib/pageContent';
 import { href } from '../../lib/router';
 
@@ -36,28 +36,34 @@ export function TeamPanel({ data }: { data: HouseData }) {
           {workers.map((worker) => (
             <li key={worker.id} className="ui-target-row flex gap-2 p-3">
               <Avatar name={worker.name} size="sm" />
-              <div className="flex min-w-0 flex-1 items-center justify-between gap-2">
+              <div className="min-w-0 flex-1">
                 <EntityLink
                   href={href(TEAM_ROUTE)}
-                  className="ui-target-row__link min-w-0 truncate"
+                  className="ui-target-row__link block truncate"
                 >
                   {worker.name}
                 </EntityLink>
-                <div className="ui-target-row__action flex shrink-0 items-center gap-1">
-                  <IconButton
+                <div className="ui-target-row__action mt-1 flex items-center gap-1">
+                  <Button
                     href={href('/messages')}
+                    variant="ghost"
                     size="small"
+                    className="whitespace-nowrap"
                     aria-label={`Message ${worker.name}`}
                   >
-                    <MessageCircle className="h-5 w-5" />
-                  </IconButton>
-                  <IconButton
+                    <MessageCircle className="h-4 w-4" />
+                    Message
+                  </Button>
+                  <Button
                     href={href('/request-booking')}
+                    variant="ghost"
                     size="small"
+                    className="whitespace-nowrap"
                     aria-label={`Book ${worker.name}`}
                   >
-                    <Calendar className="h-5 w-5" />
-                  </IconButton>
+                    <Calendar className="h-4 w-4" />
+                    Book
+                  </Button>
                 </div>
               </div>
             </li>

@@ -33,7 +33,7 @@ export function PageHeading({ title, description, actions }: PageHeadingProps) {
           </p>
         )}
       </div>
-      {actions && <div className="flex shrink-0 items-center gap-4">{actions}</div>}
+      {actions && <div className="flex shrink-0 items-center gap-2">{actions}</div>}
     </div>
   );
 }
