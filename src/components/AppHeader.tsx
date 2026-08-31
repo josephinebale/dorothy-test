@@ -1,6 +1,8 @@
 import { useEffect, useRef } from 'react';
 import {
   Bell,
+  ChevronDown,
+  ChevronUp,
   CircleUser,
   LogOut,
   LockKeyhole,
@@ -17,14 +19,16 @@ import { href } from '../lib/router';
 import { useKeyboardMenu } from '../lib/useKeyboardMenu';
 import { Avatar } from './Avatar';
 import {
+  accountAccessibleName,
   bookingsAccessibleName,
   messagesAccessibleName,
+  notificationsAccessibleName,
 } from './header-utils';
 import { HouseSwitcher } from './HouseSwitcher';
 import { Logo } from './Logo';
 import { Badge } from './ui/Badge';
+import { Button } from './ui/Button';
 import { Card } from './ui/Card';
-import { IconButton } from './ui/IconButton';
 
 const NAV_ITEMS = [
   { label: 'Dashboard', path: '/' },
@@ -45,6 +49,7 @@ type AppHeaderProps = {
   path: string;
   unreadMessages: number;
   bookingsBadge: number;
+  unreadNotifications: number;
   onSelectHouse: (houseId: string) => void;
   onSignOut: () => void;
 };
@@ -54,6 +59,7 @@ export function AppHeader({
   path,
   unreadMessages,
   bookingsBadge,
+  unreadNotifications,
   onSelectHouse,
   onSignOut,
 }: AppHeaderProps) {
@@ -77,13 +83,18 @@ export function AppHeader({
           </a>
 
           <div className="flex shrink-0 items-center gap-4">
-            <IconButton
+            <Button
               href={href('/notifications')}
-              aria-label="Notifications"
-              className={path === '/notifications' ? 'bg-surface-selected' : ''}
+              variant="ghost"
+              aria-label={notificationsAccessibleName(unreadNotifications)}
+              className={`header-identity-control ${
+                path === '/notifications' ? 'bg-surface-selected' : ''
+              }`}
             >
-              <Bell className="h-5 w-5" />
-            </IconButton>
+              <Bell className="h-5 w-5 shrink-0" />
+              Notifications
+              <Badge count={unreadNotifications} />
+            </Button>
 
             <span
               aria-hidden="true"
@@ -91,18 +102,25 @@ export function AppHeader({
             />
 
             <div className="relative">
-            <IconButton
+            <Button
               ref={accountMenu.triggerRef}
               type="button"
-              bordered
+              variant="ghost"
               onClick={accountMenu.toggle}
               onKeyDown={accountMenu.onTriggerKeyDown}
               aria-haspopup="menu"
               aria-expanded={accountMenu.open}
-              aria-label="Account menu"
+              aria-label={accountAccessibleName(MANAGER_NAME)}
+              className="header-identity-control"
             >
               <Avatar name={MANAGER_NAME} size="sm" />
-            </IconButton>
+              <span className="max-w-40 truncate">{MANAGER_NAME}</span>
+              {accountMenu.open ? (
+                <ChevronUp className="h-4 w-4 shrink-0" />
+              ) : (
+                <ChevronDown className="h-4 w-4 shrink-0" />
+              )}
+            </Button>
 
             {accountMenu.open && (
               <Card className="absolute top-full right-0 z-20 mt-1 w-72 shadow-lg">

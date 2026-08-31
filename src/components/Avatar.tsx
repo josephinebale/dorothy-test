@@ -32,14 +32,14 @@ export function Avatar({ name, size = 'md' }: AvatarProps) {
         width={pixels}
         height={pixels}
         style={{ width: dimension, height: dimension }}
-        className={`avatar avatar--${size} object-cover`}
+        className={`avatar avatar--${size} object-cover ring-1 ring-text-strong`}
       />
     );
   }
 
   return (
     <span
-      className={`avatar avatar--${size} inline-flex items-center justify-center bg-surface-selected font-medium text-text-secondary`}
+      className={`avatar avatar--${size} inline-flex items-center justify-center bg-text-strong font-medium text-surface`}
       aria-hidden="true"
     >
       {initials(name)}

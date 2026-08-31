@@ -353,6 +353,11 @@ body {
 
 .header-identity {
   height: var(--header-identity-height);
+  overflow: visible;
+}
+
+.header-identity-control:focus-visible {
+  z-index: 10;
 }
 
 .header-navigation {

@@ -90,6 +90,14 @@ export default function App() {
         path={path}
         unreadMessages={unreadOverride ?? data.unreadMessages}
         bookingsBadge={data.bookingsToApprove}
+        unreadNotifications={
+          [
+            unreadOverride ?? data.unreadMessages,
+            data.requestsToAccept,
+            data.bookingsToApprove,
+            data.plansToReview,
+          ].filter((count) => count > 0).length
+        }
         onSelectHouse={selectHouse}
         onSignOut={signOut}
       />
