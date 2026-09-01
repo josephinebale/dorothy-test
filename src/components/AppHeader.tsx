@@ -63,7 +63,7 @@ export function AppHeader({
   const accountName = accountAccessibleName(MANAGER_NAME);
 
   return (
-    <header className="app-header sticky top-0 z-20">
+    <header className="app-header z-20">
       <div className="app-header-identity">
         <div
           className="app-header-row mx-auto flex max-w-page items-center justify-between gap-4 px-8"

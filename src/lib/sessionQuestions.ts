@@ -29,7 +29,7 @@ const PAGE_LABELS: Record<string, string> = {
 
 export function createDefaultSessionQuestions(): SessionQuestionsState {
   return {
-    annotationsVisible: true,
+    annotationsVisible: false,
   };
 }
 
@@ -69,7 +69,7 @@ export function parseSessionQuestions(raw: string | null): SessionQuestionsState
       annotationsVisible:
         typeof state.annotationsVisible === 'boolean'
           ? state.annotationsVisible
-          : true,
+          : false,
     };
   } catch {
     return createDefaultSessionQuestions();

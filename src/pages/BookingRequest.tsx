@@ -1,11 +1,20 @@
 import { useMemo, useState } from 'react';
-import { Check, ChevronDown, Clock3, MapPin, Users } from 'lucide-react';
+import {
+  Check,
+  ChevronDown,
+  Clock3,
+  MapPin,
+  Navigation,
+  SquareCheck,
+  Users,
+} from 'lucide-react';
 import { Avatar } from '../components/Avatar';
 import { LocationMarker } from '../components/LocationMarker';
 import { PinnedQuestion } from '../components/PinnedQuestion';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 import { EntityLink } from '../components/ui/EntityLink';
+import { Tag } from '../components/ui/Tag';
 import { LOCATIONS, type Booking, type LocationData } from '../data/locations';
 import { formatTime } from '../lib/date';
 import { workerProfilePath } from '../lib/pageContent';
@@ -26,6 +35,45 @@ type Draft = {
   financeReference: string;
   selectedWorkerIds: string[];
 };
+
+/* Placeholder detail for the richer worker list, deterministic by roster index so
+   a worker keeps the same suburb and training between reloads. */
+const WORKER_SUBURBS = [
+  'Camperdown',
+  'Greenwich',
+  'Artarmon',
+  'Oatley',
+  'Manly',
+  'Marrickville',
+  'Chatswood',
+  'Balmain',
+];
+
+const WORKER_TRAINING = [
+  [
+    'insights into behaviour',
+    'health and medication',
+    'specialised daily supports',
+    'positive behaviour support',
+  ],
+  [
+    'catheter care',
+    'tube feeding support',
+    'diabetes management',
+    'epilepsy and seizure support',
+    'medication management',
+  ],
+  [],
+  ['health and medication', 'insights into behaviour', 'complex bowel care', 'wound care'],
+  ['positive behaviour support', 'insights into behaviour'],
+];
+
+function workerDetailFor(index: number): { suburb: string; training: string[] } {
+  return {
+    suburb: WORKER_SUBURBS[index % WORKER_SUBURBS.length],
+    training: WORKER_TRAINING[index % WORKER_TRAINING.length],
+  };
+}
 
 const HOURLY_RATE = 72.74;
 const FIELD_CLASS =
@@ -82,7 +130,7 @@ function BookingRequestSummary({
   const estimate = hours * HOURLY_RATE;
 
   return (
-    <Card as="aside" className="sticky top-32 p-5">
+    <Card as="aside" className="sticky top-8 p-5">
       <h2 className="text-md font-bold text-text">Summary</h2>
       <ol className="mt-4 space-y-4">
         {STEPS.map((item) => {
@@ -362,16 +410,22 @@ function StepThree({
   setDraft,
   data,
   showErrors,
+  workerDetail,
 }: {
   draft: Draft;
   setDraft: (next: Draft) => void;
   data: LocationData;
   showErrors: boolean;
+  workerDetail: boolean;
 }) {
   const workers = useMemo(
     () => [...data.workers].sort((a, b) => a.name.localeCompare(b.name)),
     [data.workers],
   );
+
+  const selectedNames = workers
+    .filter((worker) => draft.selectedWorkerIds.includes(worker.id))
+    .map((worker) => worker.name);
 
   const toggleWorker = (workerId: string) => {
     const selected = draft.selectedWorkerIds.includes(workerId);
@@ -393,10 +447,16 @@ function StepThree({
       <p className="text-sm text-text-secondary">Step 3 of 3</p>
       <h2 className="mt-1 text-lg font-bold text-text">Select workers</h2>
       <p className="mt-2 text-sm text-text-secondary">
-        Send this request to up to 10 workers in the {data.location.name} team.
+        {workerDetail
+          ? 'Select up to 10 workers.'
+          : `Send this request to up to 10 workers in the ${data.location.name} team.`}
       </p>
       <p className="mt-4 text-sm font-bold text-text">
-        {draft.selectedWorkerIds.length} of 10 workers selected
+        {workerDetail
+          ? selectedNames.length === 0
+            ? 'No workers selected'
+            : `${selectedNames.length} worker${selectedNames.length === 1 ? '' : 's'} selected: ${selectedNames.join(', ')}`
+          : `${draft.selectedWorkerIds.length} of 10 workers selected`}
       </p>
 
       {workers.length === 0 ? (
@@ -406,6 +466,46 @@ function StepThree({
             Add workers to this location before requesting a booking.
           </p>
         </div>
+      ) : workerDetail ? (
+        <ul className="mt-3 divide-y divide-border-subtle">
+          {workers.map((worker, index) => {
+            const unavailable = index === 5;
+            const selected = draft.selectedWorkerIds.includes(worker.id);
+            const atLimit = !selected && draft.selectedWorkerIds.length >= 10;
+            const detail = workerDetailFor(index);
+            return (
+              <li key={worker.id} className="flex items-start gap-3 py-4">
+                <input
+                  type="checkbox"
+                  checked={selected}
+                  disabled={unavailable || atLimit}
+                  onChange={() => toggleWorker(worker.id)}
+                  aria-label={worker.name}
+                  className="mt-6 h-4 w-4 shrink-0"
+                />
+                <Avatar name={worker.name} size="md" />
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-bold text-text">{worker.name}</p>
+                  <p className="mt-1 flex items-center gap-2 text-xs text-text-secondary">
+                    <Navigation className="h-5 w-5 shrink-0" />
+                    Based in {detail.suburb}, over 10km away
+                  </p>
+                  <p className="mt-1 flex items-center gap-2 text-xs text-text-secondary">
+                    <SquareCheck className="h-5 w-5 shrink-0" />
+                    {data.location.name} team
+                  </p>
+                  {detail.training.length > 0 && (
+                    <p className="mt-1 flex items-start gap-2 text-xs text-text-secondary">
+                      <Check className="h-5 w-5 shrink-0" />
+                      <span>Trained in {detail.training.join(', ')}</span>
+                    </p>
+                  )}
+                </div>
+                {unavailable && <Tag tone="neutral">Booked at this time</Tag>}
+              </li>
+            );
+          })}
+        </ul>
       ) : (
         <ul className="mt-3 divide-y divide-border-subtle">
           {workers.map((worker, index) => {
@@ -416,7 +516,7 @@ function StepThree({
               <li key={worker.id}>
                 <label
                   className={`flex items-center gap-3 py-3 ${
-                    unavailable ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
+                    unavailable ? 'cursor-not-allowed text-text-secondary' : 'cursor-pointer'
                   }`}
                 >
                   <input
@@ -436,9 +536,7 @@ function StepThree({
                     </span>
                   </span>
                   {unavailable && (
-                    <span className="rounded bg-surface-selected px-2 py-1 text-xs text-text-secondary">
-                      Booked at this time
-                    </span>
+                    <Tag tone="neutral">Booked at this time</Tag>
                   )}
                 </label>
               </li>
@@ -601,11 +699,13 @@ export function BookingRequest({
   data,
   onCreateBooking,
   onSelectLocation,
+  workerDetail,
 }: {
   path: string;
   data: LocationData;
   onCreateBooking: (booking: Booking) => void;
   onSelectLocation: (locationId: string) => void;
+  workerDetail: boolean;
 }) {
   const [step, setStep] = useState<Step>(1);
   const [showErrors, setShowErrors] = useState(false);
@@ -709,12 +809,20 @@ export function BookingRequest({
             <StepTwo draft={draft} setDraft={setDraft} showErrors={showErrors} />
           )}
           {step === 3 && (
-            <StepThree draft={draft} setDraft={setDraft} data={data} showErrors={showErrors} />
+            <StepThree
+              draft={draft}
+              setDraft={setDraft}
+              data={data}
+              showErrors={showErrors}
+              workerDetail={workerDetail}
+            />
           )}
-          <p className="mt-5 text-sm text-text-strong">
-            {step < 3 ? `Next step: ${step === 1 ? 'Details' : 'Select workers'}` : 'Ready to send'}
-          </p>
-          <div className="mt-3 flex items-center gap-3">
+          {step < 3 && (
+            <p className="mt-5 text-sm text-text-strong">
+              Next step: {step === 1 ? 'Details' : 'Select workers'}
+            </p>
+          )}
+          <div className={`flex items-center gap-3 ${step < 3 ? 'mt-3' : 'mt-5'}`}>
             <Button type="button" variant="primary" onClick={continueFlow}>
               {step === 3 ? 'Submit booking request' : 'Continue'}
             </Button>

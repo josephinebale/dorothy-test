@@ -64,6 +64,17 @@ test('the identity tier is 56px and the nav tier is 48px', () => {
   assert.doesNotMatch(row, /\bpy-\d/);
 });
 
+test('the header scrolls with the page rather than staying pinned', () => {
+  const header = source('../src/components/AppHeader.tsx');
+  const request = source('../src/pages/BookingRequest.tsx');
+
+  assert.match(header, /<header className="app-header z-20">/);
+  assert.doesNotMatch(header, /sticky top-0/);
+  /* Summary used to sit 128px down to clear a pinned header. */
+  assert.match(request, /<Card as="aside" className="sticky top-8 p-5">/);
+  assert.doesNotMatch(request, /sticky top-32/);
+});
+
 test('header and footer logos keep their distinct compact sizes', () => {
   const logo = source('../src/components/Logo.tsx');
 

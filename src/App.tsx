@@ -28,6 +28,7 @@ import { BookingRequest } from './pages/BookingRequest';
 import { Messages } from './pages/Messages';
 import { Notifications } from './pages/Notifications';
 import { LocationProfilePreview } from './pages/LocationProfilePreview';
+import { PageVariantToggle } from './components/PageVariantToggle';
 import { PrototypeStart } from './pages/PrototypeStart';
 import {
   ManageLocationSettings,
@@ -47,6 +48,7 @@ export default function App() {
     () => findLocation(readLastLocationId())?.id ?? null,
   );
   const [unreadOverride, setUnreadOverride] = useState<number | null>(null);
+  const [pageVariant, setPageVariant] = useState(false);
   const [createdBookings, setCreatedBookings] = useState<Booking[]>([]);
 
   const selectLocation = useCallback((nextLocationId: string) => {
@@ -70,6 +72,7 @@ export default function App() {
     setLocationId(null);
     setCreatedBookings([]);
     setUnreadOverride(null);
+    setPageVariant(false);
     navigate('/');
   }, []);
 
@@ -165,6 +168,7 @@ export default function App() {
               onCreateBooking={(booking) => {
                 setCreatedBookings((current) => [booking, ...current]);
               }}
+              workerDetail={pageVariant}
             />
           ) : path === '/bookings' || bookingViewFromPath(path) ? (
             <Bookings data={visibleData} view={bookingViewFromPath(path) ?? 'confirmed'} />
@@ -190,6 +194,12 @@ export default function App() {
             <Dashboard data={visibleData} />
           )}
         </main>
+
+        <PageVariantToggle
+          path={path}
+          active={pageVariant}
+          onToggle={() => setPageVariant(!pageVariant)}
+        />
 
         <SessionQuestions onRestart={restart} />
       </div>

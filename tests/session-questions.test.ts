@@ -6,18 +6,18 @@ import {
   parseSessionQuestions,
 } from '../src/lib/sessionQuestions.ts';
 
-test('session storage defaults to annotations visible', () => {
+test('session storage defaults to annotations hidden', () => {
   assert.deepEqual(createDefaultSessionQuestions(), {
-    annotationsVisible: true,
+    annotationsVisible: false,
   });
 });
 
-test('falls back to annotations visible when saved data is invalid', () => {
+test('falls back to annotations hidden when saved data is invalid', () => {
   assert.deepEqual(parseSessionQuestions('not-json'), {
-    annotationsVisible: true,
+    annotationsVisible: false,
   });
   assert.deepEqual(parseSessionQuestions('{}'), {
-    annotationsVisible: true,
+    annotationsVisible: false,
   });
 });
 

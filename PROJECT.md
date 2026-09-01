@@ -45,11 +45,13 @@ Persisted in `localStorage`:
 - `hm.sessionQuestions` (research overlay)
 - `hm.locationProfiles` (worker-facing profile details for each location)
 
-No prototype-start flag → **Welcome to Hireup for Providers**, a deliberately simple holding screen with one **Start prototype** button and no credentials. Starting clears any remembered location and proceeds to **Choose your location**. After a location is chosen, return visits open the last location. Account menu: **Log out**, then **Log back in** or **Log in as a new user** (clears remembered location).
+No prototype-start flag → **Log in to Hireup**, a simplified login screen: logo, tagline, and one **Login** button, with no credential fields. Logging in clears any remembered location and proceeds to **Choose your location**. After a location is chosen, return visits open the last location. Account menu: **Log out**, then **Log back in** or **Log in as a new user** (clears remembered location).
 
-The eye control shows or hides all `PinnedQuestion` markers. Visibility defaults to on and persists in `hm.sessionQuestions` across reloads. Markers open a popover containing only the element-specific question text. There is no Session questions panel, notes list, or copy-all control.
+The eye control shows or hides all `PinnedQuestion` markers. Visibility defaults to off and persists in `hm.sessionQuestions` across reloads. Markers open a popover containing only the element-specific question text. There is no Session questions panel, notes list, or copy-all control.
 
-Beside it, **Restart prototype** resets the run between participants: it clears `hm.prototypeStarted`, `hm.lastLocationId` (and the legacy house key), `hm.signedIn`, and `hm.locationProfiles`, drops in-memory bookings and the unread override, and returns to the **Welcome to Hireup for Providers** holding screen. It deliberately keeps `hm.sessionQuestions`, since annotation visibility is the moderator’s preference, not the participant’s state. It asks for confirmation first, because it sits next to a control used mid-session.
+Beside it, **Restart prototype** resets the run between participants: it clears `hm.prototypeStarted`, `hm.lastLocationId` (and the legacy house key), `hm.signedIn`, and `hm.locationProfiles`, drops in-memory bookings and the unread override, and returns to the **Log in to Hireup** screen. It deliberately keeps `hm.sessionQuestions`, since annotation visibility is the moderator’s preference, not the participant’s state. It asks for confirmation first, because it sits next to a control used mid-session.
+
+A third control sits in the **bottom-left** corner, deliberately away from that pair, and only appears on pages listed in `src/lib/pageVariants.ts`. It swaps the page to a second version mid-session — currently only **Show more worker detail** on `/request-booking`, which turns step 3’s plain worker list into the richer one (suburb and distance, team, and the full training list). The state lives in `App.tsx`, so it survives moving between steps and resets on restart. It is a moderator control, not a participant one: nothing in the page hints at it.
 
 `src/data/discussionQuestions.ts` is the source of truth for question wording and metadata: `{ id, page, type, text, elementHint? }`. It stores no answers. `elementHint` is a human-readable placement description, never a selector. Markers are placed manually in page JSX. The general `settings-co-design` activity is in the catalogue for the Location, Organisation, and Account settings areas.
 
@@ -128,7 +130,7 @@ The header message count is therefore the universal total (`totalUnreadMessages(
 
 ## Header and footer (settled)
 
-Two tiers, `max-w-page` + `px-8` on both.
+Two tiers, `max-w-page` + `px-8` on both. The header is **not sticky** — it scrolls away with the page. The request-booking Summary still sticks, but to `top-8` (page padding), not to a 128px offset that used to clear a pinned header.
 
 **Tier 1** (56px, `--header-identity-height`): Hireup lockup (24px, `block h-6 w-auto`) · 24px hairline · LocationSwitcher · Messages + Notifications (36px icon-only controls with contextual badges) · account (**md 36px** Helen photo + rotating chevron, no text label, class `-mr-4`). The extra row height gives every 36px control 10px above and below.
 

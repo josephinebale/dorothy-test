@@ -106,6 +106,33 @@ test('the dock offers a restart beside the annotations toggle', () => {
   assert.match(dock, /window\.confirm/);
 });
 
+test('the page-variant control sits apart, and only where there is a variant', () => {
+  const toggle = source('../src/components/PageVariantToggle.tsx');
+  const variants = source('../src/lib/pageVariants.ts');
+  const css = source('../src/index.css');
+  const app = source('../src/App.tsx');
+
+  assert.match(variants, /'\/request-booking': /);
+  assert.match(variants, /export function variantLabel/);
+  assert.match(toggle, /if \(!label\) return null/);
+  assert.match(toggle, /aria-pressed=\{active\}/);
+  /* Bottom left, clear of the annotations and restart pair on the right. */
+  assert.match(css, /\.page-variant-control \{[\s\S]*?left: var\(--space-4\);/);
+  assert.doesNotMatch(css, /\.page-variant-control \{[^}]*right:/);
+  assert.match(app, /<PageVariantToggle/);
+});
+
+test('docked tooltips are edge-anchored, so they cannot widen the page', () => {
+  const css = source('../src/index.css');
+  const docked = css.slice(css.indexOf('.session-questions-controls .ui-tooltip::after'));
+
+  /* Centred on a corner button, a hidden tooltip still overhangs the viewport
+     and gives the document a horizontal scrollbar. */
+  assert.match(docked, /transform: none;/);
+  assert.match(docked, /\.session-questions-controls \.ui-tooltip::after \{[\s\S]*?right: 0;/);
+  assert.match(docked, /\.page-variant-control \.ui-tooltip::after \{[\s\S]*?left: 0;/);
+});
+
 test('restart returns the prototype to a location that has never been chosen', () => {
   const app = source('../src/App.tsx');
   const session = source('../src/lib/session.ts');

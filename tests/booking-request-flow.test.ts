@@ -39,7 +39,7 @@ test('worker selection comes from the current location team', () => {
 
   assert.match(app, /<BookingRequest[\s\S]*onSelectLocation=\{selectLocation\}/);
   assert.match(flow, /\[\.\.\.data\.workers\]\.sort/);
-  assert.match(flow, /workers in the \{data\.location\.name\} team/);
+  assert.match(flow, /workers in the \$\{data\.location\.name\} team/);
 });
 
 test('submitting opens a requested booking detail screen', () => {
@@ -80,4 +80,41 @@ test('the booking request layout includes empty, error, and summary states', () 
   assert.match(flow, /No team members are available/);
   assert.match(flow, /BookingRequestSummary/);
   assert.match(flow, /Pricing estimate/);
+  assert.match(flow, /Next step: \{step === 1 \? 'Details' : 'Select workers'\}/);
+  assert.doesNotMatch(flow, /Ready to send/);
+});
+
+test('the richer worker list is driven from outside the page, not a hidden hotspot', () => {
+  const flow = source('../src/pages/BookingRequest.tsx');
+  const app = source('../src/App.tsx');
+
+  assert.match(flow, /workerDetail: boolean/);
+  assert.match(app, /const \[pageVariant, setPageVariant\] = useState\(false\)/);
+  assert.match(app, /workerDetail=\{pageVariant\}/);
+  /* The step label is plain text again. */
+  assert.doesNotMatch(flow, /onClick=\{onToggleWorkerDetail\}/);
+  assert.doesNotMatch(flow, /useState\(false\);\s*\/\* Held here/);
+});
+
+test('the revealed worker list adds place, team, and training', () => {
+  const flow = source('../src/pages/BookingRequest.tsx');
+
+  assert.match(flow, /Based in \{detail\.suburb\}, over 10km away/);
+  assert.match(flow, /\{data\.location\.name\} team/);
+  assert.match(flow, /Trained in \{detail\.training\.join\(', '\)\}/);
+  assert.doesNotMatch(flow, /Show more|Show less|expandedWorkerIds|toggleExpanded/);
+  assert.match(flow, /worker\$\{selectedNames\.length === 1 \? '' : 's'\} selected: /);
+  assert.match(flow, /Select up to 10 workers\./);
+});
+
+test('unavailable workers keep a readable booked-at-this-time tag', () => {
+  const flow = source('../src/pages/BookingRequest.tsx');
+  const row = flow.slice(
+    flow.indexOf('const unavailable = index === 5'),
+    flow.indexOf('showErrors && draft.selectedWorkerIds.length === 0'),
+  );
+
+  assert.match(row, /<Tag tone="neutral">Booked at this time<\/Tag>/);
+  assert.doesNotMatch(row, /opacity-50/);
+  assert.match(row, /unavailable \? 'cursor-not-allowed text-text-secondary'/);
 });
