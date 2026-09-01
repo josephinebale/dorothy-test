@@ -53,10 +53,11 @@ export function SessionQuestions({ onRestart }: { onRestart: () => void }) {
           aria-pressed={annotationsVisible}
           className="ui-tooltip"
         >
+          {/* The icon names the action, like the label: struck-out eye to hide. */}
           {annotationsVisible ? (
-            <Eye className="h-5 w-5" />
-          ) : (
             <EyeOff className="h-5 w-5" />
+          ) : (
+            <Eye className="h-5 w-5" />
           )}
         </IconButton>
 

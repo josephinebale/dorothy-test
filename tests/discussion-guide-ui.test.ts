@@ -94,6 +94,14 @@ test('the research dock is an annotations toggle only', () => {
   );
 });
 
+test('the eye icon shows what the button does, matching its label', () => {
+  const dock = source('../src/components/SessionQuestions.tsx');
+
+  /* Visible annotations means the button hides them, so it wears the struck-out
+     eye. The icon and the label describe the same action. */
+  assert.match(dock, /annotationsVisible \? \(\s*<EyeOff className="h-5 w-5" \/>\s*\) : \(\s*<Eye className="h-5 w-5" \/>/);
+});
+
 test('the dock offers a restart beside the annotations toggle', () => {
   const dock = source('../src/components/SessionQuestions.tsx');
 
