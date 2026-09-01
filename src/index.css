@@ -82,8 +82,8 @@
 
   /* Tier 1 carries the global scope, tier 2 the working scope, so the nav
      underline has a row bottom to anchor to. */
-  --header-identity-height: 3rem;
-  --header-nav-height: 3.5rem;
+  --header-identity-height: 3.5rem;
+  --header-nav-height: 3rem;
   /* Scaled with the page so the narrow column keeps a readable share of the row
      rather than thinning out as the container widens. */
   --narrow-column-width: 20rem;
@@ -99,7 +99,7 @@
 
   --panel-width: 24rem;
   --panel-max-height: 75vh;
-  --messages-shell-min-height: 40rem;
+  --messages-shell-height: 40rem;
   --booking-grid-min-height: 17.5rem;
 }
 
@@ -125,7 +125,9 @@ body {
 
 .ui-button:focus-visible,
 .ui-icon-button:focus-visible,
-.ui-entity-link:focus-visible {
+.ui-entity-link:focus-visible,
+.header-menu-trigger:focus-visible,
+.main-nav-link:focus-visible {
   outline: 2px solid var(--color-brand);
   outline-offset: 2px;
 }
@@ -332,15 +334,25 @@ body {
   align-items: center;
   justify-content: center;
   border-radius: 9999px;
-  padding-inline: var(--space-1);
+  /* 6px so two digits are not squeezed against the pill. Tabular figures give
+     every digit a 7.73px advance, so one digit reads as a soft pill too. */
+  padding-inline: calc(var(--space-1) * 1.5);
   font-size: var(--text-xs);
   line-height: 1;
   font-weight: var(--font-weight-medium);
+  font-variant-numeric: tabular-nums;
 }
 
 .ui-badge--attention {
   background: var(--color-badge);
   color: var(--color-surface);
+}
+
+.header-utility .ui-badge {
+  position: absolute;
+  top: calc(-1 * var(--space-1));
+  right: calc(-1 * var(--space-1));
+  box-shadow: 0 0 0 2px var(--color-surface);
 }
 
 /* A label, not a control: filled and borderless, so it never reads as a button,
@@ -440,21 +452,25 @@ body {
   height: var(--header-nav-height);
 }
 
-.location-switcher-trigger {
+.header-menu-trigger {
   display: inline-flex;
-  max-width: 16rem;
+  height: 2.25rem;
   align-items: center;
   gap: var(--space-2);
-  padding: var(--space-1) var(--space-2);
+  padding: 0 var(--space-2);
   border: 0;
   border-radius: var(--radius-sm);
   background: transparent;
-  text-align: left;
   color: var(--color-text);
 }
 
-.location-switcher-trigger:hover {
+.header-menu-trigger:hover {
   background: var(--color-surface-subtle);
+}
+
+.location-switcher-trigger {
+  max-width: 16rem;
+  text-align: left;
 }
 
 .ui-tooltip {
@@ -490,26 +506,29 @@ body {
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  border-bottom: 2px solid transparent;
-  padding-top: 2px;
+  padding-inline: var(--space-3);
+  border-bottom: 3px solid transparent;
+  padding-top: 3px;
 }
 
+/* The hover fill is the block, not the label, so it runs the full tier height
+   and the padding gives it width. The nav is pulled left by the same padding so
+   the first label still aligns with the lockup on the rail above. */
 .main-nav-link:hover {
-  border-bottom-color: var(--color-border);
+  background: var(--color-info-surface);
 }
 
 .main-nav-link--active {
-  border-bottom-color: var(--color-brand);
+  border-bottom-color: var(--color-text);
 }
 
-.main-nav-link:focus-visible {
-  z-index: 10;
-  outline: 2px solid var(--color-brand);
-  outline-offset: calc(-1 * var(--space-1));
-}
-
+/* Definite height, not a minimum: the two panes scroll inside the shell rather
+   than growing it, so the page itself does not scroll to read a long list. The
+   capped row is what stops a long list from stretching the grid past that
+   height; each column then needs its own `min-h-0` to be allowed to shrink. */
 .messages-shell {
-  min-height: var(--messages-shell-min-height);
+  height: var(--messages-shell-height);
+  grid-template-rows: minmax(0, 1fr);
 }
 
 .booking-grid {

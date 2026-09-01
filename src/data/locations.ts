@@ -240,6 +240,21 @@ export function getLocationData(locationId: string): LocationData {
   return data;
 }
 
+/** Messages spans locations, so a worker link can point outside the current one. */
+export function findWorker(
+  workerId: string | null,
+): { worker: Worker; location: Location; index: number } | null {
+  if (!workerId) return null;
+
+  for (const location of LOCATIONS) {
+    const data = getLocationData(location.id);
+    const index = data.workers.findIndex((worker) => worker.id === workerId);
+    if (index >= 0) return { worker: data.workers[index], location, index };
+  }
+
+  return null;
+}
+
 export function findLocation(locationId: string | null): Location | null {
   if (!locationId) return null;
   return LOCATIONS.find((location) => location.id === locationId) ?? null;

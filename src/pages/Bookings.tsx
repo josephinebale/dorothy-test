@@ -10,16 +10,16 @@ import { Card } from '../components/ui/Card';
 import { EntityLink } from '../components/ui/EntityLink';
 import type { Booking, LocationData } from '../data/locations';
 import { formatTime, startOfDay } from '../lib/date';
-import { EMPTY_STATES, TEAM_ROUTE } from '../lib/pageContent';
-import { href } from '../lib/router';
+import {
+  EMPTY_STATES,
+  TEAM_ROUTE,
+  bookingsViewPath,
+  workerProfilePath,
+  type BookingViewId,
+} from '../lib/pageContent';
+import { href, navigate } from '../lib/router';
 
-type BookingView =
-  | 'requested'
-  | 'confirmed'
-  | 'waiting'
-  | 'approve'
-  | 'next-invoice'
-  | 'invoiced';
+type BookingView = BookingViewId;
 
 const VIEWS: { id: BookingView; label: string }[] = [
   { id: 'requested', label: 'Requested' },
@@ -107,6 +107,7 @@ function bookingsForView(data: LocationData, view: BookingView): Booking[] {
 
 function BookingCard({ booking, data }: { booking: Booking; data: LocationData }) {
   const hours = durationHours(booking);
+  const worker = data.workers.find((item) => item.name === booking.workerName);
   const detailHref =
     booking.status === 'requested'
       ? href(`/bookings/request/${booking.id}`)
@@ -127,7 +128,7 @@ function BookingCard({ booking, data }: { booking: Booking; data: LocationData }
         <Avatar name={booking.workerName} size="lg" />
         <div>
           <EntityLink
-            href={href(TEAM_ROUTE)}
+            href={href(worker ? workerProfilePath(worker.id) : TEAM_ROUTE)}
             className="ui-target-row__action ui-target-row__link--text"
           >
             {booking.workerName}
@@ -181,8 +182,7 @@ function BookingCard({ booking, data }: { booking: Booking; data: LocationData }
   );
 }
 
-export function Bookings({ data }: { data: LocationData }) {
-  const [view, setView] = useState<BookingView>('confirmed');
+export function Bookings({ data, view }: { data: LocationData; view: BookingView }) {
   const [worker, setWorker] = useState('');
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
@@ -212,7 +212,19 @@ export function Bookings({ data }: { data: LocationData }) {
 
   return (
     <div>
-      <PageHeading title="Bookings" actions={<RequestBookingButton />} />
+      <PageHeading
+        title={activeLabel}
+        description={
+          <>
+            Showing {filteredBookings.length > 0 ? 1 : 0} -{' '}
+            {Math.min(filteredBookings.length, 40)} of {filteredBookings.length}{' '}
+            {view === 'confirmed'
+              ? 'upcoming bookings that have been accepted by a worker.'
+              : 'bookings.'}
+          </>
+        }
+        actions={<RequestBookingButton />}
+      />
 
       <div className="grid layout-rail-content items-start gap-6">
       <aside className="space-y-4">
@@ -227,7 +239,7 @@ export function Bookings({ data }: { data: LocationData }) {
               <button
                 key={item.id}
                 type="button"
-                onClick={() => setView(item.id)}
+                onClick={() => navigate(bookingsViewPath(item.id))}
                 className={`flex w-full items-center gap-2 border-l-2 px-3 py-2 text-left text-sm font-medium ${
                   active
                     ? 'border-brand bg-info-surface text-text'
@@ -325,21 +337,14 @@ export function Bookings({ data }: { data: LocationData }) {
       </aside>
 
       <section>
-        <h2 className="text-lg font-bold text-text">{activeLabel}</h2>
-        <p className="mt-1 max-w-content text-sm text-text-strong">
-          Showing {filteredBookings.length > 0 ? 1 : 0} - {Math.min(filteredBookings.length, 40)} of{' '}
-          {filteredBookings.length}{' '}
-          {view === 'confirmed' ? 'upcoming bookings that have been accepted by a worker.' : 'bookings.'}
-        </p>
-
         {filteredBookings.length > 0 ? (
-          <div className="mt-3 space-y-4">
+          <div className="space-y-4">
             {filteredBookings.slice(0, 40).map((booking) => (
               <BookingCard key={booking.id} booking={booking} data={data} />
             ))}
           </div>
         ) : (
-          <Card className="mt-3 px-6 py-12 text-center">
+          <Card className="px-6 py-12 text-center">
             <p className="text-lg font-bold text-text">
               {EMPTY_STATES.bookingsFiltered.title}
             </p>

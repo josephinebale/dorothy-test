@@ -30,18 +30,19 @@ npm run lint
   local storage.
 - **Bookings**, scoped to the selected location: status views, worker and date filters, a
   "Bookings I have created" toggle, and booking detail cards.
-- **Team**, scoped to the selected location: an alphabetical worker list using the existing Team
-  page treatment.
-- **Messages**, scoped to the selected location: conversation list, empty state, and a thread view
-  matching the existing Messages layout.
+- **Team**, scoped to the selected location: an alphabetical worker list and linked worker profiles
+  with availability, support, credentials, qualifications, and work history.
+- **Messages**, across every location: conversation list with location labels, empty state, and a
+  thread view matching the existing Messages layout.
 - **Settings** for this location, the organisation, and Helen’s account. The account menu goes to
-  Your account or Log out. See `PROJECT.md` for which sections remain.
+  Your account or Log out. Location settings includes an editable worker-facing profile and preview.
 
 ## Annotations (for research sessions)
 
 The eye control at the bottom right shows or hides discussion-guide pins beside selected UI
 elements. Pins open the question text only. Visibility is saved in the browser under
-`hm.sessionQuestions`, so it survives a reload during a session.
+`hm.sessionQuestions`, so it survives a reload during a session. The restart control beside it
+returns the prototype to “Choose your location” for the next participant.
 
 ## Testing the first-run experience
 
@@ -66,4 +67,4 @@ to a backend.
 
 ## Not built
 
-Jobs, profile editing, settings content, and multi-location aggregate views.
+Jobs, invoices as a real product, settings content, and multi-location aggregate views.

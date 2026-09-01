@@ -39,6 +39,12 @@ export function clearLastLocationId(): void {
   remove(LEGACY_HOUSE_KEY);
 }
 
+/** Back to a first run: signed in by default, with no location ever chosen. */
+export function clearSession(): void {
+  clearLastLocationId();
+  remove(SIGNED_IN_KEY);
+}
+
 export function readSignedIn(): boolean {
   return read(SIGNED_IN_KEY) !== 'false';
 }

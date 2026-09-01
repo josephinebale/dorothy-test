@@ -87,9 +87,39 @@ test('the research dock is an annotations toggle only', () => {
   assert.match(dock, /writeSessionQuestions/);
   assert.match(dock, /Show annotations|Hide annotations/);
   assert.doesNotMatch(dock, /Session questions|CircleHelp|SessionQuestionsPanel|path/);
-  assert.match(app, /<SessionQuestions \/>/);
+  assert.match(app, /<SessionQuestions onRestart=\{restart\} \/>/);
   assert.equal(
     existsSync(new URL('../src/components/SessionQuestionsPanel.tsx', import.meta.url)),
     false,
   );
+});
+
+test('the dock offers a restart beside the annotations toggle', () => {
+  const dock = source('../src/components/SessionQuestions.tsx');
+
+  const eyeAt = dock.indexOf('annotationsVisible ? \'Hide annotations\'');
+  const restartAt = dock.indexOf('Restart prototype');
+
+  assert.ok(eyeAt > -1 && restartAt > eyeAt, 'restart should follow the eye');
+  assert.match(dock, /<RotateCcw className="h-5 w-5" \/>/);
+  assert.match(dock, /onClick=\{confirmRestart\}/);
+  assert.match(dock, /window\.confirm/);
+});
+
+test('restart returns the prototype to a location that has never been chosen', () => {
+  const app = source('../src/App.tsx');
+  const session = source('../src/lib/session.ts');
+  const profiles = source('../src/lib/locationProfiles.ts');
+
+  assert.match(session, /export function clearSession\(\)/);
+  assert.match(session, /remove\(SIGNED_IN_KEY\)/);
+  assert.match(profiles, /export function clearLocationProfiles\(\)/);
+
+  const restart = app.slice(app.indexOf('const restart ='), app.indexOf('const signOut ='));
+  assert.match(restart, /clearSession\(\)/);
+  assert.match(restart, /clearLocationProfiles\(\)/);
+  assert.match(restart, /setLocationId\(null\)/);
+  assert.match(restart, /setCreatedBookings\(\[\]\)/);
+  assert.match(restart, /setUnreadOverride\(null\)/);
+  assert.match(restart, /navigate\('\/'\)/);
 });

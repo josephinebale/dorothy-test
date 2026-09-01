@@ -5,7 +5,7 @@ import { PageHeading } from '../components/PageHeading';
 import { PinnedQuestion } from '../components/PinnedQuestion';
 import { Card } from '../components/ui/Card';
 import { addDays, formatLongDate, startOfDay } from '../lib/date';
-import { EMPTY_STATES } from '../lib/pageContent';
+import { EMPTY_STATES, bookingsViewPath } from '../lib/pageContent';
 import { href } from '../lib/router';
 
 type Item = {
@@ -32,14 +32,14 @@ function buildItems(data: LocationData): Item[] {
       description: 'Workers have not yet responded to these requests.',
       Icon: Calendar,
       date: addDays(today, -1),
-      path: '/bookings',
+      path: bookingsViewPath('requested'),
     },
     {
       title: `${data.bookingsToApprove} bookings to approve`,
       description: 'Approve completed bookings so workers can be paid on time.',
       Icon: CalendarCheck,
       date: addDays(today, -2),
-      path: '/bookings',
+      path: bookingsViewPath('approve'),
     },
     {
       title: `${data.plansToReview} support plans to review`,

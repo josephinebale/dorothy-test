@@ -1,5 +1,38 @@
 export const TEAM_ROUTE = '/team';
 
+export function workerProfilePath(workerId: string): string {
+  return `${TEAM_ROUTE}/${workerId}`;
+}
+
+export function workerIdFromPath(path: string): string | null {
+  if (!path.startsWith(`${TEAM_ROUTE}/`)) return null;
+  return path.slice(TEAM_ROUTE.length + 1) || null;
+}
+
+export const BOOKINGS_ROUTE = '/bookings';
+
+/** Each rail status is addressable, so a notification can open the right one. */
+export const BOOKING_VIEW_IDS = [
+  'requested',
+  'confirmed',
+  'waiting',
+  'approve',
+  'next-invoice',
+  'invoiced',
+] as const;
+
+export type BookingViewId = (typeof BOOKING_VIEW_IDS)[number];
+
+export function bookingsViewPath(view: BookingViewId): string {
+  return `${BOOKINGS_ROUTE}/${view}`;
+}
+
+export function bookingViewFromPath(path: string): BookingViewId | null {
+  if (!path.startsWith(`${BOOKINGS_ROUTE}/`)) return null;
+  const candidate = path.slice(BOOKINGS_ROUTE.length + 1);
+  return BOOKING_VIEW_IDS.find((view) => view === candidate) ?? null;
+}
+
 export const NOTIFICATION_EMPTY_DESCRIPTIONS = {
   requests: "We'll let you know when a booking request needs your attention.",
   approvals: "We'll let you know when a booking needs your approval.",

@@ -32,8 +32,8 @@ test('all split layouts share one 320px narrow-column token', () => {
 
 test('page shell is 1440px with a two-tier header', () => {
   assert.match(css, /--container-page:\s*90rem/);
-  assert.match(css, /--header-identity-height:\s*3rem/);
-  assert.match(css, /--header-nav-height:\s*3\.5rem/);
+  assert.match(css, /--header-identity-height:\s*3\.5rem/);
+  assert.match(css, /--header-nav-height:\s*3rem/);
 });
 
 test('pages declare their distinct layout archetype', () => {

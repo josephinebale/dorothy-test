@@ -1,7 +1,7 @@
 import { Briefcase, Calendar, CalendarCheck } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import type { LocationData } from '../../data/locations';
-import { NOTIFICATION_EMPTY_DESCRIPTIONS } from '../../lib/pageContent';
+import { NOTIFICATION_EMPTY_DESCRIPTIONS, bookingsViewPath } from '../../lib/pageContent';
 import { href } from '../../lib/router';
 import { PinnedQuestion } from '../../components/PinnedQuestion';
 import { Card } from '../../components/ui/Card';
@@ -31,7 +31,7 @@ function buildCards(data: LocationData): StripCard[] {
           ? 'Review and manage your booking requests.'
           : NOTIFICATION_EMPTY_DESCRIPTIONS.requests,
       Icon: Calendar,
-      path: requestsToAccept > 0 ? '/bookings' : undefined,
+      path: requestsToAccept > 0 ? bookingsViewPath('requested') : undefined,
     },
     {
       title:
@@ -43,7 +43,7 @@ function buildCards(data: LocationData): StripCard[] {
           ? 'Approve the booking so that your support worker can be paid on time.'
           : NOTIFICATION_EMPTY_DESCRIPTIONS.approvals,
       Icon: CalendarCheck,
-      path: bookingsToApprove > 0 ? '/bookings' : undefined,
+      path: bookingsToApprove > 0 ? bookingsViewPath('approve') : undefined,
     },
     {
       title: 'No new job applicants',

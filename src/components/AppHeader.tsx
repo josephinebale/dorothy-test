@@ -1,7 +1,8 @@
 import { useEffect, useRef } from 'react';
 import {
+  Bell,
   ChevronDown,
-  ChevronUp,
+  MessageSquare,
 } from 'lucide-react';
 import type { Location } from '../data/locations';
 import {
@@ -23,6 +24,7 @@ import { Logo } from './Logo';
 import { Badge } from './ui/Badge';
 import { Button } from './ui/Button';
 import { Card } from './ui/Card';
+import { IconButton } from './ui/IconButton';
 
 const NAV_ITEMS = [
   { label: 'Dashboard', path: '/' },
@@ -56,6 +58,7 @@ export function AppHeader({
     activeNavRef.current?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
   }, [path]);
 
+  const messagesName = messagesAccessibleName(unreadMessages);
   const notificationsName = notificationsAccessibleName(unreadNotifications);
   const accountName = accountAccessibleName(MANAGER_NAME);
 
@@ -66,34 +69,45 @@ export function AppHeader({
           className="app-header-row mx-auto flex max-w-page items-center justify-between gap-4 px-8"
           style={{ height: 'var(--header-identity-height)' }}
         >
-          <a
-            href={href('/')}
-            aria-label="Hireup for Providers dashboard"
-            className="shrink-0 rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
-          >
-            <Logo />
-          </a>
+          <div className="flex min-w-0 items-center gap-4">
+            <a
+              href={href('/')}
+              aria-label="Hireup for Providers dashboard"
+              className="shrink-0 rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+            >
+              <Logo />
+            </a>
+            <span
+              aria-hidden="true"
+              className="h-6 w-px shrink-0 self-center bg-border-subtle"
+            />
+            <LocationSwitcher location={location} onSelect={onSelectLocation} />
+          </div>
 
           <div className="flex flex-1 items-center justify-end gap-3">
-            <Button
+            <IconButton
               href={href('/messages')}
-              variant="ghost"
-              aria-label={messagesAccessibleName(unreadMessages)}
-              className={path === '/messages' ? 'bg-surface-selected' : ''}
+              aria-label={messagesName}
+              data-tooltip={messagesName}
+              className={`header-utility relative ui-tooltip ${
+                path === '/messages' ? 'bg-surface-selected' : ''
+              }`}
             >
-              <span>Messages</span>
+              <MessageSquare className="h-5 w-5" />
               <Badge count={unreadMessages} />
-            </Button>
+            </IconButton>
 
-            <Button
+            <IconButton
               href={href('/notifications')}
-              variant="ghost"
               aria-label={notificationsName}
-              className={path === '/notifications' ? 'bg-surface-selected' : ''}
+              data-tooltip={notificationsName}
+              className={`header-utility relative ui-tooltip ${
+                path === '/notifications' ? 'bg-surface-selected' : ''
+              }`}
             >
-              <span>Notifications</span>
+              <Bell className="h-5 w-5" />
               <Badge count={unreadNotifications} />
-            </Button>
+            </IconButton>
 
             <div className="relative flex items-center">
               <Button
@@ -106,15 +120,14 @@ export function AppHeader({
                 aria-haspopup="menu"
                 aria-expanded={accountMenu.open}
                 aria-label={accountName}
-                className="-mr-4"
+                className="header-menu-trigger -mr-4"
               >
                 <Avatar name={MANAGER_NAME} size="md" />
-                <span className="max-w-40 truncate">Helen</span>
-                {accountMenu.open ? (
-                  <ChevronUp className="h-5 w-5 shrink-0 text-text-tertiary" />
-                ) : (
-                  <ChevronDown className="h-5 w-5 shrink-0 text-text-tertiary" />
-                )}
+                <ChevronDown
+                  className={`h-5 w-5 shrink-0 text-text-tertiary transition-transform ${
+                    accountMenu.open ? 'rotate-180' : ''
+                  }`}
+                />
               </Button>
 
               {accountMenu.open && (
@@ -165,15 +178,8 @@ export function AppHeader({
         </div>
       </div>
 
-      <div className="app-header-nav-row mx-auto flex max-w-page items-stretch px-8">
-        <div className="flex shrink-0 items-center">
-          <LocationSwitcher location={location} onSelect={onSelectLocation} />
-        </div>
-
-        <span aria-hidden="true" className="mx-6 h-6 w-px shrink-0 self-center bg-border-subtle" />
-
-        <div className="min-w-0 flex-1 overflow-x-auto">
-          <nav className="flex h-full w-max items-stretch gap-8" aria-label="Main">
+      <div className="app-header-nav-row mx-auto flex max-w-page items-stretch overflow-x-auto px-8">
+          <nav className="-ml-3 flex h-full w-max items-stretch" aria-label="Main">
             {NAV_ITEMS.map((item) => {
               const bookingRequestRoute =
                 item.path === '/bookings' &&
@@ -197,8 +203,8 @@ export function AppHeader({
                   }
                   className={`main-nav-link h-full shrink-0 text-sm ${
                     active
-                      ? 'main-nav-link--active font-medium text-text'
-                      : 'font-normal text-text-strong'
+                      ? 'main-nav-link--active font-bold text-text'
+                      : 'font-medium text-text-strong'
                   }`}
                 >
                   <span>{item.label}</span>
@@ -207,7 +213,6 @@ export function AppHeader({
               );
             })}
           </nav>
-        </div>
       </div>
     </header>
   );

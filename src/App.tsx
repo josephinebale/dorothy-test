@@ -2,12 +2,18 @@ import { useCallback, useState } from 'react';
 import { AppFooter } from './components/AppFooter';
 import { AppHeader } from './components/AppHeader';
 import { SessionQuestions } from './components/SessionQuestions';
+import { totalUnreadMessages } from './data/conversations';
 import { findLocation, getLocationData, type Booking } from './data/locations';
 import { ROUTES } from './lib/informationArchitecture';
-import { TEAM_ROUTE } from './lib/pageContent';
+import {
+  LOCATION_PROFILE_PREVIEW_ROUTE,
+  clearLocationProfiles,
+} from './lib/locationProfiles';
+import { TEAM_ROUTE, bookingViewFromPath, workerIdFromPath } from './lib/pageContent';
 import { navigate, useHashRoute } from './lib/router';
 import {
   clearLastLocationId,
+  clearSession,
   readLastLocationId,
   readSignedIn,
   writeLastLocationId,
@@ -19,6 +25,7 @@ import { Bookings } from './pages/Bookings';
 import { BookingRequest } from './pages/BookingRequest';
 import { Messages } from './pages/Messages';
 import { Notifications } from './pages/Notifications';
+import { LocationProfilePreview } from './pages/LocationProfilePreview';
 import {
   ManageLocationSettings,
   OrganisationSettings,
@@ -27,6 +34,7 @@ import {
 import { SignedOut } from './pages/SignedOut';
 import { STUB_TITLES, Stub } from './pages/Stub';
 import { Team } from './pages/Team';
+import { WorkerProfile } from './pages/WorkerProfile';
 
 export default function App() {
   const path = useHashRoute();
@@ -45,6 +53,19 @@ export default function App() {
 
   const onUnreadChange = useCallback((count: number) => {
     setUnreadOverride(count);
+  }, []);
+
+  /* Between participants: drop everything the last session wrote, so the run
+     starts where no location has been chosen. The moderator's annotation
+     preference is deliberately left alone. */
+  const restart = useCallback(() => {
+    clearSession();
+    clearLocationProfiles();
+    setSignedIn(readSignedIn());
+    setLocationId(null);
+    setCreatedBookings([]);
+    setUnreadOverride(null);
+    navigate('/');
   }, []);
 
   const signOut = useCallback(() => {
@@ -99,7 +120,7 @@ export default function App() {
       <AppHeader
         location={visibleData.location}
         path={path}
-        unreadMessages={unreadOverride ?? visibleData.unreadMessages}
+        unreadMessages={unreadOverride ?? totalUnreadMessages()}
         bookingsBadge={visibleData.bookingsToApprove}
         unreadNotifications={
           [
@@ -124,14 +145,18 @@ export default function App() {
                 setCreatedBookings((current) => [booking, ...current]);
               }}
             />
-          ) : path === '/bookings' ? (
-            <Bookings data={visibleData} />
+          ) : path === '/bookings' || bookingViewFromPath(path) ? (
+            <Bookings data={visibleData} view={bookingViewFromPath(path) ?? 'confirmed'} />
           ) : path === TEAM_ROUTE ? (
             <Team data={visibleData} />
+          ) : path.startsWith(`${TEAM_ROUTE}/`) ? (
+            <WorkerProfile data={visibleData} workerId={workerIdFromPath(path)} />
           ) : path === '/messages' ? (
-            <Messages data={visibleData} onUnreadChange={onUnreadChange} />
+            <Messages onUnreadChange={onUnreadChange} />
           ) : path === '/notifications' ? (
             <Notifications data={visibleData} />
+          ) : path === LOCATION_PROFILE_PREVIEW_ROUTE ? (
+            <LocationProfilePreview data={visibleData} />
           ) : path.startsWith(ROUTES.manageLocation) ? (
             <ManageLocationSettings data={visibleData} path={path} />
           ) : path.startsWith(ROUTES.organisationSettings) ? (
@@ -145,7 +170,7 @@ export default function App() {
           )}
         </main>
 
-        <SessionQuestions />
+        <SessionQuestions onRestart={restart} />
       </div>
 
       <AppFooter />

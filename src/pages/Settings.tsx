@@ -1,6 +1,7 @@
 import { useState, type ReactNode } from 'react';
 import { MoreHorizontal } from 'lucide-react';
 import { Avatar } from '../components/Avatar';
+import { LocationProfileSettings } from '../components/LocationProfileSettings';
 import { PageHeading } from '../components/PageHeading';
 import { PinnedQuestion } from '../components/PinnedQuestion';
 import { Button } from '../components/ui/Button';
@@ -343,6 +344,8 @@ function LocationSection({
   data: LocationData;
 }) {
   switch (section) {
+    case 'profile':
+      return <LocationProfileSettings data={data} />;
     case 'preferences':
       return (
         <PreferenceList

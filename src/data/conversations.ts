@@ -1,5 +1,5 @@
-import type { LocationData } from './locations';
-import { addDays, startOfDay } from '../lib/date';
+import { LOCATIONS, getLocationData, type LocationData } from './locations.ts';
+import { addDays, startOfDay } from '../lib/date.ts';
 
 export type ChatMessage = {
   id: string;
@@ -10,6 +10,8 @@ export type ChatMessage = {
 export type Conversation = {
   id: string;
   workerName: string;
+  locationId: string;
+  locationName: string;
   preview: string;
   at: Date;
   unread: number;
@@ -41,13 +43,19 @@ function previewFor(last: ChatMessage): string {
   return last.text.length > 42 ? `${last.text.slice(0, 42).trim()}...` : last.text;
 }
 
-export function buildConversations(data: LocationData): Conversation[] {
+/**
+ * Messages sits in the universal nav, so the list spans every location. Dates
+ * are spread by an interleaved index rather than a per-location one, so the top
+ * of the list mixes locations instead of showing one location at a time.
+ */
+function buildForLocation(data: LocationData, locationIndex: number): Conversation[] {
   const today = startOfDay(new Date());
   const workers = [...data.workers].sort((a, b) => a.name.localeCompare(b.name));
 
   const conversations = workers
     .map((worker, index) => {
-      const at = addDays(today, -(8 + index * 11));
+      const interleaved = index * LOCATIONS.length + locationIndex;
+      const at = addDays(today, -(4 + interleaved * 2));
       at.setHours(14, 20 + (index % 6) * 5, 0, 0);
 
       const outgoing = PROVIDER_NOTES[index % PROVIDER_NOTES.length];
@@ -66,6 +74,8 @@ export function buildConversations(data: LocationData): Conversation[] {
       return {
         id: worker.id,
         workerName: worker.name,
+        locationId: data.location.id,
+        locationName: data.location.name,
         preview: previewFor(last),
         at,
         unread: 0,
@@ -82,4 +92,17 @@ export function buildConversations(data: LocationData): Conversation[] {
   }
 
   return conversations;
+}
+
+export function buildAllConversations(): Conversation[] {
+  return LOCATIONS.flatMap((location, locationIndex) =>
+    buildForLocation(getLocationData(location.id), locationIndex),
+  ).sort((a, b) => b.at.getTime() - a.at.getTime());
+}
+
+export function totalUnreadMessages(): number {
+  return LOCATIONS.reduce(
+    (sum, location) => sum + getLocationData(location.id).unreadMessages,
+    0,
+  );
 }

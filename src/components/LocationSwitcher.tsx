@@ -2,7 +2,6 @@ import {
   Building2,
   Check,
   ChevronDown,
-  ChevronUp,
   House,
 } from 'lucide-react';
 import { LOCATIONS, type Location } from '../data/locations';
@@ -47,17 +46,17 @@ export function LocationSwitcher({ location, onSelect }: LocationSwitcherProps) 
         aria-haspopup="menu"
         aria-expanded={menu.open}
         aria-label={`Switch location. Current location: ${location.name}`}
-        className="location-switcher-trigger -ml-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+        className="header-menu-trigger location-switcher-trigger"
       >
         <LocationMarker location={location} />
         <span className="min-w-0 truncate text-sm font-medium text-text">
           {location.name}
         </span>
-        {menu.open ? (
-          <ChevronUp className="h-5 w-5 shrink-0 text-text-tertiary" />
-        ) : (
-          <ChevronDown className="h-5 w-5 shrink-0 text-text-tertiary" />
-        )}
+        <ChevronDown
+          className={`h-5 w-5 shrink-0 text-text-tertiary transition-transform ${
+            menu.open ? 'rotate-180' : ''
+          }`}
+        />
       </button>
       <PinnedQuestion questionId="access-context" />
 

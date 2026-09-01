@@ -42,10 +42,13 @@ Persisted in `localStorage`:
 - `hm.signedIn`
 - `hm.lastLocationId` (legacy house key still read)
 - `hm.sessionQuestions` (research overlay)
+- `hm.locationProfiles` (worker-facing profile details for each location)
 
 No location remembered → **Choose your location**. After that, return visits open the last location. Account menu: **Log out**, then **Log back in** or **Log in as a new user** (clears remembered location).
 
 The eye control shows or hides all `PinnedQuestion` markers. Visibility defaults to on and persists in `hm.sessionQuestions` across reloads. Markers open a popover containing only the element-specific question text. There is no Session questions panel, notes list, or copy-all control.
+
+Beside it, **Restart prototype** resets the run between participants: it clears `hm.lastLocationId` (and the legacy house key), `hm.signedIn`, and `hm.locationProfiles`, drops in-memory bookings and the unread override, and returns to **Choose your location**. It deliberately keeps `hm.sessionQuestions`, since annotation visibility is the moderator’s preference, not the participant’s state. It asks for confirmation first, because it sits next to a control used mid-session.
 
 `src/data/discussionQuestions.ts` is the source of truth for question wording and metadata: `{ id, page, type, text, elementHint? }`. It stores no answers. `elementHint` is a human-readable placement description, never a selector. Markers are placed manually in page JSX. The general `settings-co-design` activity is in the catalogue for the Location, Organisation, and Account settings areas.
 
@@ -56,10 +59,13 @@ Custom hash router (`src/lib/router.ts`): `href`, `navigate`, `useHashRoute`, `c
 | Path | Page |
 | --- | --- |
 | `/` | Dashboard |
-| `/bookings` | Bookings list (status rail) |
+| `/bookings` | Bookings list (status rail), defaults to Confirmed |
+| `/bookings/:status` | One rail status: `requested`, `confirmed`, `waiting`, `approve`, `next-invoice`, `invoiced` (`bookingsViewPath` / `bookingViewFromPath` in `pageContent.ts`) |
 | `/request-booking` | Three-step request flow |
 | `/bookings/request/:id` | Requested booking detail |
 | `/team` | Team |
+| `/team/:workerId` | Worker profile |
+| `/location-profile-preview` | Preview of the selected location profile workers see |
 | `/messages` | Messages |
 | `/notifications` | Notifications |
 | `/manage-location…` | Location settings |
@@ -67,7 +73,9 @@ Custom hash router (`src/lib/router.ts`): `href`, `navigate`, `useHashRoute`, `c
 | `/your-account…` | Helen’s account |
 | stubs | Report incident, help, legal, etc. (`src/pages/Stub.tsx`) |
 
-**Bookings** stays the active header tab on `/request-booking` and `/bookings/request/…`.
+**Bookings** stays the active header tab on `/request-booking`, `/bookings/request/…`, and every `/bookings/:status`.
+
+The rail writes the status into the address (`navigate(bookingsViewPath(id))`) rather than holding it in component state, so notifications can deep-link and the back button returns to the previous status. Requests-waiting notifications open `requested`; approvals notifications open `approve`. An unrecognised status falls through to the stub route, and `/bookings/request/:id` is matched first so it never reads as a status.
 
 Unknown or removed settings section IDs still resolve to that scope’s first remaining section (`sectionFromPath` in `src/lib/informationArchitecture.ts`). House aliases rewrite in `canonicalPath`.
 
@@ -103,30 +111,47 @@ Submit writes a `requested` booking and goes to `#/bookings/request/{id}`. Detai
 
 Dashboard week grid collapses to **4 bookings per day** with show more / Show less (`COLLAPSED_BOOKINGS_PER_DAY`).
 
+## Worker profiles
+
+Clicking a worker name from Team, the Dashboard’s Most booked workers list, a booking card, a requested-booking detail, or the active message thread opens `#/team/{workerId}`. Names inside worker-selection controls and the conversation list keep their selection behaviour instead of navigating.
+
+The profile adapts the existing Hireup worker profile into this prototype’s UI primitives: identity and verification summary, About, availability, support offered, verified documents, qualifications, and work history. Profile content is deterministic placeholder data derived from the worker’s location record.
+
+Because Messages spans locations, a profile link can point at a worker outside the current one. `findWorker(workerId)` in `src/data/locations.ts` resolves an ID against every location, preferring the current one, and the heading, the card, and the booking count all name **that worker’s** location rather than the selected one. Only an ID that exists nowhere shows the not-found state.
+
+## Messages is universal
+
+Messages sits in the universal nav, so the list is every conversation with every worker across all five locations — not the selected location’s roster. `buildAllConversations()` interleaves locations by index before sorting newest first, so the top of the list mixes locations instead of showing one at a time. Each row names its location on a third quiet line (`text-xs text-text-tertiary`), the open thread names it under the worker, and search matches location names as well as worker names and previews.
+
+The header message count is therefore the universal total (`totalUnreadMessages()`, 9), not `data.unreadMessages`. Switching location does not rebuild the list or reset what has been read. Notifications stay location-scoped: that page reports on the location you are in.
+
 ## Header and footer (settled)
 
 Two tiers, `max-w-page` + `px-8` on both.
 
-**Tier 1** (48px, `--header-identity-height`): Hireup lockup (24px, `block h-6 w-auto`) · Messages + Notifications (label + badge, no decorative icons, 36px default buttons) · account (Helen, **md 36px** photo, `size="default"`, class `-mr-4`). No divider before the account. All three controls are centred with 6px above and below; the account wrapper must stay `flex` to avoid an inline baseline gap.
+**Tier 1** (56px, `--header-identity-height`): Hireup lockup (24px, `block h-6 w-auto`) · 24px hairline · LocationSwitcher · Messages + Notifications (36px icon-only controls with contextual badges) · account (**md 36px** Helen photo + rotating chevron, no text label, class `-mr-4`). The extra row height gives every 36px control 10px above and below.
 
-**Tier 2** (56px, `--header-nav-height`): LocationSwitcher (`-ml-2` on the trigger so the marker lines up with the logo) · 24px hairline (`h-6 w-px self-center`) · Dashboard / Bookings / Team. Active link: `font-medium`, brand underline on the **row bottom**. Links are `h-full`. Header bottom hairline is `box-shadow: 0 1px 0` on `.app-header` — it sits **under** the 2px active underline, not on top of it.
+**Tier 2** (48px, `--header-nav-height`): Dashboard / Bookings / Team only. Links use 14/20 type (`text-sm`) with 24px gaps. Inactive links use dark `--color-text-strong` at 500, not a muted grey; active links use primary body text at 700 plus a 3px body-text underline on the **row bottom** (`.main-nav-link` carries a matching 3px `padding-top` so the label stays optically centred). Type stays 14px — definition comes from weight and the underline, not size. Links are `h-full`. The two row heights total 104px; the 1px separator sits between them. Header bottom hairline is `box-shadow: 0 1px 0` on `.app-header` — it sits **under** the active underline, not on top of it.
 
-**Footer:** compact logo **18px** (`block w-auto`), row `flex items-center`, `py-3`, `--footer-gap`.
+**Footer:** unchanged by the header refresh. Compact logo **18px** (`block w-auto`), row `flex items-center`, `py-3`, `--footer-gap`.
 
 ### Alignment traps (do not “fix” with extra padding)
 
-- `.ui-button--default` is **unlayered CSS**: `height: 2.25rem; padding: 0 var(--space-4)` (16px). Tailwind `px-2` on the account button **does not win**. The right-edge pull-back is `-mr-4` (16px), not `-mr-2`.
+- `.ui-button--default` is **unlayered CSS**: `height: 2.25rem; padding: 0 var(--space-4)` (16px). Header dropdown triggers also carry the later `.header-menu-trigger`, which intentionally gives both account and location controls 36px height and 8px horizontal padding. The account right-edge pull-back remains `-mr-4`.
 - `.ui-button` already `inline-flex` + `align-items: center` + `gap: var(--space-2)`.
-- `.location-switcher-trigger` already `align-items: center`. Internal padding stays; only `-ml-2` pulls the face to the logo.
-- Badge: 18px height, `min-width: 1.125rem`, 4px horizontal padding, `leading-none` / flex centre. Colour `#D6244A`. Sits **beside the label**.
+- An input placed beside a button must come down to the button’s 36px (`h-9`), not the other way round: button height is unlayered CSS, so a Tailwind height on the button is a silent no-op. Stacked form fields with labels stay 40px (`h-10`). Any row mixing controls also needs `items-center`, or the default stretch top-aligns them (this was the Messages search row: 40 / 36 / 28px, all top-aligned).
+- `.header-menu-trigger` supplies the shared location/account height, radius, gap, transparent rest state, and subtle hover. Both use one ChevronDown which rotates while open.
+- Badge: 18px height, `min-width: 1.125rem`, 6px horizontal padding (`calc(var(--space-1) * 1.5)`), `leading-none` / flex centre, and `tabular-nums`. Digits are already centred by the flex box — 4px padding made the pill look cramped rather than off-centre, so the fix was air, not alignment. Two digits render 27.5px wide, one digit 19.7px. Colour remains `#D6244A` (about 4.99:1 with white, so no token change was needed). Header utility badges are overlaid at the top-right with a 2px surface-coloured separation ring; the Bookings nav badge remains inline.
 - A button uses an icon or a text label, not both. Identity (Helen’s avatar and the location marker) and menu chevrons are not decorative and stay. Icon-only controls keep accessible labels. Remaining icons stay `h-5 w-5` (`tests/icon-size.test.ts`).
 - Location marker: `h-9 w-9 rounded-lg`, no border/ring, one green for every location (`#E6F2E8` / `#216B2D`).
 
 ## Visual consistency rules
 
 - Standard page shell: 32px top padding and 24px between `PageHeading` and the first content block. Do not remove page headings, including Dashboard.
+- One heading block per page, like Team: title, description, and the page action inline in the same row. On Bookings that heading is the selected view (`activeLabel` — Confirmed, Requested, and so on) with its “Showing 1 – 40 of 129 …” count as the description and **Request booking** on the right. The view name is not repeated as a second heading below.
 - Colour signals status or interactivity. On the Dashboard week grid, only `requested` cards are tinted because they need a decision; `confirmed` and `ended` cards stay white with quiet status pills.
 - Booking prices use neutral tags, not success green.
+- List rows keep one line: avatar, name, then row actions right-aligned and centred against the avatar. The Dashboard’s Most booked workers rows use 36px icon-only `IconButton`s (`MessageSquare` for Message, `Calendar` for Book) with `aria-label` and a matching tooltip, so a narrow column does not push actions onto a second line.
 - Rail navigation on Bookings and all Settings scopes uses the same active treatment: 2px brand left marker, `px-3 py-2`, and quiet selected background.
 - Dividers stay only where they separate adjacent content that would otherwise read as one group. The line above Bookings filters is intentionally absent; the rail’s 16px gap separates navigation from filters.
 
@@ -135,7 +160,7 @@ Two tiers, `max-w-page` + `px-8` on both.
 - Page shell: 1440px (`--container-page: 90rem`), main `px-8 pt-8 pb-4`.
 - Narrow column: `--narrow-column-width: 20rem` (320px). Do not invent per-page sidebar widths.
 - Bookings + Settings: `layout-rail-content`.
-- Messages: `layout-master-detail`.
+- Messages: `layout-master-detail`. The shell is a **definite** `height: var(--messages-shell-height)` with `grid-template-rows: minmax(0, 1fr)`, and both columns carry `min-h-0`. All three are needed: with only a height the grid row still stretches to its content, and without `min-h-0` a column refuses to shrink, so the list grows instead of scrolling. Conversation rows carry the divider on the `li` with `last:border-b-0`, so the list finishes on one line rather than doubling up against the next element.
 - Dashboard: `layout-content-aside`.
 - Team / stubs: `width-main-column`.
 
@@ -172,12 +197,15 @@ Still three destinations with a **left rail** per scope (not one dumped settings
 
 **Location settings** (`/manage-location`, heading “Location settings”):
 
+- Location profile — editable worker-facing About, support locations, broad support needs, safety information, and support required; includes **Preview profile**
 - Support worker preferences
 - Support plan — **kept for research**. A house-level plan is likely leftover from one-client matching; ask the participant whether a SIL house has one plan or many.
 - Location name — **kept for research**. Names are public CPA SIL listing names; ask whether a house manager would rename them.
 - People (load-bearing for roles and access)
 
 Removed from this scope: location picture (the marker is initials, no photo renders), support areas, specialised support, COVID-19.
+
+Location profile edits persist per location in `hm.locationProfiles`. The preview deliberately uses broad location-level information only: never add resident names, diagnoses tied to individuals, private addresses, or booking-specific support-plan details.
 
 **Organisation settings** (`/organisation-settings`): organisation details, financial details, documents, people. Whole scope is **read-only**. Financial and documents are still present (thin placeholder content).
 
@@ -190,11 +218,14 @@ Removed from this scope: location picture (the marker is initials, no photo rend
 | Routes / created bookings | `src/App.tsx` |
 | Request flow | `src/pages/BookingRequest.tsx` |
 | Bookings list | `src/pages/Bookings.tsx` |
+| Worker profile | `src/pages/WorkerProfile.tsx`, `src/lib/pageContent.ts` |
 | Header / account menu | `src/components/AppHeader.tsx` |
 | Location switcher / marker | `src/components/LocationSwitcher.tsx`, `LocationMarker.tsx` |
 | Settings scopes | `src/pages/Settings.tsx`, `src/lib/informationArchitecture.ts` |
+| Location profile edit / preview | `src/components/LocationProfileSettings.tsx`, `src/pages/LocationProfilePreview.tsx`, `src/lib/locationProfiles.ts` |
 | Data | `src/data/locations.ts` |
 | Discussion guide | `src/data/discussionQuestions.ts`, `src/components/PinnedQuestion.tsx` |
+| Research dock (annotations, restart) | `src/components/SessionQuestions.tsx`, `src/lib/session.ts` |
 | Tokens | `src/index.css` |
 | Flow tests | `tests/booking-request-flow.test.ts` |
 | Header tests | `tests/header-polish.test.ts` |

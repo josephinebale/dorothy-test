@@ -5,7 +5,8 @@ import { Card } from '../components/ui/Card';
 import { EntityLink } from '../components/ui/EntityLink';
 import { IconButton } from '../components/ui/IconButton';
 import type { LocationData, Worker } from '../data/locations';
-import { EMPTY_STATES } from '../lib/pageContent';
+import { EMPTY_STATES, workerProfilePath } from '../lib/pageContent';
+import { href } from '../lib/router';
 
 function workerSummary(worker: Worker, index: number): string {
   const details = ['Paying at Level 1.'];
@@ -38,7 +39,7 @@ export function Team({ data }: { data: LocationData }) {
               <Avatar name={worker.name} size="md" />
               <div className="min-w-0 flex-1">
                 <EntityLink
-                  href="#/messages"
+                  href={href(workerProfilePath(worker.id))}
                   className="ui-target-row__link"
                 >
                   {worker.name}

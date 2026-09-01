@@ -5,8 +5,10 @@ import { LocationMarker } from '../components/LocationMarker';
 import { PinnedQuestion } from '../components/PinnedQuestion';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
+import { EntityLink } from '../components/ui/EntityLink';
 import { LOCATIONS, type Booking, type LocationData } from '../data/locations';
 import { formatTime } from '../lib/date';
+import { workerProfilePath } from '../lib/pageContent';
 import { href, navigate } from '../lib/router';
 
 type Step = 1 | 2 | 3;
@@ -566,7 +568,9 @@ function BookingRequestDetail({
               ).map((worker) => (
                 <div key={worker.id} className="flex items-center gap-3">
                   <Avatar name={worker.name} size="md" />
-                  <span className="text-sm font-medium text-text">{worker.name}</span>
+                  <EntityLink href={href(workerProfilePath(worker.id))}>
+                    {worker.name}
+                  </EntityLink>
                 </div>
               ))}
             </div>

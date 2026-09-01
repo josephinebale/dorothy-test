@@ -14,6 +14,7 @@ export type SettingsSection = {
 };
 
 export const LOCATION_SECTIONS: SettingsSection[] = [
+  { id: 'profile', label: 'Location profile' },
   { id: 'preferences', label: 'Support worker preferences' },
   { id: 'support-plan', label: 'Support plan' },
   { id: 'location-name', label: 'Location name' },

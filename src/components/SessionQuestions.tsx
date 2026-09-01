@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, RotateCcw } from 'lucide-react';
 import {
   readSessionQuestions,
   SESSION_QUESTIONS_CHANGE_EVENT,
@@ -8,7 +8,7 @@ import {
 } from '../lib/sessionQuestions';
 import { IconButton } from './ui/IconButton';
 
-export function SessionQuestions() {
+export function SessionQuestions({ onRestart }: { onRestart: () => void }) {
   const [annotationsVisible, setAnnotationsVisible] = useState(
     () => readSessionQuestions().annotationsVisible,
   );
@@ -32,6 +32,15 @@ export function SessionQuestions() {
     writeSessionQuestions({ ...current, annotationsVisible: next });
   };
 
+  /* This control sits beside one the moderator uses mid-session, and it throws
+     the run away, so it asks first. */
+  const confirmRestart = () => {
+    const confirmed = window.confirm(
+      'Restart the prototype? This clears the chosen location and anything created during this session.',
+    );
+    if (confirmed) onRestart();
+  };
+
   return (
     <div className="session-questions-dock pointer-events-none sticky z-50 h-0">
       <div className="session-questions-controls pointer-events-auto">
@@ -49,6 +58,17 @@ export function SessionQuestions() {
           ) : (
             <EyeOff className="h-5 w-5" />
           )}
+        </IconButton>
+
+        <IconButton
+          type="button"
+          bordered
+          onClick={confirmRestart}
+          aria-label="Restart prototype"
+          data-tooltip="Restart prototype"
+          className="ui-tooltip"
+        >
+          <RotateCcw className="h-5 w-5" />
         </IconButton>
       </div>
     </div>

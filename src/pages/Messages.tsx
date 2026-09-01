@@ -8,10 +8,13 @@ import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 import { EntityLink } from '../components/ui/EntityLink';
 import { IconButton } from '../components/ui/IconButton';
-import { buildConversations, type Conversation } from '../data/conversations';
-import type { LocationData } from '../data/locations';
+import {
+  buildAllConversations,
+  totalUnreadMessages,
+  type Conversation,
+} from '../data/conversations';
 import { formatTime } from '../lib/date';
-import { EMPTY_STATES } from '../lib/pageContent';
+import { EMPTY_STATES, workerProfilePath } from '../lib/pageContent';
 import { href } from '../lib/router';
 
 const WEEKDAYS = [
@@ -57,12 +60,11 @@ function dividerLabel(date: Date): string {
 }
 
 type MessagesProps = {
-  data: LocationData;
   onUnreadChange: (count: number) => void;
 };
 
-export function Messages({ data, onUnreadChange }: MessagesProps) {
-  const [conversations, setConversations] = useState(() => buildConversations(data));
+export function Messages({ onUnreadChange }: MessagesProps) {
+  const [conversations, setConversations] = useState(() => buildAllConversations());
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [query, setQuery] = useState('');
   const [search, setSearch] = useState('');
@@ -70,17 +72,10 @@ export function Messages({ data, onUnreadChange }: MessagesProps) {
   const [showArchived, setShowArchived] = useState(false);
   const [visibleCount, setVisibleCount] = useState(8);
 
+  /* The list is universal, so switching location must not reset read state. */
   useEffect(() => {
-    const next = buildConversations(data);
-    setConversations(next);
-    setSelectedId(null);
-    setQuery('');
-    setSearch('');
-    setDraft('');
-    setShowArchived(false);
-    setVisibleCount(8);
-    onUnreadChange(next.reduce((sum, conversation) => sum + conversation.unread, 0));
-  }, [data.location.id, data.unreadMessages, data.workers, onUnreadChange]);
+    onUnreadChange(totalUnreadMessages());
+  }, [onUnreadChange]);
 
   const filtered = useMemo(() => {
     const needle = search.trim().toLowerCase();
@@ -88,6 +83,7 @@ export function Messages({ data, onUnreadChange }: MessagesProps) {
     return conversations.filter(
       (conversation) =>
         conversation.workerName.toLowerCase().includes(needle) ||
+        conversation.locationName.toLowerCase().includes(needle) ||
         conversation.preview.toLowerCase().includes(needle),
     );
   }, [conversations, search]);
@@ -159,9 +155,9 @@ export function Messages({ data, onUnreadChange }: MessagesProps) {
       />
 
       <Card className="layout-master-detail messages-shell">
-        <div className="flex min-w-0 flex-col border-r border-border-subtle">
+        <div className="flex min-h-0 min-w-0 flex-col border-r border-border-subtle">
           <form
-            className="flex gap-2 border-b border-border-subtle p-3"
+            className="flex items-center gap-2 border-b border-border-subtle p-3"
             onSubmit={(event) => {
               event.preventDefault();
               setSearch(query);
@@ -172,7 +168,7 @@ export function Messages({ data, onUnreadChange }: MessagesProps) {
               value={query}
               onChange={(event) => setQuery(event.target.value)}
               placeholder="Search messages"
-              className="h-10 min-w-0 flex-1 rounded border border-border px-2 text-sm"
+              className="h-9 min-w-0 flex-1 rounded border border-border px-3 text-sm"
               aria-label="Search conversations"
             />
             <Button type="submit">
@@ -195,9 +191,9 @@ export function Messages({ data, onUnreadChange }: MessagesProps) {
               visible.map((conversation) => {
                 const active = conversation.id === selectedId;
                 return (
-                  <li key={conversation.id}>
+                  <li key={conversation.id} className="border-b border-border-subtle last:border-b-0">
                     <div
-                      className={`ui-target-row flex w-full items-start gap-3 border-b border-border-subtle px-3 py-3 text-left ${
+                      className={`ui-target-row flex w-full items-start gap-3 px-3 py-3 text-left ${
                         active ? 'ui-target-row--active' : ''
                       }`}
                     >
@@ -224,6 +220,9 @@ export function Messages({ data, onUnreadChange }: MessagesProps) {
                           </span>
                           <Badge count={conversation.unread} />
                         </span>
+                        <span className="mt-1 block truncate text-xs text-text-tertiary">
+                          {conversation.locationName}
+                        </span>
                       </span>
                     </div>
                   </li>
@@ -245,7 +244,7 @@ export function Messages({ data, onUnreadChange }: MessagesProps) {
           )}
         </div>
 
-        <div className="flex min-w-0 flex-1 flex-col">
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col">
           {showArchived ? (
             <div className="flex flex-1 flex-col items-center justify-center px-8 text-center">
               <span className="flex h-10 w-10 items-center justify-center rounded-full bg-surface-selected text-text-secondary">
@@ -264,10 +263,14 @@ export function Messages({ data, onUnreadChange }: MessagesProps) {
                 <Avatar name={selected.workerName} size="md" />
                 <div className="min-w-0 flex-1">
                   <p className="truncate">
-                    <EntityLink as="span">
-                    {selected.workerName}{' '}
+                    <EntityLink href={href(workerProfilePath(selected.id))}>
+                      {selected.workerName}
                     </EntityLink>
+                    {' '}
                     <span className="font-normal text-text-secondary">(Support worker)</span>
+                  </p>
+                  <p className="truncate text-xs text-text-tertiary">
+                    {selected.locationName}
                   </p>
                 </div>
                 <Button
@@ -303,7 +306,10 @@ export function Messages({ data, onUnreadChange }: MessagesProps) {
                       <Avatar name={selected.workerName} size="sm" />
                       <div>
                         <p className="text-xs text-text-secondary">
-                          <EntityLink as="span">{selected.workerName}</EntityLink> · Support worker
+                          <EntityLink href={href(workerProfilePath(selected.id))}>
+                            {selected.workerName}
+                          </EntityLink>
+                          {' · Support worker'}
                         </p>
                         <p className="mt-1 inline-block rounded bg-surface-selected px-3 py-2 text-sm text-text">
                           {message.text}

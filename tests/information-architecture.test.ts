@@ -16,6 +16,7 @@ import {
 
 test('settings sections are split by scope without changing existing labels', () => {
   assert.deepEqual(LOCATION_SECTIONS.map(({ label }) => label), [
+    'Location profile',
     'Support worker preferences',
     'Support plan',
     'Location name',
@@ -56,7 +57,7 @@ test('each settings scope has one route and a stable default section', () => {
     organisationSettings: '/organisation-settings',
     yourAccount: '/your-account',
   });
-  assert.equal(sectionFromPath('/manage-location', LOCATION_SECTIONS), 'preferences');
+  assert.equal(sectionFromPath('/manage-location', LOCATION_SECTIONS), 'profile');
   assert.equal(sectionFromPath('/manage-location/people', LOCATION_SECTIONS), 'people');
   assert.equal(sectionFromPath('/manage-location/location-name', LOCATION_SECTIONS), 'location-name');
   assert.equal(sectionFromPath('/manage-house/house-name', LOCATION_SECTIONS), 'location-name');

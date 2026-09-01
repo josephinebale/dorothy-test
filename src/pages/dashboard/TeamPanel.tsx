@@ -1,10 +1,11 @@
+import { Calendar, MessageSquare } from 'lucide-react';
 import type { LocationData } from '../../data/locations';
 import { Avatar } from '../../components/Avatar';
 import { PinnedQuestion } from '../../components/PinnedQuestion';
-import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
 import { EntityLink } from '../../components/ui/EntityLink';
-import { EMPTY_STATES, TEAM_ROUTE } from '../../lib/pageContent';
+import { IconButton } from '../../components/ui/IconButton';
+import { EMPTY_STATES, TEAM_ROUTE, workerProfilePath } from '../../lib/pageContent';
 import { href } from '../../lib/router';
 
 export function TeamPanel({ data }: { data: LocationData }) {
@@ -37,35 +38,31 @@ export function TeamPanel({ data }: { data: LocationData }) {
       ) : (
         <Card as="ul" divided className="mt-3">
           {workers.map((worker) => (
-            <li key={worker.id} className="ui-target-row p-3">
-              <div className="flex items-center gap-3">
-                <Avatar name={worker.name} size="md" />
-                <EntityLink
-                  href={href(TEAM_ROUTE)}
-                  className="ui-target-row__link ui-target-row__link--text min-w-0 flex-1 truncate"
-                >
-                  {worker.name}
-                </EntityLink>
-              </div>
-              <div className="ui-target-row__action mt-3 flex items-center gap-2">
-                <Button
+            <li key={worker.id} className="ui-target-row flex items-center gap-3 p-3">
+              <Avatar name={worker.name} size="md" />
+              <EntityLink
+                href={href(workerProfilePath(worker.id))}
+                className="ui-target-row__link ui-target-row__link--text min-w-0 flex-1 truncate"
+              >
+                {worker.name}
+              </EntityLink>
+              <div className="ui-target-row__action ml-auto flex shrink-0 items-center gap-1">
+                <IconButton
                   href={href('/messages')}
-                  variant="secondary"
-                  size="small"
-                  className="whitespace-nowrap"
                   aria-label={`Message ${worker.name}`}
+                  data-tooltip={`Message ${worker.name}`}
+                  className="ui-tooltip"
                 >
-                  Message
-                </Button>
-                <Button
+                  <MessageSquare className="h-5 w-5" />
+                </IconButton>
+                <IconButton
                   href={href('/request-booking')}
-                  variant="secondary"
-                  size="small"
-                  className="whitespace-nowrap"
                   aria-label={`Book ${worker.name}`}
+                  data-tooltip={`Book ${worker.name}`}
+                  className="ui-tooltip"
                 >
-                  Book
-                </Button>
+                  <Calendar className="h-5 w-5" />
+                </IconButton>
               </div>
             </li>
           ))}

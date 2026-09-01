@@ -15,11 +15,58 @@ test('Bookings separates navigation and filters with space instead of a redundan
   assert.doesNotMatch(beforeFilter, /pt-4/);
 });
 
+test('the Bookings view heading and its count sit in the Request booking row', () => {
+  const bookings = source('../src/pages/Bookings.tsx');
+  const team = source('../src/pages/Team.tsx');
+  const heading = bookings.slice(
+    bookings.indexOf('<PageHeading'),
+    bookings.indexOf('actions={<RequestBookingButton />}') + 40,
+  );
+
+  assert.match(team, /description=[\s\S]*?actions=\{<RequestBookingButton \/>\}/);
+  assert.match(heading, /title=\{activeLabel\}/);
+  assert.match(heading, /Showing \{/);
+  assert.doesNotMatch(bookings, /<h2[^>]*>\{activeLabel\}<\/h2>/);
+});
+
 test('booking prices use a neutral tag because price is information, not status', () => {
   const bookings = source('../src/pages/Bookings.tsx');
   const price = bookings.slice(bookings.indexOf('<Tag tone='), bookings.indexOf('<Tag tone=') + 140);
 
   assert.match(price, /<Tag tone="neutral"/);
+});
+
+test('the Messages search field matches the button height it sits beside', () => {
+  const messages = source('../src/pages/Messages.tsx');
+  const row = messages.slice(messages.indexOf('<form'), messages.indexOf('</form>'));
+
+  assert.match(row, /className="flex items-center gap-2/);
+  assert.match(row, /placeholder="Search messages"[\s\S]*?className="h-9 /);
+  assert.doesNotMatch(row, /h-10/);
+});
+
+test('the conversation list scrolls inside a shell of definite height', () => {
+  const css = source('../src/index.css');
+  const messages = source('../src/pages/Messages.tsx');
+
+  assert.match(
+    css,
+    /\.messages-shell \{\s*height: var\(--messages-shell-height\);\s*grid-template-rows: minmax\(0, 1fr\);/,
+  );
+  assert.doesNotMatch(css, /--messages-shell-min-height/);
+  assert.match(messages, /<ul className="min-h-0 flex-1 overflow-auto">/);
+  assert.equal(messages.match(/className="flex min-h-0 min-w-0/g)?.length, 2);
+});
+
+test('conversation rows are separated by one line, with none after the last', () => {
+  const messages = source('../src/pages/Messages.tsx');
+  const row = messages.slice(
+    messages.indexOf('visible.map((conversation)'),
+    messages.indexOf('</ul>'),
+  );
+
+  assert.match(row, /<li key=\{conversation\.id\} className="border-b border-border-subtle last:border-b-0">/);
+  assert.doesNotMatch(row, /ui-target-row[^`]*border-b/);
 });
 
 test('settings and bookings use the same quiet active rail treatment', () => {
