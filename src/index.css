@@ -195,11 +195,11 @@ body {
 }
 
 .pinned-question-trigger {
-  width: 1.5rem;
-  height: 1.5rem;
-  border-color: var(--color-border-subtle);
+  width: 1.75rem;
+  height: 1.75rem;
+  border-color: var(--color-border);
   border-radius: 9999px;
-  background: var(--color-surface);
+  background: var(--color-neutral-surface);
 }
 
 .ui-icon-button--bordered {
@@ -531,10 +531,12 @@ body {
   bottom: var(--footer-gap);
 }
 
-.session-questions-button {
+.session-questions-controls {
   position: absolute;
   right: var(--space-4);
   bottom: calc(var(--space-4) - var(--footer-gap));
+  display: flex;
+  gap: var(--space-2);
 }
 
 .entity-row {

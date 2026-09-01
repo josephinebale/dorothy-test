@@ -1,31 +1,39 @@
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import test from 'node:test';
 
 function source(path: string): string {
   return readFileSync(new URL(path, import.meta.url), 'utf8');
 }
 
-test('PinnedQuestion uses existing primitives and a neutral dot marker', () => {
+test('PinnedQuestion uses existing primitives and a calm prominent marker', () => {
   const pinned = source('../src/components/PinnedQuestion.tsx');
   const css = source('../src/index.css');
 
   assert.match(pinned, /<IconButton/);
   assert.match(pinned, /<Card\s+as="section"/);
-  assert.match(pinned, /bg-text-tertiary/);
+  assert.match(pinned, /rounded-full bg-text-secondary/);
   assert.doesNotMatch(pinned, /ui-badge|bg-badge|text-badge/);
   assert.doesNotMatch(pinned, /shadow-/);
-  assert.match(css, /\.pinned-question-trigger[\s\S]*?height: 1\.5rem;/);
-  assert.match(css, /\.pinned-question-trigger[\s\S]*?width: 1\.5rem;/);
+  assert.match(css, /\.pinned-question-trigger[\s\S]*?height: 1\.75rem;/);
+  assert.match(css, /\.pinned-question-trigger[\s\S]*?width: 1\.75rem;/);
+  assert.match(css, /\.pinned-question-trigger[\s\S]*?background: var\(--color-neutral-surface\);/);
 });
 
-test('PinnedQuestion shows the canonical question and saves its answer', () => {
+test('PinnedQuestion shows only the canonical question text', () => {
   const pinned = source('../src/components/PinnedQuestion.tsx');
 
   assert.match(pinned, /questionById\(questionId\)/);
-  assert.match(pinned, /<textarea/);
-  assert.match(pinned, /setSessionQuestionNote/);
-  assert.match(pinned, /writeSessionQuestions/);
+  assert.match(pinned, /\{question\.text\}/);
+  assert.doesNotMatch(pinned, /<textarea|Answer|Jot down|setSessionQuestionNote/);
+});
+
+test('PinnedQuestion follows the persisted annotations visibility state', () => {
+  const pinned = source('../src/components/PinnedQuestion.tsx');
+
+  assert.match(pinned, /annotationsVisible/);
+  assert.match(pinned, /SESSION_QUESTIONS_CHANGE_EVENT/);
+  assert.match(pinned, /if \(!question \|\| !annotationsVisible\) return null/);
 });
 
 test('PinnedQuestion popovers close with Escape and outside clicks', () => {
@@ -70,29 +78,18 @@ test('element questions are pinned to every requested page and context', () => {
   }
 });
 
-test('the question panel groups only general discussion questions by page', () => {
-  const panel = source('../src/components/SessionQuestionsPanel.tsx');
+test('the research dock is an annotations toggle only', () => {
+  const dock = source('../src/components/SessionQuestions.tsx');
+  const app = source('../src/App.tsx');
 
-  assert.match(panel, /DISCUSSION_QUESTIONS/);
-  assert.match(panel, /question\.type === 'general'/);
-  assert.match(panel, /pageLabel\(page\)/);
-  assert.match(panel, /generalQuestionGroups\.map/);
-  assert.doesNotMatch(panel, /state\.questions\.map\(\(question, index\)/);
-});
-
-test('the question panel synchronises answers entered through pinned popovers', () => {
-  const panel = source('../src/components/SessionQuestionsPanel.tsx');
-
-  assert.match(panel, /SESSION_QUESTIONS_CHANGE_EVENT/);
-  assert.match(panel, /window\.addEventListener\(SESSION_QUESTIONS_CHANGE_EVENT/);
-});
-
-test('the copy-all control follows the label-only button rule', () => {
-  const panel = source('../src/components/SessionQuestionsPanel.tsx');
-  const copyButton = panel.slice(
-    panel.indexOf('onClick={copyAll}') - 120,
-    panel.indexOf('onClick={copyAll}') + 260,
+  assert.match(dock, /annotationsVisible/);
+  assert.match(dock, /aria-pressed=\{annotationsVisible\}/);
+  assert.match(dock, /writeSessionQuestions/);
+  assert.match(dock, /Show annotations|Hide annotations/);
+  assert.doesNotMatch(dock, /Session questions|CircleHelp|SessionQuestionsPanel|path/);
+  assert.match(app, /<SessionQuestions \/>/);
+  assert.equal(
+    existsSync(new URL('../src/components/SessionQuestionsPanel.tsx', import.meta.url)),
+    false,
   );
-
-  assert.doesNotMatch(copyButton, /<Copy/);
 });

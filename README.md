@@ -37,20 +37,11 @@ npm run lint
 - **Settings** for this location, the organisation, and Helen’s account. The account menu goes to
   Your account or Log out. See `PROJECT.md` for which sections remain.
 
-## Session questions (for research sessions)
+## Annotations (for research sessions)
 
-The question-mark button at the bottom right opens one **Session questions** panel.
-
-- **Quick note** adds an in-the-moment note tagged with the screen that is currently open. Quick
-  notes appear in a running list and can be deleted individually.
-- General discussion-guide questions are grouped by page and each has an editable question and
-  answer area, followed by an **Other notes** area.
-- Small neutral dots beside selected UI elements open a pinned question and answer field. They are
-  always visible and do not block the prototype’s normal interactions.
-- Everything is saved in the browser under `hm.sessionQuestions`, so it survives a reload during a
-  session.
-- **Copy all notes** copies quick notes, general questions, element-pinned questions with page and
-  element context, and other notes as plain text ready to paste into a shared document.
+The eye control at the bottom right shows or hides discussion-guide pins beside selected UI
+elements. Pins open the question text only. Visibility is saved in the browser under
+`hm.sessionQuestions`, so it survives a reload during a session.
 
 ## Testing the first-run experience
 

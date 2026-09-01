@@ -68,6 +68,12 @@ export const DISCUSSION_QUESTIONS: DiscussionQuestion[] = [
     text: 'What would you expect to manage for the organisation rather than a location?',
   },
   {
+    id: 'settings-co-design',
+    page: '/settings',
+    type: 'general',
+    text: "Walk me through what you'd expect to find under each of these settings areas — Location, Organisation, and your Account. If you were organising this menu yourself, what would you add, rename, or move?",
+  },
+  {
     id: 'dashboard-attention',
     page: '/',
     type: 'element',

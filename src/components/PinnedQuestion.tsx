@@ -4,16 +4,10 @@ import { questionById } from '../data/discussionQuestions';
 import {
   readSessionQuestions,
   SESSION_QUESTIONS_CHANGE_EVENT,
-  setSessionQuestionNote,
-  writeSessionQuestions,
   type SessionQuestionsState,
 } from '../lib/sessionQuestions';
 import { Card } from './ui/Card';
 import { IconButton } from './ui/IconButton';
-
-function answerFor(state: SessionQuestionsState, questionId: string): string {
-  return state.questions.find((question) => question.id === questionId)?.note ?? '';
-}
 
 export function PinnedQuestion({
   questionId,
@@ -29,8 +23,8 @@ export function PinnedQuestion({
   const popoverRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
   const [position, setPosition] = useState({ top: 0, left: 0 });
-  const [answer, setAnswer] = useState(() =>
-    answerFor(readSessionQuestions(), questionId),
+  const [annotationsVisible, setAnnotationsVisible] = useState(
+    () => readSessionQuestions().annotationsVisible,
   );
 
   const updatePosition = useCallback(() => {
@@ -72,29 +66,24 @@ export function PinnedQuestion({
         setOpen(false);
       }
     };
-    const syncAnswer = (event: Event) => {
+    const syncVisibility = (event: Event) => {
       const state = (event as CustomEvent<SessionQuestionsState>).detail;
-      if (state) setAnswer(answerFor(state, questionId));
+      if (!state) return;
+      setAnnotationsVisible(state.annotationsVisible);
+      if (!state.annotationsVisible) setOpen(false);
     };
 
     window.addEventListener('keydown', closeOnEscape);
     window.addEventListener('pointerdown', closeOnOutsideClick);
-    window.addEventListener(SESSION_QUESTIONS_CHANGE_EVENT, syncAnswer);
+    window.addEventListener(SESSION_QUESTIONS_CHANGE_EVENT, syncVisibility);
     return () => {
       window.removeEventListener('keydown', closeOnEscape);
       window.removeEventListener('pointerdown', closeOnOutsideClick);
-      window.removeEventListener(SESSION_QUESTIONS_CHANGE_EVENT, syncAnswer);
+      window.removeEventListener(SESSION_QUESTIONS_CHANGE_EVENT, syncVisibility);
     };
-  }, [questionId]);
+  }, []);
 
-  if (!question) return null;
-
-  const saveAnswer = (value: string) => {
-    setAnswer(value);
-    writeSessionQuestions(
-      setSessionQuestionNote(readSessionQuestions(), questionId, value),
-    );
-  };
+  if (!question || !annotationsVisible) return null;
 
   return (
     <span ref={rootRef} className={`inline-flex shrink-0 ${className}`.trim()}>
@@ -108,7 +97,7 @@ export function PinnedQuestion({
         aria-controls={popoverId}
         className="pinned-question-trigger text-text-tertiary"
       >
-        <span className="h-1.5 w-1.5 rounded-full bg-text-tertiary" />
+        <span className="h-2 w-2 rounded-full bg-text-secondary" />
       </IconButton>
 
       {open && createPortal(
@@ -119,16 +108,6 @@ export function PinnedQuestion({
         >
           <Card as="section" id={popoverId} className="p-4 text-left">
             <p className="text-sm font-bold text-text">{question.text}</p>
-            <label className="mt-3 block text-xs font-medium text-text-secondary">
-              Answer
-              <textarea
-                value={answer}
-                onChange={(event) => saveAnswer(event.target.value)}
-                placeholder="Jot down what was said"
-                rows={4}
-                className="mt-1 w-full resize-y rounded border border-border bg-surface px-3 py-2 text-sm font-normal text-text"
-              />
-            </label>
           </Card>
         </div>,
         document.body,

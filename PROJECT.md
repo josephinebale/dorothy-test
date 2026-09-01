@@ -45,9 +45,9 @@ Persisted in `localStorage`:
 
 No location remembered → **Choose your location**. After that, return visits open the last location. Account menu: **Log out**, then **Log back in** or **Log in as a new user** (clears remembered location).
 
-The **question-mark** control opens Session questions (quick notes tagged by page, general discussion questions grouped by page, other notes, copy-all). Small neutral `PinnedQuestion` dots beside selected elements open element-specific questions and answer fields. Both flavours save into `hm.sessionQuestions`, keyed by question ID, so copy-all includes them together.
+The eye control shows or hides all `PinnedQuestion` markers. Visibility defaults to on and persists in `hm.sessionQuestions` across reloads. Markers open a popover containing only the element-specific question text. There is no Session questions panel, notes list, or copy-all control.
 
-`src/data/discussionQuestions.ts` is the source of truth for question wording and metadata. `elementHint` is a human-readable placement description, never a selector. Markers are placed manually in page JSX and are always visible in this research prototype.
+`src/data/discussionQuestions.ts` is the source of truth for question wording and metadata: `{ id, page, type, text, elementHint? }`. It stores no answers. `elementHint` is a human-readable placement description, never a selector. Markers are placed manually in page JSX. The general `settings-co-design` activity is in the catalogue for the Location, Organisation, and Account settings areas.
 
 ## Routing
 

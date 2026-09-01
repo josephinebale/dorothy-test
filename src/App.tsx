@@ -145,7 +145,7 @@ export default function App() {
           )}
         </main>
 
-        <SessionQuestions path={path} />
+        <SessionQuestions />
       </div>
 
       <AppFooter />

@@ -5,12 +5,6 @@ import {
   questionById,
   questionsForPage,
 } from '../src/data/discussionQuestions.ts';
-import {
-  createDefaultSessionQuestions,
-  formatSessionNotes,
-  parseSessionQuestions,
-  setSessionQuestionNote,
-} from '../src/lib/sessionQuestions.ts';
 
 test('discussion questions have unique ids and element questions have placement hints', () => {
   const ids = DISCUSSION_QUESTIONS.map((question) => question.id);
@@ -22,6 +16,14 @@ test('discussion questions have unique ids and element questions have placement 
     DISCUSSION_QUESTIONS
       .filter((question) => question.type === 'element')
       .every((question) => Boolean(question.elementHint)),
+  );
+  assert.ok(
+    DISCUSSION_QUESTIONS.every(
+      (question) =>
+        Object.keys(question).every((key) =>
+          ['id', 'page', 'type', 'text', 'elementHint'].includes(key),
+        ),
+    ),
   );
 });
 
@@ -57,48 +59,14 @@ test('question lookup and page grouping use the canonical catalogue', () => {
   );
 });
 
-test('default and older saved sessions gain every canonical question without losing answers', () => {
-  const defaults = createDefaultSessionQuestions();
-  const saved = parseSessionQuestions(
-    JSON.stringify({
-      questions: [
-        {
-          id: 'question-1',
-          text: 'Edited existing question',
-          note: 'Existing answer',
-        },
-      ],
-      otherNotes: 'Keep this',
-    }),
+test('the catalogue includes one cross-settings co-design activity', () => {
+  const activities = DISCUSSION_QUESTIONS.filter(
+    (question) => question.id === 'settings-co-design',
   );
 
-  assert.equal(defaults.questions.length, DISCUSSION_QUESTIONS.length);
-  assert.equal(saved.questions.length, DISCUSSION_QUESTIONS.length);
-  assert.equal(saved.questions.find((question) => question.id === 'question-1')?.text, 'Edited existing question');
-  assert.equal(saved.questions.find((question) => question.id === 'question-1')?.note, 'Existing answer');
-  assert.equal(saved.otherNotes, 'Keep this');
-});
-
-test('a pinned answer updates the same question record used by copy all', () => {
-  const state = createDefaultSessionQuestions();
-  const next = setSessionQuestionNote(state, 'request-frequency', 'Weekly is the usual choice.');
-
-  assert.equal(
-    next.questions.find((question) => question.id === 'request-frequency')?.note,
-    'Weekly is the usual choice.',
-  );
-  assert.equal(state.questions.find((question) => question.id === 'request-frequency')?.note, '');
-});
-
-test('copy all includes both general and element-pinned answers', () => {
-  let state = createDefaultSessionQuestions();
-  state = setSessionQuestionNote(state, 'bookings-general', 'I search by worker.');
-  state = setSessionQuestionNote(state, 'request-frequency', 'Weekly is familiar.');
-  const summary = formatSessionNotes(state);
-
-  assert.match(summary, /General questions/);
-  assert.match(summary, /How do you currently find a booking[\s\S]*Notes: I search by worker\./);
-  assert.match(summary, /Element-pinned questions/);
-  assert.match(summary, /Dashboard — weekly bookings grid/);
-  assert.match(summary, /Do these frequency options[\s\S]*Notes: Weekly is familiar\./);
+  assert.equal(activities.length, 1);
+  assert.equal(activities[0].type, 'general');
+  assert.equal(activities[0].page, '/settings');
+  assert.match(activities[0].text, /Location, Organisation, and your Account/);
+  assert.match(activities[0].text, /add, rename, or move/);
 });
