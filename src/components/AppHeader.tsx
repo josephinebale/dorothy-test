@@ -93,7 +93,7 @@ export function AppHeader({
               aria-label={messagesAccessibleName(unreadMessages)}
               className={path === '/messages' ? 'bg-surface-selected' : ''}
             >
-              <MessageCircle className="h-4 w-4 shrink-0" />
+              <MessageCircle className="h-5 w-5 shrink-0" />
               <span>Messages</span>
               <Badge count={unreadMessages} />
             </Button>
@@ -105,7 +105,7 @@ export function AppHeader({
               aria-label={notificationsName}
               className={path === '/notifications' ? 'bg-surface-selected' : ''}
             >
-              <Bell className="h-4 w-4 shrink-0" />
+              <Bell className="h-5 w-5 shrink-0" />
               <span>Notifications</span>
               <Badge count={unreadNotifications} />
             </Button>
@@ -127,9 +127,9 @@ export function AppHeader({
                 <Avatar name={MANAGER_NAME} size="sm" />
                 <span className="max-w-40 truncate">{MANAGER_NAME}</span>
                 {accountMenu.open ? (
-                  <ChevronUp className="h-4 w-4 shrink-0 text-text-tertiary" />
+                  <ChevronUp className="h-5 w-5 shrink-0 text-text-tertiary" />
                 ) : (
-                  <ChevronDown className="h-4 w-4 shrink-0 text-text-tertiary" />
+                  <ChevronDown className="h-5 w-5 shrink-0 text-text-tertiary" />
                 )}
               </Button>
 
@@ -153,7 +153,7 @@ export function AppHeader({
                           onClick={() => accountMenu.close()}
                           className="flex items-center gap-3 px-3 py-2 text-sm text-text-strong hover:bg-surface-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
                         >
-                          <Icon className="h-4 w-4 shrink-0 text-text-strong" />
+                          <Icon className="h-5 w-5 shrink-0 text-text-strong" />
                           {label}
                         </a>
                       );
@@ -168,7 +168,7 @@ export function AppHeader({
                       }}
                       className="flex w-full items-center gap-3 border-t border-border-subtle px-3 py-2 text-left text-sm text-text-strong hover:bg-surface-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
                     >
-                      <LogOut className="h-4 w-4 shrink-0 text-text-strong" />
+                      <LogOut className="h-5 w-5 shrink-0 text-text-strong" />
                       Log out
                     </button>
                   </div>

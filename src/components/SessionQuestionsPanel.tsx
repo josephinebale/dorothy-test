@@ -75,7 +75,7 @@ export function SessionQuestionsPanel({ path, onClose }: SessionQuestionsPanelPr
           data-tooltip="Close"
           className="ml-auto ui-tooltip text-text-secondary"
         >
-          <X className="h-4 w-4" />
+          <X className="h-5 w-5" />
         </IconButton>
       </div>
 
@@ -184,7 +184,7 @@ export function SessionQuestionsPanel({ path, onClose }: SessionQuestionsPanelPr
           onClick={copyAll}
           size="small"
         >
-          <Copy className="h-4 w-4" />
+          <Copy className="h-5 w-5" />
           Copy all notes
         </Button>
         {copyStatus === 'copied' && (

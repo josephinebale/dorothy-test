@@ -35,8 +35,8 @@ export function TeamPanel({ data }: { data: HouseData }) {
         <Card as="ul" divided className="mt-3">
           {workers.map((worker) => (
             <li key={worker.id} className="ui-target-row p-3">
-              <div className="flex items-center gap-2">
-                <Avatar name={worker.name} size="sm" />
+              <div className="flex items-center gap-3">
+                <Avatar name={worker.name} size="md" />
                 <EntityLink
                   href={href(TEAM_ROUTE)}
                   className="ui-target-row__link ui-target-row__link--text min-w-0 flex-1 truncate"
@@ -52,7 +52,7 @@ export function TeamPanel({ data }: { data: HouseData }) {
                   className="whitespace-nowrap"
                   aria-label={`Message ${worker.name}`}
                 >
-                  <MessageCircle className="h-4 w-4 shrink-0" />
+                  <MessageCircle className="h-5 w-5 shrink-0" />
                   Message
                 </Button>
                 <Button
@@ -62,7 +62,7 @@ export function TeamPanel({ data }: { data: HouseData }) {
                   className="whitespace-nowrap"
                   aria-label={`Book ${worker.name}`}
                 >
-                  <Calendar className="h-4 w-4 shrink-0" />
+                  <Calendar className="h-5 w-5 shrink-0" />
                   Book
                 </Button>
               </div>

@@ -72,7 +72,7 @@ export function Notifications({ data }: { data: HouseData }) {
         <Card as="ul" divided>
           {items.map(({ title, description, Icon, date, path }) => (
             <li key={title} className="ui-target-row flex items-start gap-3 p-4">
-              <Icon className="mt-1 h-4 w-4 shrink-0 text-text-strong" />
+              <Icon className="h-5 w-5 shrink-0 text-text-strong" />
               <div className="min-w-0 flex-1">
                 <a href={href(path)} className="ui-target-row__link">
                   {title}

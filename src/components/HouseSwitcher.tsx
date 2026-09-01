@@ -53,9 +53,9 @@ export function HouseSwitcher({ house, onSelect }: HouseSwitcherProps) {
           {house.name}
         </span>
         {menu.open ? (
-          <ChevronUp className="h-4 w-4 shrink-0 text-text-tertiary" />
+          <ChevronUp className="h-5 w-5 shrink-0 text-text-tertiary" />
         ) : (
-          <ChevronDown className="h-4 w-4 shrink-0 text-text-tertiary" />
+          <ChevronDown className="h-5 w-5 shrink-0 text-text-tertiary" />
         )}
       </button>
 
@@ -93,7 +93,7 @@ export function HouseSwitcher({ house, onSelect }: HouseSwitcherProps) {
                       <span className="flex items-center gap-1">
                         <span className="truncate">{option.name}</span>
                         {selected && (
-                          <Check className="h-4 w-4 shrink-0 text-brand" />
+                          <Check className="h-5 w-5 shrink-0 text-brand" />
                         )}
                       </span>
                       <span className="mt-1 block truncate text-xs font-normal text-text-secondary">
@@ -116,7 +116,7 @@ export function HouseSwitcher({ house, onSelect }: HouseSwitcherProps) {
                   className={`${MENU_ROW} hover:bg-surface-subtle`}
                 >
                   <span className="flex h-6 w-6 shrink-0 items-center justify-center">
-                    <Icon className="h-4 w-4" />
+                    <Icon className="h-5 w-5" />
                   </span>
                   {label}
                 </a>

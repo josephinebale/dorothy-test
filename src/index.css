@@ -19,20 +19,15 @@
   --color-pending: #704600;
   --color-pending-surface: #f9e7c8;
   --color-neutral: #4b5362;
-  --color-neutral-surface: #e8ebf0;
+  /* Must stay a step darker than --color-page, or a neutral fill disappears. */
+  --color-neutral-surface: var(--gray-200);
   --color-info: #184e78;
   --color-info-surface: #e2f0fa;
-  /* CPA's live digital palette, paired with quiet tints for legible markers. */
-  --color-house-green-surface: #EBF9EA;
-  --color-house-green-foreground: #1B651D;
-  --color-house-lime-surface: #F8FADF;
-  --color-house-lime-foreground: #1B651D;
-  --color-house-purple-surface: #E4AAF4;
-  --color-house-purple-foreground: #57007C;
-  --color-house-orange-surface: #FFF1E8;
-  --color-house-orange-foreground: #9A3E0D;
-  --color-house-blue-surface: #DFF7F8;
-  --color-house-blue-foreground: #0063A5;
+  /* One marker colour for every location, from the single green in the Cerebral
+     Palsy Alliance logo (#2E953E): a 12% tint for the surface, and the same
+     green darkened until the initials clear 4.5:1 against it. */
+  --color-house-surface: #E6F2E8;
+  --color-house-foreground: #216B2D;
 
   --text-xs: 0.75rem;
   --text-xs--line-height: 1rem;
@@ -340,12 +335,11 @@ body {
   color: var(--color-surface);
 }
 
-/* A label, not a control: roomier than .ui-badge so a count stays readable
-   beside a heading. The border keeps both tones the same height. */
+/* A label, not a control: filled and borderless, so it never reads as a button,
+   and roomier than .ui-badge so a count stays readable beside a heading. */
 .ui-tag {
   display: inline-flex;
   align-items: center;
-  border: 1px solid transparent;
   border-radius: var(--radius-sm);
   padding: var(--space-1) var(--space-2);
   font-size: var(--text-xs);
@@ -354,11 +348,8 @@ body {
   white-space: nowrap;
 }
 
-/* A tinted grey would match the page background, so this tone separates with a
-   surface and a hairline instead. */
 .ui-tag--neutral {
-  border-color: var(--color-border);
-  background: var(--color-surface);
+  background: var(--color-neutral-surface);
   color: var(--color-text-strong);
 }
 

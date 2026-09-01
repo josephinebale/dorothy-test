@@ -30,7 +30,7 @@ export function SessionQuestions({ path }: { path: string }) {
           aria-expanded={open}
           className="session-questions-button pointer-events-auto ui-tooltip"
         >
-          <CircleHelp className="h-4 w-4" />
+          <CircleHelp className="h-5 w-5" />
         </IconButton>
       </div>
     </>

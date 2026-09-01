@@ -85,7 +85,7 @@ export function BookingsWeek({ data }: { data: HouseData }) {
             aria-label="Previous week"
             data-tooltip="Previous week"
           >
-            <ChevronLeft className="h-4 w-4" />
+            <ChevronLeft className="h-5 w-5" />
           </IconButton>
           <IconButton
             type="button"
@@ -96,7 +96,7 @@ export function BookingsWeek({ data }: { data: HouseData }) {
             aria-label="Next week"
             data-tooltip="Next week"
           >
-            <ChevronRight className="h-4 w-4" />
+            <ChevronRight className="h-5 w-5" />
           </IconButton>
         </div>
       </div>

@@ -38,7 +38,7 @@ export function ChooseHouse({ onSelect }: { onSelect: (houseId: string) => void 
                 {house.suburb}, {house.state}
               </span>
             </span>
-              <ChevronRight className="h-4 w-4 shrink-0 text-text-tertiary" />
+              <ChevronRight className="h-5 w-5 shrink-0 text-text-tertiary" />
             </button>
           ))}
         </Card>

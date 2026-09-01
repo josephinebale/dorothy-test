@@ -86,7 +86,7 @@ export function NotificationStrip({ data }: { data: HouseData }) {
               )}
               <p className="mt-1 text-sm text-text-secondary">{description}</p>
             </div>
-            <Icon className="mt-1 h-4 w-4 shrink-0 text-text-strong" />
+            <Icon className="h-5 w-5 shrink-0 text-text-strong" />
           </div>
         ))}
       </Card>

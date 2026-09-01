@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import test from 'node:test';
 import {
   EMPTY_STATES,
@@ -6,8 +7,23 @@ import {
   TEAM_ROUTE,
 } from '../src/lib/pageContent.ts';
 
+function avatarSize(path: string): string {
+  const source = readFileSync(new URL(path, import.meta.url), 'utf8');
+  const match = source.match(/<Avatar\b[^>]*\bsize="(sm|md|lg)"/);
+  assert.ok(match, `${path} must render an Avatar with an explicit size`);
+  return match[1];
+}
+
 test('Team uses one public route', () => {
   assert.equal(TEAM_ROUTE, '/team');
+});
+
+test('dashboard most-booked avatars match the Team list size', () => {
+  assert.equal(
+    avatarSize('../src/pages/dashboard/TeamPanel.tsx'),
+    avatarSize('../src/pages/Team.tsx'),
+  );
+  assert.equal(avatarSize('../src/pages/Team.tsx'), 'md');
 });
 
 test('notification empty copy uses one contraction and one notification verb', () => {

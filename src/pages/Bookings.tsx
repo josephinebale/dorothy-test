@@ -128,7 +128,7 @@ function BookingCard({ booking, data }: { booking: Booking; data: HouseData }) {
             {booking.workerName}
           </EntityLink>
           <p className="mt-1 flex items-center gap-1 text-xs text-text-secondary">
-            {booking.status === 'confirmed' && <Check className="h-4 w-4 text-success" />}
+            {booking.status === 'confirmed' && <Check className="h-5 w-5 text-success" />}
             {booking.status === 'confirmed' ? 'Worker confirmed' : 'Waiting for worker response'}
           </p>
         </div>
@@ -136,21 +136,21 @@ function BookingCard({ booking, data }: { booking: Booking; data: HouseData }) {
 
       <dl className="mt-3 space-y-1 text-sm text-text-strong">
         <div className="flex items-center gap-2">
-          <Clock3 className="h-4 w-4" />
+          <Clock3 className="h-5 w-5" />
           <span>{hours} {hours === 1 ? 'hour' : 'hours'}</span>
         </div>
         {booking.sleepover && (
           <div className="flex items-center gap-2">
-            <Moon className="h-4 w-4" />
+            <Moon className="h-5 w-5" />
             <span>Sleepover</span>
           </div>
         )}
         <div className="flex items-center gap-2">
-          <Repeat2 className="h-4 w-4" />
+          <Repeat2 className="h-5 w-5" />
           <span>Weekly on a {WEEKDAYS[booking.start.getDay()]}</span>
         </div>
         <div className="flex items-center gap-2">
-          <MapPin className="h-4 w-4" />
+          <MapPin className="h-5 w-5" />
           <span>{data.house.suburb}, {data.house.state}</span>
         </div>
       </dl>
@@ -259,7 +259,7 @@ export function Bookings({ data }: { data: HouseData }) {
                   aria-label="Clear worker filter"
                   className="absolute top-1/2 right-8 -translate-y-1/2 text-text-secondary"
                 >
-                  <X className="h-4 w-4" />
+                  <X className="h-5 w-5" />
                 </button>
               )}
             </span>

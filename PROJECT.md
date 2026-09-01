@@ -11,7 +11,9 @@ Tests: `node --test --experimental-strip-types tests/*.test.ts` (there is no `np
 
 Live: https://josephinebale.github.io/dorothy-test/ (GitHub Pages via `.github/workflows/deploy.yml` on `main`. Vite `base: './'` so assets work on a sub-path.)
 
-`README.md` is older and incomplete. **This file is the source of truth** for how the prototype works now.
+If you change the prototype: work on a branch, then fast-forward `main` and `git push origin main`. That is what updates the live URL. Do not force-push.
+
+`README.md` is older and incomplete. **This file is the source of truth** for how the prototype works now. Give this whole file to another agent.
 
 ---
 
@@ -97,7 +99,7 @@ Reads as a sentence: these sections, inside this location.
 
 Count badges sit **beside** the label, not on an icon. Zero → no badge. Cap 99+. Accessible names in `header-utils.ts`. Active: brand underline flush with the bottom of the row (`.main-nav-link--active`). Hover is a quiet grey underline, never a filled pill — the underline needs this tier's bottom edge to anchor to.
 
-Location control face: `HouseMarker` (rounded square, per-location colour) + location name + chevron, on one line. Borderless with a hover fill, not an outlined box. Organisation name is **not** on the face; it heads the menu instead.
+Location control face: `HouseMarker` (rounded square, **one** CPA-logo green for every location) + location name + chevron, on one line. Borderless with a hover fill, not an outlined box. Organisation name is **not** on the face; it heads the menu instead.
 
 Location menu (`left-0` under the control), two groups, one quiet row treatment:
 
@@ -110,7 +112,7 @@ Location rows are choices, not `EntityLink`s.
 
 Shape carries the meaning, so the two marker styles are consistent rather than arbitrary.
 
-- **Rounded square = location.** `HouseMarker` + `src/lib/houseMarker.ts`: five CPA palette tones (green, lime, purple, orange, blue), surface + foreground, AA contrast, colour derived from the location id so a location keeps its colour. Used in the switcher face, every location menu row, and the Choose your location list.
+- **Rounded square = location.** `HouseMarker`: **one** colour for every location, sampled from the only green in the Cerebral Palsy Alliance logo (`#2E953E`). `--color-house-surface` is that green at 12% over white; `--color-house-foreground` is the same green darkened until the initials clear AA (5.7:1). Initials distinguish locations, not colour. Used in the switcher face, every location menu row, and the Choose your location list. Do not reintroduce per-location tones without a brand source for each colour.
 - **Circle = person.** `Avatar`: real photo where one exists (`src/data/avatars.ts`), otherwise a dark circular initials fallback. No ring. Used for workers and the account holder.
 
 Never a circular initials mark for a location, and never a square photo for a person. Helen Dawson has no portrait asset, so the account control shows circular “HD” initials.
@@ -191,7 +193,7 @@ Keep section **labels** unchanged unless asked.
 
 **Week grid** (`BookingsWeek.tsx`)
 
-- Day column is **147px** at the 1440 page width (1032 main ÷ 7). **“Pialligo, ACT” stays on one line.**
+- Day column is **147px** at the 1440 page width (1032 main ÷ 7). Suburb lines such as **“Dee Why, NSW”** stay on one line.
 - Status pills: solid fill (`StatusPill`), `flex w-full items-center justify-center`, label centred. Do not tint pills the same as the Card tone.
 - Empty days: “No bookings”.
 - Data generator (`houses.ts`): today always has ≥2 shifts; yesterday always has ≥1 completed shift except when today is Monday (no earlier day in the displayed week).
@@ -200,7 +202,7 @@ Keep section **labels** unchanged unless asked.
 
 Each worker row:
 
-- Line 1: avatar + name (`EntityLink` to `/team`, stretched-link pattern, **blue and underlined** like the original — `.ui-target-row__link--text`).
+- Line 1: **medium** avatar (same 36px size as the Team list) + name (`EntityLink` to `/team`, stretched-link pattern, **blue and underlined** like the original — `.ui-target-row__link--text`).
 - Line 2: **Message** (`MessageCircle`) and **Book** (`Calendar`) as small **secondary** buttons (border, white fill, 4px radius), icon then label. Not indented: they start on the **row's content edge, level with the avatar's left edge**, so each row has one left edge for both lines. 8px between the two buttons, `mt-3` from the name line; the row-to-row gap stays wider (24px) so each row still reads as one unit.
 - Name is the primary target. Buttons are quieter (medium 500, bordered). Layered above the stretched link (`ui-target-row__action`). Hover fill on a button is deeper than the row hover so they stay distinct.
 
@@ -246,7 +248,9 @@ Radius: control 4px (buttons, pills), surface 8px (cards). Nested week booking c
 
 Spacing `--space-1`…`--space-8` = 4, 8, 12, 16, 24, 32, 40, 48px. `--spacing` = `--space-1`, so Tailwind `gap-6` is **24px**, not `--space-6` (32px). Dashboard section stacks use `space-y-6` = 24px.
 
-Avatars: sm 28, md 36, lg 44.
+Avatars: sm 28, md 36, lg 44. Dashboard most-booked rows use **md**, same as the Team list.
+
+Location markers: `--color-house-surface` `#E6F2E8`, `--color-house-foreground` `#216B2D` (logo green `#2E953E` tinted / darkened). There is no `houseMarker.ts`.
 
 Buttons: default 36px, small 32px. IconButton matches. Request booking is primary. Save is secondary (bordered).
 
@@ -261,7 +265,7 @@ Also: `Avatar`, `HouseMarker`, `PageHeading`, `StatusPill`, `Logo`.
 Counts and labels — pick by whether the thing is interactive:
 
 - `Badge` — alert count sitting on a control. 14px, red `--color-badge`, `aria-hidden`, hidden at 0. Header nav and Messages rows only.
-- `Tag` — non-interactive label. 26px, 12px medium, 4px radius. `neutral` is a white fill with a `--color-border` hairline; a tinted grey would match `--color-page` and disappear. `success` is `--color-success-surface`. Used for the week-heading count, booking price, and session-note page label.
+- `Tag` — non-interactive label. 24px, 12px medium, 4px radius, **filled and borderless** so it never reads as a button. `neutral` is `--color-neutral-surface`, which must stay a step darker than `--color-page` or the fill disappears against it. `success` is `--color-success-surface`. Used for the week-heading count, booking price, and session-note page label.
 
 StatusPill solid:
 
@@ -269,7 +273,7 @@ StatusPill solid:
 - requested: `bg-pending text-surface`
 - ended: `bg-neutral text-surface`
 
-Icons: `h-4 w-4` inline, `h-5 w-5` standalone. Do not override `strokeWidth`.
+Icons: one size everywhere, `h-5 w-5` (20px) — inside buttons, in list rows, in menus, and as standalone controls. There is no small variant; a 16px icon reads as a different system next to a 20px one. `tests/icon-size.test.ts` scans every lucide usage and fails on anything else. The 16px checkbox inputs in Bookings filters and Settings are form controls, not icons. Do not override `strokeWidth`.
 
 ---
 
@@ -352,7 +356,6 @@ src/lib/pageContent.ts
 src/lib/informationArchitecture.ts
 src/lib/useKeyboardMenu.ts
 src/lib/sessionQuestions.ts
-src/lib/houseMarker.ts
 src/pages/Dashboard.tsx
 src/pages/dashboard/{NotificationStrip,BookingsWeek,TeamPanel}.tsx
 src/pages/Bookings.tsx
@@ -363,7 +366,7 @@ src/pages/Settings.tsx
 src/pages/ChooseHouse.tsx
 src/pages/SignedOut.tsx
 src/pages/Stub.tsx
-tests/*.test.ts
+tests/*.test.ts (including `icon-size.test.ts` — every lucide icon is `h-5 w-5`; `house-marker.test.ts` — one logo-green marker pair)
 .github/workflows/deploy.yml
 ```
 

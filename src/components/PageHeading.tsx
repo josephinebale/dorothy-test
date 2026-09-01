@@ -10,7 +10,7 @@ export function RequestBookingButton() {
       variant="primary"
       className="shrink-0"
     >
-      <Plus className="h-4 w-4" />
+      <Plus className="h-5 w-5" />
       Request booking
     </Button>
   );
