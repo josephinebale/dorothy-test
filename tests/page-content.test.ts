@@ -26,6 +26,19 @@ test('dashboard most-booked avatars match the Team list size', () => {
   assert.equal(avatarSize('../src/pages/Team.tsx'), 'md');
 });
 
+test('dashboard bookings collapse busy days and can reveal the rest', () => {
+  const source = readFileSync(
+    new URL('../src/pages/dashboard/BookingsWeek.tsx', import.meta.url),
+    'utf8',
+  );
+
+  assert.match(source, /const COLLAPSED_BOOKINGS_PER_DAY = 4;/);
+  assert.match(source, /dayBookings\.slice\(0, COLLAPSED_BOOKINGS_PER_DAY\)/);
+  assert.match(source, /aria-expanded=\{expanded\}/);
+  assert.match(source, /Show less/);
+  assert.match(source, /more \$\{plural\(hiddenBookingCount, 'booking', 'bookings'\)\}/);
+});
+
 test('notification empty copy uses one contraction and one notification verb', () => {
   assert.deepEqual(NOTIFICATION_EMPTY_DESCRIPTIONS, {
     requests: "We'll let you know when a booking request needs your attention.",

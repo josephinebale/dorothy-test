@@ -6,6 +6,7 @@ import ericaO from '../assets/avatars/erica-o.jpg';
 import geoffreyL from '../assets/avatars/geoffrey-l.jpg';
 import gingerN from '../assets/avatars/ginger-n.jpg';
 import hanHendrickP from '../assets/avatars/han-hendrick-p.jpg';
+import helenDawson from '../assets/avatars/helen-dawson.jpg';
 import iraJ from '../assets/avatars/ira-j.jpg';
 import johnM from '../assets/avatars/john-m.jpg';
 import mandiiZ from '../assets/avatars/mandii-z.jpg';
@@ -29,6 +30,7 @@ const AVATARS: Record<string, string> = {
   'Ira J': iraJ,
   'Ginger N': gingerN,
   'Han Hendrick P': hanHendrickP,
+  'Helen Dawson': helenDawson,
   'John M': johnM,
   'Pete C': peteC,
   'Sally M': sallyM,

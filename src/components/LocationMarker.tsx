@@ -18,7 +18,7 @@ export function LocationMarker({
   return (
     <span
       aria-hidden="true"
-      className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded bg-location-surface text-xs font-bold text-location-foreground"
+      className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-location-surface text-xs font-bold text-location-foreground"
     >
       {initials(location.name)}
     </span>

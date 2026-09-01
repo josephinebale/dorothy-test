@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronDown, ChevronLeft, ChevronRight, ChevronUp } from 'lucide-react';
 import type { Booking, LocationData } from '../../data/locations';
 import { StatusPill } from '../../components/StatusPill';
 import { Button } from '../../components/ui/Button';
@@ -23,6 +23,12 @@ const CARD_TONES: Record<Booking['status'], 'success' | 'pending' | 'neutral'> =
   ended: 'neutral',
 };
 
+const COLLAPSED_BOOKINGS_PER_DAY = 4;
+
+function plural(count: number, singular: string, pluralForm: string): string {
+  return count === 1 ? singular : pluralForm;
+}
+
 function BookingCard({ booking, suburb, state }: { booking: Booking; suburb: string; state: string }) {
   return (
     <Card tone={CARD_TONES[booking.status]} className="!rounded-sm p-2">
@@ -45,6 +51,7 @@ function BookingCard({ booking, suburb, state }: { booking: Booking; suburb: str
 
 export function BookingsWeek({ data }: { data: LocationData }) {
   const [weekOffset, setWeekOffset] = useState(0);
+  const [expanded, setExpanded] = useState(false);
 
   const today = startOfDay(new Date());
   const weekStart = addDays(startOfWeek(today), weekOffset * 7);
@@ -53,6 +60,13 @@ export function BookingsWeek({ data }: { data: LocationData }) {
 
   const inWeek = data.bookings.filter(
     (booking) => booking.start >= weekStart && booking.start < addDays(weekEnd, 1),
+  );
+  const bookingsByDay = days.map((day) =>
+    inWeek.filter((booking) => isSameDay(booking.start, day)),
+  );
+  const hiddenBookingCount = bookingsByDay.reduce(
+    (total, bookings) => total + Math.max(0, bookings.length - COLLAPSED_BOOKINGS_PER_DAY),
+    0,
   );
 
   return (
@@ -71,7 +85,10 @@ export function BookingsWeek({ data }: { data: LocationData }) {
         <div className="flex shrink-0 items-center gap-2">
           <Button
             type="button"
-            onClick={() => setWeekOffset(0)}
+            onClick={() => {
+              setWeekOffset(0);
+              setExpanded(false);
+            }}
             size="small"
           >
             Today
@@ -80,7 +97,10 @@ export function BookingsWeek({ data }: { data: LocationData }) {
             type="button"
             bordered
             size="small"
-            onClick={() => setWeekOffset((value) => value - 1)}
+            onClick={() => {
+              setWeekOffset((value) => value - 1);
+              setExpanded(false);
+            }}
             className="ui-tooltip"
             aria-label="Previous week"
             data-tooltip="Previous week"
@@ -91,7 +111,10 @@ export function BookingsWeek({ data }: { data: LocationData }) {
             type="button"
             bordered
             size="small"
-            onClick={() => setWeekOffset((value) => value + 1)}
+            onClick={() => {
+              setWeekOffset((value) => value + 1);
+              setExpanded(false);
+            }}
             className="ui-tooltip"
             aria-label="Next week"
             data-tooltip="Next week"
@@ -133,9 +156,13 @@ export function BookingsWeek({ data }: { data: LocationData }) {
             </p>
           </div>
         ) : (
-          <div className="grid booking-grid grid-cols-7">
-            {days.map((day) => {
-              const dayBookings = inWeek.filter((booking) => isSameDay(booking.start, day));
+          <>
+            <div id="dashboard-bookings-grid" className="grid booking-grid grid-cols-7">
+            {days.map((day, index) => {
+              const dayBookings = bookingsByDay[index];
+              const visibleDayBookings = expanded
+                ? dayBookings
+                : dayBookings.slice(0, COLLAPSED_BOOKINGS_PER_DAY);
               return (
                 <div
                   key={day.toISOString()}
@@ -146,7 +173,7 @@ export function BookingsWeek({ data }: { data: LocationData }) {
                       No bookings
                     </p>
                   ) : (
-                    dayBookings.map((booking) => (
+                    visibleDayBookings.map((booking) => (
                       <BookingCard
                         key={booking.id}
                         booking={booking}
@@ -158,7 +185,26 @@ export function BookingsWeek({ data }: { data: LocationData }) {
                 </div>
               );
             })}
-          </div>
+            </div>
+            {hiddenBookingCount > 0 && (
+              <button
+                type="button"
+                aria-expanded={expanded}
+                aria-controls="dashboard-bookings-grid"
+                onClick={() => setExpanded((value) => !value)}
+                className="flex w-full items-center justify-center gap-1 border-t border-border-subtle px-4 py-3 text-sm font-medium text-brand underline hover:text-brand-hover focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-brand"
+              >
+                {expanded
+                  ? 'Show less'
+                  : `${hiddenBookingCount} more ${plural(hiddenBookingCount, 'booking', 'bookings')}`}
+                {expanded ? (
+                  <ChevronUp className="h-5 w-5" />
+                ) : (
+                  <ChevronDown className="h-5 w-5" />
+                )}
+              </button>
+            )}
+          </>
         )}
       </Card>
     </section>

@@ -1,4 +1,4 @@
-import { addDays, startOfDay } from '../lib/date';
+import { addDays, startOfDay } from '../lib/date.ts';
 
 export type BookingStatus = 'confirmed' | 'requested' | 'ended';
 
@@ -62,9 +62,19 @@ const WORKER_POOL = [
   'Pete C',
   'Sally M',
   'Venessa S',
+  'Priya N',
+  'Tom W',
+  'Aisha K',
+  'Daniel F',
+  'Mei L',
+  'Chris B',
 ];
 
-const WORKERS_PER_LOCATION = [9, 7, 8, 6, 10];
+/** Regulars a CPA SIL house would typically book with (core plus casuals). */
+const WORKERS_PER_LOCATION = [14, 11, 15, 13, 16];
+
+/** Daytime shifts before the overnight sleepover. 24/7 houses run 2–4 overlapping day staff. */
+const DAYTIME_COUNTS = [4, 2, 4, 3, 4];
 
 /** Seeded so the placeholder roster and shifts stay identical between reloads. */
 function seededRandom(seed: number): () => number {
@@ -93,57 +103,82 @@ function rosterFor(locationIndex: number): string[] {
   return names;
 }
 
-const SHIFTS_PER_DAY = [0, 1, 1, 2, 2, 2, 3];
-const START_MINUTES = [0, 0, 30, 45];
+const DAYTIME_SHIFTS: Record<number, { hour: number; minutes: number; hours: number }[]> = {
+  2: [
+    { hour: 7, minutes: 0, hours: 9 },
+    { hour: 16, minutes: 0, hours: 6 },
+  ],
+  3: [
+    { hour: 7, minutes: 0, hours: 8 },
+    { hour: 15, minutes: 0, hours: 6 },
+    { hour: 15, minutes: 30, hours: 6 },
+  ],
+  4: [
+    { hour: 7, minutes: 0, hours: 8 },
+    { hour: 7, minutes: 30, hours: 8 },
+    { hour: 15, minutes: 0, hours: 6 },
+    { hour: 15, minutes: 0, hours: 6 },
+  ],
+};
+
+function pickWorker(roster: string[], used: Set<string>, random: () => number): string {
+  const available = roster.filter((name) => !used.has(name));
+  const pool = available.length > 0 ? available : roster;
+  const coreEnd = Math.max(1, Math.ceil(pool.length * 0.6));
+  const slice = random() < 0.72 ? pool.slice(0, coreEnd) : pool;
+  return slice[Math.floor(random() * slice.length)];
+}
+
+function statusFor(offset: number, end: Date, now: Date, random: () => number): BookingStatus {
+  if (offset < 0 || (offset === 0 && end < now)) return 'ended';
+  return random() < 0.1 ? 'requested' : 'confirmed';
+}
 
 function buildBookings(location: Location, locationIndex: number, roster: string[]): Booking[] {
   const random = seededRandom(4801 + locationIndex * 977);
   const today = startOfDay(new Date());
   const now = new Date();
   const bookings: Booking[] = [];
+  const daytime = DAYTIME_SHIFTS[DAYTIME_COUNTS[locationIndex]];
 
   for (let offset = -14; offset <= 27; offset += 1) {
     const day = addDays(today, offset);
-    const drawn = SHIFTS_PER_DAY[Math.floor(random() * SHIFTS_PER_DAY.length)];
-    // Today always has shifts so the "Today" column is never blank during testing.
-    // Yesterday always has one so the week shows a completed shift, unless today is
-    // Monday, when no earlier day falls inside the displayed week.
-    const guaranteesEndedShift = offset === -1 && today.getDay() !== 1;
-    const count =
-      offset === 0 ? Math.max(drawn, 2) : guaranteesEndedShift ? Math.max(drawn, 1) : drawn;
+    const used = new Set<string>();
+    let slot = 0;
 
-    for (let i = 0; i < count; i += 1) {
-      const workerName = roster[Math.floor(random() * roster.length)];
-      const sleepover = random() < 0.18;
-
-      let start: Date;
-      let end: Date;
-      if (sleepover) {
-        start = at(day, 19 + Math.floor(random() * 2), 0);
-        end = at(addDays(day, 1), 7, 0);
-      } else {
-        start = at(day, 6 + Math.floor(random() * 10), START_MINUTES[Math.floor(random() * 4)]);
-        end = new Date(start.getTime() + (2 + Math.floor(random() * 7)) * 3600 * 1000);
-      }
-
-      let status: BookingStatus;
-      if (offset < 0 || (offset === 0 && end < now)) {
-        status = 'ended';
-      } else {
-        status = random() < 0.25 ? 'requested' : 'confirmed';
-      }
+    for (const shift of daytime) {
+      const workerName = pickWorker(roster, used, random);
+      used.add(workerName);
+      const start = at(day, shift.hour, shift.minutes);
+      const end = new Date(start.getTime() + shift.hours * 3600 * 1000);
 
       bookings.push({
-        id: `${location.id}-${offset}-${i}`,
+        id: `${location.id}-${offset}-${slot}`,
         locationId: location.id,
         workerName,
         start,
         end,
-        status,
-        sleepover,
+        status: statusFor(offset, end, now, random),
+        sleepover: false,
         createdByMe: random() < 0.7,
       });
+      slot += 1;
     }
+
+    const sleepoverWorker = pickWorker(roster, used, random);
+    const sleepoverStart = at(day, 21, 0);
+    const sleepoverEnd = at(addDays(day, 1), 7, 0);
+
+    bookings.push({
+      id: `${location.id}-${offset}-${slot}`,
+      locationId: location.id,
+      workerName: sleepoverWorker,
+      start: sleepoverStart,
+      end: sleepoverEnd,
+      status: statusFor(offset, sleepoverEnd, now, random),
+      sleepover: true,
+      createdByMe: random() < 0.7,
+    });
   }
 
   return bookings.sort((a, b) => a.start.getTime() - b.start.getTime());

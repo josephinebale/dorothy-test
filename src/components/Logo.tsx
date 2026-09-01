@@ -6,7 +6,7 @@
 const ASPECT_RATIO = 982 / 300;
 
 export function Logo({ compact = false }: { compact?: boolean }) {
-  const height = compact ? 24 : 30;
+  const height = compact ? 18 : 24;
 
   return (
     <svg

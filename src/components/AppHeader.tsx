@@ -124,8 +124,8 @@ export function AppHeader({
                 aria-expanded={accountMenu.open}
                 aria-label={accountName}
               >
-                <Avatar name={MANAGER_NAME} size="sm" />
-                <span className="max-w-40 truncate">{MANAGER_NAME}</span>
+                <Avatar name={MANAGER_NAME} size="md" />
+                <span className="max-w-40 truncate">Helen</span>
                 {accountMenu.open ? (
                   <ChevronUp className="h-5 w-5 shrink-0 text-text-tertiary" />
                 ) : (
