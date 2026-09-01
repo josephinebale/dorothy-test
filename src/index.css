@@ -22,16 +22,17 @@
   --color-neutral-surface: #e8ebf0;
   --color-info: #184e78;
   --color-info-surface: #e2f0fa;
-  --color-house-indigo-surface: #E8EAFF;
-  --color-house-indigo-foreground: #29348F;
-  --color-house-teal-surface: #DDF4EE;
-  --color-house-teal-foreground: #195C4A;
-  --color-house-amber-surface: #FFF0CC;
-  --color-house-amber-foreground: #6A4600;
-  --color-house-rose-surface: #FBE4EC;
-  --color-house-rose-foreground: #84294A;
-  --color-house-violet-surface: #EEE7FA;
-  --color-house-violet-foreground: #5B3585;
+  /* CPA's live digital palette, paired with quiet tints for legible markers. */
+  --color-house-green-surface: #EBF9EA;
+  --color-house-green-foreground: #1B651D;
+  --color-house-lime-surface: #F8FADF;
+  --color-house-lime-foreground: #1B651D;
+  --color-house-purple-surface: #E4AAF4;
+  --color-house-purple-foreground: #57007C;
+  --color-house-orange-surface: #FFF1E8;
+  --color-house-orange-foreground: #9A3E0D;
+  --color-house-blue-surface: #DFF7F8;
+  --color-house-blue-foreground: #0063A5;
 
   --text-xs: 0.75rem;
   --text-xs--line-height: 1rem;

@@ -38,11 +38,11 @@ export type HouseData = {
 };
 
 export const HOUSES: House[] = [
-  { id: 'bellbird-court', name: 'Bellbird Court', suburb: 'Pialligo', state: 'ACT' },
-  { id: 'kingfisher-place', name: 'Kingfisher Place', suburb: 'Wollongong', state: 'NSW' },
-  { id: 'wattle-grove', name: 'Wattle Grove', suburb: 'Geelong', state: 'VIC' },
-  { id: 'rosella-rise', name: 'Rosella Rise', suburb: 'Greenwich', state: 'NSW' },
-  { id: 'banksia-street', name: 'Banksia Street', suburb: 'Upper Swan', state: 'WA' },
+  { id: 'dee-why-1', name: 'Dee Why 1', suburb: 'Dee Why', state: 'NSW' },
+  { id: 'galston-1', name: 'Galston 1', suburb: 'Galston', state: 'NSW' },
+  { id: 'hornsby', name: 'Hornsby', suburb: 'Hornsby', state: 'NSW' },
+  { id: 'north-ryde-1', name: 'North Ryde 1', suburb: 'North Ryde', state: 'NSW' },
+  { id: 'wahroonga', name: 'Wahroonga', suburb: 'Wahroonga', state: 'NSW' },
 ];
 
 const WORKER_POOL = [

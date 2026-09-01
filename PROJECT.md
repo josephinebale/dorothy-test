@@ -39,7 +39,7 @@ Every menu answers: what am I acting on?
 
 Source: `src/lib/informationArchitecture.ts`
 
-- `ORGANISATION_NAME` = Hireup Demonstration Co
+- `ORGANISATION_NAME` = Cerebral Palsy Alliance
 - `MANAGER_NAME` = Helen Dawson
 - `CAN_EDIT_ORGANISATION_DETAILS` = **false**. Organisation settings use the same layout when editable; fields are read-only (Save/Upload disabled) when this is false. Flip only this flag.
 
@@ -110,7 +110,7 @@ Location rows are choices, not `EntityLink`s.
 
 Shape carries the meaning, so the two marker styles are consistent rather than arbitrary.
 
-- **Rounded square = location.** `HouseMarker` + `src/lib/houseMarker.ts`: five tones (indigo, teal, amber, rose, violet), surface + foreground, AA contrast, colour derived from the location id so a location keeps its colour. Used in the switcher face, every location menu row, and the Choose your location list.
+- **Rounded square = location.** `HouseMarker` + `src/lib/houseMarker.ts`: five CPA palette tones (green, lime, purple, orange, blue), surface + foreground, AA contrast, colour derived from the location id so a location keeps its colour. Used in the switcher face, every location menu row, and the Choose your location list.
 - **Circle = person.** `Avatar`: real photo where one exists (`src/data/avatars.ts`), otherwise a dark circular initials fallback. No ring. Used for workers and the account holder.
 
 Never a circular initials mark for a location, and never a square photo for a person. Helen Dawson has no portrait asset, so the account control shows circular “HD” initials.
@@ -159,7 +159,7 @@ Page shell: `mx-auto w-full max-w-page px-8 pt-8 pb-4` (`src/App.tsx`), where `-
 
 | Path | Page | Notes |
 |---|---|---|
-| `/` | Dashboard | Notification strip, week of bookings, **Most booked** aside. Heading actions: Request booking (primary) then Report incident (secondary). `layout-content-aside`, `items-baseline`. |
+| `/` | Dashboard | Notification strip, week of bookings, **Most booked workers** aside. Heading actions: Request booking (primary) then Report incident (secondary). `layout-content-aside`, `items-baseline`. |
 | `/bookings` | Bookings | Status rail (Requested, Confirmed, Waiting for submission, Ready to approve, Next invoice, Invoiced). Filters: worker, date from/to, “Bookings I have created”. Apply filters and Reset sit **side by side**, both **secondary** (outlined), `flex-1` so they split the card in equal halves. Neither is blue: the page's only primary is Request booking. |
 | `/messages` | Messages | Location-scoped conversations. List uses the narrow column. |
 | `/team` | Team | Location-scoped workers, alphabetical list + overflow. Route is `/team`, never `/workers`. |
@@ -196,7 +196,7 @@ Keep section **labels** unchanged unless asked.
 - Empty days: “No bookings”.
 - Data generator (`houses.ts`): today always has ≥2 shifts; yesterday always has ≥1 completed shift except when today is Monday (no earlier day in the displayed week).
 
-**Most booked panel** (`TeamPanel.tsx`) — heading is **Most booked**, not “Team”. “View team” is a blue underlined text link to `/team`.
+**Most booked workers panel** (`TeamPanel.tsx`) — heading is **Most booked workers**, not “Team”. “View team” is a blue underlined text link to `/team`.
 
 Each worker row:
 
@@ -287,11 +287,13 @@ Panel: quick notes tagged with current page, four editable starter questions, Ot
 
 `src/data/houses.ts` — five locations:
 
-- Bellbird Court, Pialligo ACT (`bellbird-court`) — typical default
-- Kingfisher Place, Wollongong NSW
-- Wattle Grove, Geelong VIC
-- Rosella Rise, Greenwich NSW
-- Banksia Street, Upper Swan WA
+- Dee Why 1, Dee Why NSW (`dee-why-1`) — typical default
+- Galston 1, Galston NSW
+- Hornsby, Hornsby NSW
+- North Ryde 1, North Ryde NSW
+- Wahroonga, Wahroonga NSW
+
+These are alphabetised public CPA SIL listing names and suburbs, not private street addresses.
 
 Each has its own roster and bookings, seeded relative to **today**. Avatars: `src/data/avatars.ts`. Messages: `src/data/conversations.ts`.
 
@@ -307,7 +309,7 @@ Each has its own roster and bookings, seeded relative to **today**. Avatars: `sr
 
 Empty states: title + description (what is absent, what makes something appear). `EMPTY_STATES` in `pageContent.ts`.
 
-The word for the worker list is **Team** in nav, Team page, route (`/team`), and “View team”. The Dashboard aside heading is **Most booked** (the ordering, not the concept name).
+The word for the worker list is **Team** in nav, Team page, route (`/team`), and “View team”. The Dashboard aside heading is **Most booked workers** (the ordering, not the concept name).
 
 Booking cards do **not** repeat Location and Worker as labelled rows. The worker is already in the nested box; the location is already the page’s selected context.
 

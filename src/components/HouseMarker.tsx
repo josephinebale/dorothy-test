@@ -5,11 +5,11 @@ import {
 } from '../lib/houseMarker';
 
 const TONE_CLASSES: Record<HouseMarkerTone, string> = {
-  indigo: 'bg-house-indigo-surface text-house-indigo-foreground',
-  teal: 'bg-house-teal-surface text-house-teal-foreground',
-  amber: 'bg-house-amber-surface text-house-amber-foreground',
-  rose: 'bg-house-rose-surface text-house-rose-foreground',
-  violet: 'bg-house-violet-surface text-house-violet-foreground',
+  green: 'bg-house-green-surface text-house-green-foreground',
+  lime: 'bg-house-lime-surface text-house-lime-foreground',
+  purple: 'bg-house-purple-surface text-house-purple-foreground',
+  orange: 'bg-house-orange-surface text-house-orange-foreground',
+  blue: 'bg-house-blue-surface text-house-blue-foreground',
 };
 
 function initials(name: string): string {

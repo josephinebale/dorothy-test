@@ -1,4 +1,4 @@
-export const ORGANISATION_NAME = 'Hireup Demonstration Co';
+export const ORGANISATION_NAME = 'Cerebral Palsy Alliance';
 export const MANAGER_NAME = 'Helen Dawson';
 export const CAN_EDIT_ORGANISATION_DETAILS = false;
 

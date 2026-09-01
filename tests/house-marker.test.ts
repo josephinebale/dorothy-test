@@ -7,11 +7,11 @@ import {
 } from '../src/lib/houseMarker.ts';
 
 const HOUSE_IDS = [
-  'bellbird-court',
-  'kingfisher-place',
-  'wattle-grove',
-  'rosella-rise',
-  'banksia-street',
+  'dee-why-1',
+  'galston-1',
+  'hornsby',
+  'north-ryde-1',
+  'wahroonga',
 ];
 
 function luminance(hex: string): number {
@@ -33,10 +33,17 @@ function contrast(foreground: string, surface: string): number {
   return (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
 }
 
-test('each prototype house has a stable, distinct marker tone', () => {
+test('each CPA location has a stable, distinct marker tone', () => {
   const tones = HOUSE_IDS.map(houseMarkerTone);
   assert.equal(new Set(tones).size, HOUSE_IDS.length);
-  assert.equal(houseMarkerTone('bellbird-court'), houseMarkerTone('bellbird-court'));
+  assert.deepEqual(HOUSE_MARKER_TONES, [
+    'green',
+    'lime',
+    'purple',
+    'orange',
+    'blue',
+  ]);
+  assert.equal(houseMarkerTone('dee-why-1'), houseMarkerTone('dee-why-1'));
 });
 
 test('every house marker token pair passes AA contrast', () => {

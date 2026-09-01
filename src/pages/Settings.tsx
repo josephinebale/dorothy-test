@@ -231,7 +231,7 @@ function PreferenceList({ title, options }: { title: string; options: string[] }
 
 function FinancialDetails({ canEdit }: { canEdit: boolean }) {
   const [abn, setAbn] = useState('12 345 678 901');
-  const [accountName, setAccountName] = useState('Hireup Demonstration Co');
+  const [accountName, setAccountName] = useState(ORGANISATION_NAME);
 
   return (
     <SettingsCard title="Financial details" intro={<PrivacyNote />}>

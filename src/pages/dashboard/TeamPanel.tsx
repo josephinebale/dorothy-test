@@ -13,7 +13,7 @@ export function TeamPanel({ data }: { data: HouseData }) {
   return (
     <div>
       <div className="flex items-baseline justify-between gap-4">
-        <h2 className="text-md font-bold text-text">Most booked</h2>
+        <h2 className="text-md font-bold text-text">Most booked workers</h2>
         <a
           href={href(TEAM_ROUTE)}
           className="rounded text-sm text-brand underline hover:text-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"

@@ -1,19 +1,19 @@
 export const HOUSE_MARKER_TONES = [
-  'indigo',
-  'teal',
-  'amber',
-  'rose',
-  'violet',
+  'green',
+  'lime',
+  'purple',
+  'orange',
+  'blue',
 ] as const;
 
 export type HouseMarkerTone = (typeof HOUSE_MARKER_TONES)[number];
 
 const KNOWN_HOUSE_TONES: Record<string, HouseMarkerTone> = {
-  'bellbird-court': 'indigo',
-  'kingfisher-place': 'teal',
-  'wattle-grove': 'amber',
-  'rosella-rise': 'rose',
-  'banksia-street': 'violet',
+  'dee-why-1': 'green',
+  'galston-1': 'lime',
+  hornsby: 'purple',
+  'north-ryde-1': 'orange',
+  wahroonga: 'blue',
 };
 
 export function houseMarkerTone(id: string): HouseMarkerTone {

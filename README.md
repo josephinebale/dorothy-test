@@ -58,9 +58,10 @@ The account menu (top right) has **Log out**. That screen offers:
 
 ## Placeholder data
 
-Five locations with placeholder names, each with its own roster and its own bookings. Bookings are
-generated from a fixed seed relative to today, so the data is stable between reloads but the week
-view always includes today. See `src/data/houses.ts`.
+Five alphabetised public Cerebral Palsy Alliance SIL listing names and suburbs, each with its own
+placeholder roster and bookings. Private street addresses are not used. Bookings are generated from
+a fixed seed relative to today, so the data is stable between reloads but the week view always
+includes today. See `src/data/houses.ts`.
 
 ## Not built
 

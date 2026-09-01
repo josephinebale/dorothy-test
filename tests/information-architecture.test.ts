@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import test from 'node:test';
 import {
   ACCOUNT_SECTIONS,
@@ -61,8 +62,17 @@ test('each settings scope has one route and a stable default section', () => {
 
 test('organisation editing is controlled by one flag', () => {
   assert.equal(CAN_EDIT_ORGANISATION_DETAILS, false);
-  assert.equal(ORGANISATION_NAME, 'Hireup Demonstration Co');
+  assert.equal(ORGANISATION_NAME, 'Cerebral Palsy Alliance');
   assert.equal(MANAGER_NAME, 'Helen Dawson');
+});
+
+test('financial details reuse the shared organisation name', () => {
+  const settingsSource = readFileSync(
+    new URL('../src/pages/Settings.tsx', import.meta.url),
+    'utf8',
+  );
+  assert.match(settingsSource, /useState\(ORGANISATION_NAME\)/);
+  assert.doesNotMatch(settingsSource, /Hireup Demonstration Co/);
 });
 
 test('arrow keys wrap through menu items', () => {
