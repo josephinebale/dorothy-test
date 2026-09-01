@@ -25,9 +25,8 @@ npm run lint
   location.
 - **Location switcher** in the global nav. Switching keeps you on the page you are on
   and swaps the location context.
-- **First run**: with no remembered location, you land on a "Choose your location" screen. After that you
-  go straight into your last location on every visit. The choice is stored in the browser's
-  local storage.
+- **First run**: a simple branded holding screen starts the prototype without credentials, then
+  opens "Choose your location". After choosing, return visits open the last location.
 - **Bookings**, scoped to the selected location: status views, worker and date filters, a
   "Bookings I have created" toggle, and booking detail cards.
 - **Team**, scoped to the selected location: an alphabetical worker list and linked worker profiles
@@ -42,7 +41,7 @@ npm run lint
 The eye control at the bottom right shows or hides discussion-guide pins beside selected UI
 elements. Pins open the question text only. Visibility is saved in the browser under
 `hm.sessionQuestions`, so it survives a reload during a session. The restart control beside it
-returns the prototype to “Choose your location” for the next participant.
+returns to the holding screen for the next participant.
 
 ## Testing the first-run experience
 

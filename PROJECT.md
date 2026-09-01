@@ -39,16 +39,17 @@ The test used when trimming settings: **is there a surface anywhere in this prod
 
 Persisted in `localStorage`:
 
+- `hm.prototypeStarted`
 - `hm.signedIn`
 - `hm.lastLocationId` (legacy house key still read)
 - `hm.sessionQuestions` (research overlay)
 - `hm.locationProfiles` (worker-facing profile details for each location)
 
-No location remembered → **Choose your location**. After that, return visits open the last location. Account menu: **Log out**, then **Log back in** or **Log in as a new user** (clears remembered location).
+No prototype-start flag → **Welcome to Hireup for Providers**, a deliberately simple holding screen with one **Start prototype** button and no credentials. Starting clears any remembered location and proceeds to **Choose your location**. After a location is chosen, return visits open the last location. Account menu: **Log out**, then **Log back in** or **Log in as a new user** (clears remembered location).
 
 The eye control shows or hides all `PinnedQuestion` markers. Visibility defaults to on and persists in `hm.sessionQuestions` across reloads. Markers open a popover containing only the element-specific question text. There is no Session questions panel, notes list, or copy-all control.
 
-Beside it, **Restart prototype** resets the run between participants: it clears `hm.lastLocationId` (and the legacy house key), `hm.signedIn`, and `hm.locationProfiles`, drops in-memory bookings and the unread override, and returns to **Choose your location**. It deliberately keeps `hm.sessionQuestions`, since annotation visibility is the moderator’s preference, not the participant’s state. It asks for confirmation first, because it sits next to a control used mid-session.
+Beside it, **Restart prototype** resets the run between participants: it clears `hm.prototypeStarted`, `hm.lastLocationId` (and the legacy house key), `hm.signedIn`, and `hm.locationProfiles`, drops in-memory bookings and the unread override, and returns to the **Welcome to Hireup for Providers** holding screen. It deliberately keeps `hm.sessionQuestions`, since annotation visibility is the moderator’s preference, not the participant’s state. It asks for confirmation first, because it sits next to a control used mid-session.
 
 `src/data/discussionQuestions.ts` is the source of truth for question wording and metadata: `{ id, page, type, text, elementHint? }`. It stores no answers. `elementHint` is a human-readable placement description, never a selector. Markers are placed manually in page JSX. The general `settings-co-design` activity is in the catalogue for the Location, Organisation, and Account settings areas.
 

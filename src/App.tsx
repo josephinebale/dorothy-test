@@ -15,8 +15,10 @@ import {
   clearLastLocationId,
   clearSession,
   readLastLocationId,
+  readPrototypeStarted,
   readSignedIn,
   writeLastLocationId,
+  writePrototypeStarted,
   writeSignedIn,
 } from './lib/session';
 import { ChooseLocation } from './pages/ChooseLocation';
@@ -26,6 +28,7 @@ import { BookingRequest } from './pages/BookingRequest';
 import { Messages } from './pages/Messages';
 import { Notifications } from './pages/Notifications';
 import { LocationProfilePreview } from './pages/LocationProfilePreview';
+import { PrototypeStart } from './pages/PrototypeStart';
 import {
   ManageLocationSettings,
   OrganisationSettings,
@@ -38,6 +41,7 @@ import { WorkerProfile } from './pages/WorkerProfile';
 
 export default function App() {
   const path = useHashRoute();
+  const [started, setStarted] = useState(readPrototypeStarted);
   const [signedIn, setSignedIn] = useState(readSignedIn);
   const [locationId, setLocationId] = useState<string | null>(
     () => findLocation(readLastLocationId())?.id ?? null,
@@ -61,6 +65,7 @@ export default function App() {
   const restart = useCallback(() => {
     clearSession();
     clearLocationProfiles();
+    setStarted(false);
     setSignedIn(readSignedIn());
     setLocationId(null);
     setCreatedBookings([]);
@@ -72,6 +77,22 @@ export default function App() {
     writeSignedIn(false);
     setSignedIn(false);
   }, []);
+
+  if (!started) {
+    return (
+      <PrototypeStart
+        onStart={() => {
+          clearLastLocationId();
+          writePrototypeStarted(true);
+          writeSignedIn(true);
+          setLocationId(null);
+          setSignedIn(true);
+          setStarted(true);
+          navigate('/');
+        }}
+      />
+    );
+  }
 
   if (!signedIn) {
     return (

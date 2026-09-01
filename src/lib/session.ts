@@ -1,6 +1,7 @@
 const LOCATION_KEY = 'hm.lastLocationId';
 const LEGACY_HOUSE_KEY = 'hm.lastHouseId';
 const SIGNED_IN_KEY = 'hm.signedIn';
+const PROTOTYPE_STARTED_KEY = 'hm.prototypeStarted';
 
 function read(key: string): string | null {
   try {
@@ -43,6 +44,15 @@ export function clearLastLocationId(): void {
 export function clearSession(): void {
   clearLastLocationId();
   remove(SIGNED_IN_KEY);
+  remove(PROTOTYPE_STARTED_KEY);
+}
+
+export function readPrototypeStarted(): boolean {
+  return read(PROTOTYPE_STARTED_KEY) === 'true';
+}
+
+export function writePrototypeStarted(started: boolean): void {
+  write(PROTOTYPE_STARTED_KEY, started ? 'true' : 'false');
 }
 
 export function readSignedIn(): boolean {
