@@ -7,7 +7,7 @@ import { Tag } from '../components/ui/Tag';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 import { EntityLink } from '../components/ui/EntityLink';
-import type { Booking, HouseData } from '../data/houses';
+import type { Booking, LocationData } from '../data/locations';
 import { formatTime, startOfDay } from '../lib/date';
 import { EMPTY_STATES, TEAM_ROUTE } from '../lib/pageContent';
 import { href } from '../lib/router';
@@ -83,7 +83,7 @@ function priceFor(booking: Booking): string {
   return `$${(cents / 100).toFixed(2)}`;
 }
 
-function bookingsForView(data: HouseData, view: BookingView): Booking[] {
+function bookingsForView(data: LocationData, view: BookingView): Booking[] {
   const today = startOfDay(new Date());
 
   if (view === 'confirmed') {
@@ -104,7 +104,7 @@ function bookingsForView(data: HouseData, view: BookingView): Booking[] {
   return [];
 }
 
-function BookingCard({ booking, data }: { booking: Booking; data: HouseData }) {
+function BookingCard({ booking, data }: { booking: Booking; data: LocationData }) {
   const hours = durationHours(booking);
 
   return (
@@ -151,7 +151,7 @@ function BookingCard({ booking, data }: { booking: Booking; data: HouseData }) {
         </div>
         <div className="flex items-center gap-2">
           <MapPin className="h-5 w-5" />
-          <span>{data.house.suburb}, {data.house.state}</span>
+          <span>{data.location.suburb}, {data.location.state}</span>
         </div>
       </dl>
 
@@ -176,7 +176,7 @@ function BookingCard({ booking, data }: { booking: Booking; data: HouseData }) {
   );
 }
 
-export function Bookings({ data }: { data: HouseData }) {
+export function Bookings({ data }: { data: LocationData }) {
   const [view, setView] = useState<BookingView>('confirmed');
   const [worker, setWorker] = useState('');
   const [dateFrom, setDateFrom] = useState('');

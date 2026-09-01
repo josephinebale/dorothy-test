@@ -26,8 +26,8 @@
   /* One marker colour for every location, from the single green in the Cerebral
      Palsy Alliance logo (#2E953E): a 12% tint for the surface, and the same
      green darkened until the initials clear 4.5:1 against it. */
-  --color-house-surface: #E6F2E8;
-  --color-house-foreground: #216B2D;
+  --color-location-surface: #E6F2E8;
+  --color-location-foreground: #216B2D;
 
   --text-xs: 0.75rem;
   --text-xs--line-height: 1rem;
@@ -432,7 +432,7 @@ body {
   height: var(--header-nav-height);
 }
 
-.house-switcher-trigger {
+.location-switcher-trigger {
   display: inline-flex;
   max-width: 16rem;
   align-items: center;
@@ -445,7 +445,7 @@ body {
   color: var(--color-text);
 }
 
-.house-switcher-trigger:hover {
+.location-switcher-trigger:hover {
   background: var(--color-surface-subtle);
 }
 

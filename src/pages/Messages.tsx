@@ -8,7 +8,7 @@ import { Card } from '../components/ui/Card';
 import { EntityLink } from '../components/ui/EntityLink';
 import { IconButton } from '../components/ui/IconButton';
 import { buildConversations, type Conversation } from '../data/conversations';
-import type { HouseData } from '../data/houses';
+import type { LocationData } from '../data/locations';
 import { formatTime } from '../lib/date';
 import { EMPTY_STATES } from '../lib/pageContent';
 import { href } from '../lib/router';
@@ -56,7 +56,7 @@ function dividerLabel(date: Date): string {
 }
 
 type MessagesProps = {
-  data: HouseData;
+  data: LocationData;
   onUnreadChange: (count: number) => void;
 };
 
@@ -79,7 +79,7 @@ export function Messages({ data, onUnreadChange }: MessagesProps) {
     setShowArchived(false);
     setVisibleCount(8);
     onUnreadChange(next.reduce((sum, conversation) => sum + conversation.unread, 0));
-  }, [data.house.id, data.unreadMessages, data.workers, onUnreadChange]);
+  }, [data.location.id, data.unreadMessages, data.workers, onUnreadChange]);
 
   const filtered = useMemo(() => {
     const needle = search.trim().toLowerCase();

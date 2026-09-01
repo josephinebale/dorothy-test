@@ -2,20 +2,20 @@ import { AppFooter } from '../components/AppFooter';
 import { Logo } from '../components/Logo';
 import { PageHeading } from '../components/PageHeading';
 import { Button } from '../components/ui/Button';
-import { findHouse } from '../data/houses';
+import { findLocation } from '../data/locations';
 
 type SignedOutProps = {
-  lastHouseId: string | null;
+  lastLocationId: string | null;
   onSignInAsReturning: () => void;
   onSignInAsNewUser: () => void;
 };
 
 export function SignedOut({
-  lastHouseId,
+  lastLocationId,
   onSignInAsReturning,
   onSignInAsNewUser,
 }: SignedOutProps) {
-  const lastHouse = findHouse(lastHouseId);
+  const lastLocation = findLocation(lastLocationId);
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -40,8 +40,8 @@ export function SignedOut({
             className="w-full"
           >
             Log back in
-            {lastHouse && (
-              <span className="ml-1 font-normal opacity-90">— returns to {lastHouse.name}</span>
+            {lastLocation && (
+              <span className="ml-1 font-normal opacity-90">— returns to {lastLocation.name}</span>
             )}
           </Button>
           <Button

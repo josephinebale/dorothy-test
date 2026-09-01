@@ -1,4 +1,4 @@
-import type { HouseData } from '../data/houses';
+import type { LocationData } from '../data/locations';
 import { PageHeading, RequestBookingButton } from '../components/PageHeading';
 import { Button } from '../components/ui/Button';
 import { href } from '../lib/router';
@@ -6,7 +6,7 @@ import { BookingsWeek } from './dashboard/BookingsWeek';
 import { NotificationStrip } from './dashboard/NotificationStrip';
 import { TeamPanel } from './dashboard/TeamPanel';
 
-export function Dashboard({ data }: { data: HouseData }) {
+export function Dashboard({ data }: { data: LocationData }) {
   return (
     <div className="layout-content-aside flex items-baseline gap-6">
       <div className="min-w-0 flex-1">

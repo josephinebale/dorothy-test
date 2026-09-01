@@ -10,7 +10,7 @@ import {
   Shield,
   Settings,
 } from 'lucide-react';
-import type { House } from '../data/houses';
+import type { Location } from '../data/locations';
 import {
   MANAGER_NAME,
   PERSONAL_MENU_ITEMS,
@@ -25,7 +25,7 @@ import {
   messagesAccessibleName,
   notificationsAccessibleName,
 } from './header-utils';
-import { HouseSwitcher } from './HouseSwitcher';
+import { LocationSwitcher } from './LocationSwitcher';
 import { Logo } from './Logo';
 import { Badge } from './ui/Badge';
 import { Button } from './ui/Button';
@@ -45,22 +45,22 @@ const ACCOUNT_ICONS = {
 };
 
 type AppHeaderProps = {
-  house: House;
+  location: Location;
   path: string;
   unreadMessages: number;
   bookingsBadge: number;
   unreadNotifications: number;
-  onSelectHouse: (houseId: string) => void;
+  onSelectLocation: (locationId: string) => void;
   onSignOut: () => void;
 };
 
 export function AppHeader({
-  house,
+  location,
   path,
   unreadMessages,
   bookingsBadge,
   unreadNotifications,
-  onSelectHouse,
+  onSelectLocation,
   onSignOut,
 }: AppHeaderProps) {
   const accountMenu = useKeyboardMenu();
@@ -181,7 +181,7 @@ export function AppHeader({
 
       <div className="app-header-nav-row mx-auto flex max-w-page items-stretch px-8">
         <div className="flex shrink-0 items-center">
-          <HouseSwitcher house={house} onSelect={onSelectHouse} />
+          <LocationSwitcher location={location} onSelect={onSelectLocation} />
         </div>
 
         <span aria-hidden="true" className="mx-6 h-6 w-px shrink-0 self-center bg-border-subtle" />

@@ -61,8 +61,10 @@ export function createDefaultSessionQuestions(): SessionQuestionsState {
 
 export function pageLabel(path: string): string {
   if (
-    path === ROUTES.manageHouse ||
-    path.startsWith(`${ROUTES.manageHouse}/`)
+    path === ROUTES.manageLocation ||
+    path.startsWith(`${ROUTES.manageLocation}/`) ||
+    path === '/manage-house' ||
+    path.startsWith('/manage-house/')
   ) {
     return 'Manage this location';
   }

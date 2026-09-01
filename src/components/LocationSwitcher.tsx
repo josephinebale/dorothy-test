@@ -3,21 +3,21 @@ import {
   Check,
   ChevronDown,
   ChevronUp,
-  House as HouseIcon,
+  House,
 } from 'lucide-react';
-import { HOUSES, type House } from '../data/houses';
+import { LOCATIONS, type Location } from '../data/locations';
 import {
   ORGANISATION_NAME,
   ROUTES,
 } from '../lib/informationArchitecture';
 import { href } from '../lib/router';
 import { useKeyboardMenu } from '../lib/useKeyboardMenu';
-import { HouseMarker } from './HouseMarker';
+import { LocationMarker } from './LocationMarker';
 import { Card } from './ui/Card';
 
-type HouseSwitcherProps = {
-  house: House;
-  onSelect: (houseId: string) => void;
+type LocationSwitcherProps = {
+  location: Location;
+  onSelect: (locationId: string) => void;
 };
 
 /** Every item in the menu shares this row, so items differ only by their leading mark. */
@@ -25,7 +25,7 @@ const MENU_ROW =
   'flex w-full items-center gap-3 px-3 py-2 text-left text-sm font-medium text-text-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand';
 
 const MANAGEMENT_ITEMS = [
-  { label: 'Manage this location', path: ROUTES.manageHouse, Icon: HouseIcon },
+  { label: 'Manage this location', path: ROUTES.manageLocation, Icon: House },
   {
     label: 'Organisation settings',
     path: ROUTES.organisationSettings,
@@ -33,7 +33,7 @@ const MANAGEMENT_ITEMS = [
   },
 ];
 
-export function HouseSwitcher({ house, onSelect }: HouseSwitcherProps) {
+export function LocationSwitcher({ location, onSelect }: LocationSwitcherProps) {
   const menu = useKeyboardMenu();
 
   return (
@@ -45,12 +45,12 @@ export function HouseSwitcher({ house, onSelect }: HouseSwitcherProps) {
         onKeyDown={menu.onTriggerKeyDown}
         aria-haspopup="menu"
         aria-expanded={menu.open}
-        aria-label={`Switch location. Current location: ${house.name}`}
-        className="house-switcher-trigger focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+        aria-label={`Switch location. Current location: ${location.name}`}
+        className="location-switcher-trigger focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
       >
-        <HouseMarker house={house} />
+        <LocationMarker location={location} />
         <span className="min-w-0 truncate text-sm font-medium text-text">
-          {house.name}
+          {location.name}
         </span>
         {menu.open ? (
           <ChevronUp className="h-5 w-5 shrink-0 text-text-tertiary" />
@@ -72,8 +72,8 @@ export function HouseSwitcher({ house, onSelect }: HouseSwitcherProps) {
                 {ORGANISATION_NAME}
               </p>
 
-              {HOUSES.map((option) => {
-                const selected = option.id === house.id;
+              {LOCATIONS.map((option) => {
+                const selected = option.id === location.id;
                 return (
                   <button
                     key={option.id}
@@ -88,7 +88,7 @@ export function HouseSwitcher({ house, onSelect }: HouseSwitcherProps) {
                       selected ? 'bg-surface-selected' : 'hover:bg-surface-subtle'
                     }`}
                   >
-                    <HouseMarker house={option} />
+                    <LocationMarker location={option} />
                     <span className="min-w-0 flex-1">
                       <span className="flex items-center gap-1">
                         <span className="truncate">{option.name}</span>

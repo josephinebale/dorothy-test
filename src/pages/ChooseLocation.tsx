@@ -1,13 +1,17 @@
 import { ChevronRight } from 'lucide-react';
-import { HOUSES } from '../data/houses';
+import { LOCATIONS } from '../data/locations';
 import { AppFooter } from '../components/AppFooter';
-import { HouseMarker } from '../components/HouseMarker';
+import { LocationMarker } from '../components/LocationMarker';
 import { Logo } from '../components/Logo';
 import { PageHeading } from '../components/PageHeading';
 import { Card } from '../components/ui/Card';
 import { EntityLink } from '../components/ui/EntityLink';
 
-export function ChooseHouse({ onSelect }: { onSelect: (houseId: string) => void }) {
+export function ChooseLocation({
+  onSelect,
+}: {
+  onSelect: (locationId: string) => void;
+}) {
   return (
     <div className="flex min-h-screen flex-col">
       <header className="app-header">
@@ -24,18 +28,18 @@ export function ChooseHouse({ onSelect }: { onSelect: (houseId: string) => void 
         />
 
         <Card divided>
-          {HOUSES.map((house) => (
+          {LOCATIONS.map((location) => (
             <button
-              key={house.id}
+              key={location.id}
               type="button"
-              onClick={() => onSelect(house.id)}
+              onClick={() => onSelect(location.id)}
             className="flex w-full items-center gap-3 px-4 py-4 text-left hover:bg-surface-subtle"
           >
-            <HouseMarker house={house} />
+            <LocationMarker location={location} />
             <span className="min-w-0 flex-1">
-              <EntityLink as="span" className="block">{house.name}</EntityLink>
+              <EntityLink as="span" className="block">{location.name}</EntityLink>
               <span className="block text-sm text-text-secondary">
-                {house.suburb}, {house.state}
+                {location.suburb}, {location.state}
               </span>
             </span>
               <ChevronRight className="h-5 w-5 shrink-0 text-text-tertiary" />

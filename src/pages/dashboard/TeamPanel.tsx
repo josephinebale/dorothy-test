@@ -1,5 +1,5 @@
 import { Calendar, MessageCircle } from 'lucide-react';
-import type { HouseData } from '../../data/houses';
+import type { LocationData } from '../../data/locations';
 import { Avatar } from '../../components/Avatar';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
@@ -7,7 +7,7 @@ import { EntityLink } from '../../components/ui/EntityLink';
 import { EMPTY_STATES, TEAM_ROUTE } from '../../lib/pageContent';
 import { href } from '../../lib/router';
 
-export function TeamPanel({ data }: { data: HouseData }) {
+export function TeamPanel({ data }: { data: LocationData }) {
   const workers = data.workers.slice(0, 10);
 
   return (

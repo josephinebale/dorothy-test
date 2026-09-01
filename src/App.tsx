@@ -2,25 +2,24 @@ import { useCallback, useState } from 'react';
 import { AppFooter } from './components/AppFooter';
 import { AppHeader } from './components/AppHeader';
 import { SessionQuestions } from './components/SessionQuestions';
-import { getHouseData } from './data/houses';
-import { findHouse } from './data/houses';
+import { findLocation, getLocationData } from './data/locations';
 import { ROUTES } from './lib/informationArchitecture';
 import { TEAM_ROUTE } from './lib/pageContent';
 import { navigate, useHashRoute } from './lib/router';
 import {
-  clearLastHouseId,
-  readLastHouseId,
+  clearLastLocationId,
+  readLastLocationId,
   readSignedIn,
-  writeLastHouseId,
+  writeLastLocationId,
   writeSignedIn,
 } from './lib/session';
-import { ChooseHouse } from './pages/ChooseHouse';
+import { ChooseLocation } from './pages/ChooseLocation';
 import { Dashboard } from './pages/Dashboard';
 import { Bookings } from './pages/Bookings';
 import { Messages } from './pages/Messages';
 import { Notifications } from './pages/Notifications';
 import {
-  ManageHouseSettings,
+  ManageLocationSettings,
   OrganisationSettings,
   YourAccountSettings,
 } from './pages/Settings';
@@ -31,12 +30,14 @@ import { Team } from './pages/Team';
 export default function App() {
   const path = useHashRoute();
   const [signedIn, setSignedIn] = useState(readSignedIn);
-  const [houseId, setHouseId] = useState<string | null>(() => findHouse(readLastHouseId())?.id ?? null);
+  const [locationId, setLocationId] = useState<string | null>(
+    () => findLocation(readLastLocationId())?.id ?? null,
+  );
   const [unreadOverride, setUnreadOverride] = useState<number | null>(null);
 
-  const selectHouse = useCallback((nextHouseId: string) => {
-    writeLastHouseId(nextHouseId);
-    setHouseId(nextHouseId);
+  const selectLocation = useCallback((nextLocationId: string) => {
+    writeLastLocationId(nextLocationId);
+    setLocationId(nextLocationId);
     setUnreadOverride(null);
   }, []);
 
@@ -52,16 +53,16 @@ export default function App() {
   if (!signedIn) {
     return (
       <SignedOut
-        lastHouseId={houseId}
+        lastLocationId={locationId}
         onSignInAsReturning={() => {
           writeSignedIn(true);
           setSignedIn(true);
           navigate('/');
         }}
         onSignInAsNewUser={() => {
-          clearLastHouseId();
+          clearLastLocationId();
           writeSignedIn(true);
-          setHouseId(null);
+          setLocationId(null);
           setSignedIn(true);
           navigate('/');
         }}
@@ -69,24 +70,24 @@ export default function App() {
     );
   }
 
-  if (!houseId) {
+  if (!locationId) {
     return (
-      <ChooseHouse
-        onSelect={(nextHouseId) => {
-          selectHouse(nextHouseId);
+      <ChooseLocation
+        onSelect={(nextLocationId) => {
+          selectLocation(nextLocationId);
           navigate('/');
         }}
       />
     );
   }
 
-  const data = getHouseData(houseId);
+  const data = getLocationData(locationId);
   const stubTitle = STUB_TITLES[path];
 
   return (
     <div className="relative flex min-h-screen flex-col">
       <AppHeader
-        house={data.house}
+        location={data.location}
         path={path}
         unreadMessages={unreadOverride ?? data.unreadMessages}
         bookingsBadge={data.bookingsToApprove}
@@ -98,7 +99,7 @@ export default function App() {
             data.plansToReview,
           ].filter((count) => count > 0).length
         }
-        onSelectHouse={selectHouse}
+        onSelectLocation={selectLocation}
         onSignOut={signOut}
       />
 
@@ -112,14 +113,14 @@ export default function App() {
             <Messages data={data} onUnreadChange={onUnreadChange} />
           ) : path === '/notifications' ? (
             <Notifications data={data} />
-          ) : path.startsWith(ROUTES.manageHouse) ? (
-            <ManageHouseSettings data={data} path={path} />
+          ) : path.startsWith(ROUTES.manageLocation) ? (
+            <ManageLocationSettings data={data} path={path} />
           ) : path.startsWith(ROUTES.organisationSettings) ? (
             <OrganisationSettings data={data} path={path} />
           ) : path.startsWith(ROUTES.yourAccount) || path === '/settings' ? (
             <YourAccountSettings path={path} />
           ) : stubTitle ? (
-            <Stub title={stubTitle} house={data.house} />
+            <Stub title={stubTitle} location={data.location} />
           ) : (
             <Dashboard data={data} />
           )}

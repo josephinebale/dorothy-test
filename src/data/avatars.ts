@@ -15,7 +15,7 @@ import sallyM from '../assets/avatars/sally-m.jpg';
 import scarlettO from '../assets/avatars/scarlett-o.jpg';
 import venessaS from '../assets/avatars/venessa-s.jpg';
 
-/** Placeholder portraits, keyed by worker so a worker keeps the same face in every house. */
+/** Placeholder portraits, keyed by worker so a worker keeps the same face in every location. */
 const AVATARS: Record<string, string> = {
   'Eleni P': eleniP,
   'Angela O': angelaO,

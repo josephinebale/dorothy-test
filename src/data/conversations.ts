@@ -1,4 +1,4 @@
-import type { HouseData } from './houses';
+import type { LocationData } from './locations';
 import { addDays, startOfDay } from '../lib/date';
 
 export type ChatMessage = {
@@ -41,7 +41,7 @@ function previewFor(last: ChatMessage): string {
   return last.text.length > 42 ? `${last.text.slice(0, 42).trim()}...` : last.text;
 }
 
-export function buildConversations(data: HouseData): Conversation[] {
+export function buildConversations(data: LocationData): Conversation[] {
   const today = startOfDay(new Date());
   const workers = [...data.workers].sort((a, b) => a.name.localeCompare(b.name));
 

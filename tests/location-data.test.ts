@@ -4,7 +4,7 @@ import test from 'node:test';
 
 test('CPA SIL locations use public listing names in alphabetical order', () => {
   const source = readFileSync(
-    new URL('../src/data/houses.ts', import.meta.url),
+    new URL('../src/data/locations.ts', import.meta.url),
     'utf8',
   );
   const expectedLocations = [

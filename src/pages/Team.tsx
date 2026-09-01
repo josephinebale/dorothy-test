@@ -4,7 +4,7 @@ import { PageHeading, RequestBookingButton } from '../components/PageHeading';
 import { Card } from '../components/ui/Card';
 import { EntityLink } from '../components/ui/EntityLink';
 import { IconButton } from '../components/ui/IconButton';
-import type { HouseData, Worker } from '../data/houses';
+import type { LocationData, Worker } from '../data/locations';
 import { EMPTY_STATES } from '../lib/pageContent';
 
 function workerSummary(worker: Worker, index: number): string {
@@ -20,7 +20,7 @@ function workerSummary(worker: Worker, index: number): string {
   return details.join(' ');
 }
 
-export function Team({ data }: { data: HouseData }) {
+export function Team({ data }: { data: LocationData }) {
   const workers = [...data.workers].sort((a, b) => a.name.localeCompare(b.name));
 
   return (

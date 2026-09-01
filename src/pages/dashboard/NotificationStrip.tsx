@@ -1,6 +1,6 @@
 import { Briefcase, Calendar, CalendarCheck } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
-import type { HouseData } from '../../data/houses';
+import type { LocationData } from '../../data/locations';
 import { NOTIFICATION_EMPTY_DESCRIPTIONS } from '../../lib/pageContent';
 import { href } from '../../lib/router';
 import { Card } from '../../components/ui/Card';
@@ -16,7 +16,7 @@ function plural(count: number, singular: string, pluralForm: string): string {
   return count === 1 ? singular : pluralForm;
 }
 
-function buildCards(data: HouseData): StripCard[] {
+function buildCards(data: LocationData): StripCard[] {
   const { requestsToAccept, bookingsToApprove } = data;
 
   return [
@@ -52,7 +52,7 @@ function buildCards(data: HouseData): StripCard[] {
   ];
 }
 
-export function NotificationStrip({ data }: { data: HouseData }) {
+export function NotificationStrip({ data }: { data: LocationData }) {
   const cards = buildCards(data);
 
   return (

@@ -1,4 +1,4 @@
-import type { BookingStatus } from '../data/houses';
+import type { BookingStatus } from '../data/locations';
 
 const LABELS: Record<BookingStatus, string> = {
   confirmed: 'Confirmed',

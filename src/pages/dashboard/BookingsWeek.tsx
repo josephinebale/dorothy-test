@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import type { Booking, HouseData } from '../../data/houses';
+import type { Booking, LocationData } from '../../data/locations';
 import { StatusPill } from '../../components/StatusPill';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
@@ -43,7 +43,7 @@ function BookingCard({ booking, suburb, state }: { booking: Booking; suburb: str
   );
 }
 
-export function BookingsWeek({ data }: { data: HouseData }) {
+export function BookingsWeek({ data }: { data: LocationData }) {
   const [weekOffset, setWeekOffset] = useState(0);
 
   const today = startOfDay(new Date());
@@ -150,8 +150,8 @@ export function BookingsWeek({ data }: { data: HouseData }) {
                       <BookingCard
                         key={booking.id}
                         booking={booking}
-                        suburb={data.house.suburb}
-                        state={data.house.state}
+                        suburb={data.location.suburb}
+                        state={data.location.state}
                       />
                     ))
                   )}

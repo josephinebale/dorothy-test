@@ -2,7 +2,7 @@ import { addDays, startOfDay } from '../lib/date';
 
 export type BookingStatus = 'confirmed' | 'requested' | 'ended';
 
-export type House = {
+export type Location = {
   id: string;
   name: string;
   suburb: string;
@@ -18,7 +18,7 @@ export type Worker = {
 
 export type Booking = {
   id: string;
-  houseId: string;
+  locationId: string;
   workerName: string;
   start: Date;
   end: Date;
@@ -27,8 +27,8 @@ export type Booking = {
   createdByMe: boolean;
 };
 
-export type HouseData = {
-  house: House;
+export type LocationData = {
+  location: Location;
   workers: Worker[];
   bookings: Booking[];
   requestsToAccept: number;
@@ -37,7 +37,7 @@ export type HouseData = {
   unreadMessages: number;
 };
 
-export const HOUSES: House[] = [
+export const LOCATIONS: Location[] = [
   { id: 'dee-why-1', name: 'Dee Why 1', suburb: 'Dee Why', state: 'NSW' },
   { id: 'galston-1', name: 'Galston 1', suburb: 'Galston', state: 'NSW' },
   { id: 'hornsby', name: 'Hornsby', suburb: 'Hornsby', state: 'NSW' },
@@ -64,7 +64,7 @@ const WORKER_POOL = [
   'Venessa S',
 ];
 
-const WORKERS_PER_HOUSE = [9, 7, 8, 6, 10];
+const WORKERS_PER_LOCATION = [9, 7, 8, 6, 10];
 
 /** Seeded so the placeholder roster and shifts stay identical between reloads. */
 function seededRandom(seed: number): () => number {
@@ -84,11 +84,11 @@ function at(day: Date, hours: number, minutes: number): Date {
   return d;
 }
 
-function rosterFor(houseIndex: number): string[] {
-  const size = WORKERS_PER_HOUSE[houseIndex];
+function rosterFor(locationIndex: number): string[] {
+  const size = WORKERS_PER_LOCATION[locationIndex];
   const names: string[] = [];
   for (let i = 0; i < size; i += 1) {
-    names.push(WORKER_POOL[(houseIndex * 3 + i) % WORKER_POOL.length]);
+    names.push(WORKER_POOL[(locationIndex * 3 + i) % WORKER_POOL.length]);
   }
   return names;
 }
@@ -96,8 +96,8 @@ function rosterFor(houseIndex: number): string[] {
 const SHIFTS_PER_DAY = [0, 1, 1, 2, 2, 2, 3];
 const START_MINUTES = [0, 0, 30, 45];
 
-function buildBookings(house: House, houseIndex: number, roster: string[]): Booking[] {
-  const random = seededRandom(4801 + houseIndex * 977);
+function buildBookings(location: Location, locationIndex: number, roster: string[]): Booking[] {
+  const random = seededRandom(4801 + locationIndex * 977);
   const today = startOfDay(new Date());
   const now = new Date();
   const bookings: Booking[] = [];
@@ -134,8 +134,8 @@ function buildBookings(house: House, houseIndex: number, roster: string[]): Book
       }
 
       bookings.push({
-        id: `${house.id}-${offset}-${i}`,
-        houseId: house.id,
+        id: `${location.id}-${offset}-${i}`,
+        locationId: location.id,
         workerName,
         start,
         end,
@@ -149,9 +149,9 @@ function buildBookings(house: House, houseIndex: number, roster: string[]): Book
   return bookings.sort((a, b) => a.start.getTime() - b.start.getTime());
 }
 
-function buildHouseData(house: House, houseIndex: number): HouseData {
-  const roster = rosterFor(houseIndex);
-  const bookings = buildBookings(house, houseIndex, roster);
+function buildLocationData(location: Location, locationIndex: number): LocationData {
+  const roster = rosterFor(locationIndex);
+  const bookings = buildBookings(location, locationIndex, roster);
   const today = startOfDay(new Date());
 
   const counts = new Map<string, number>();
@@ -162,10 +162,10 @@ function buildHouseData(house: House, houseIndex: number): HouseData {
 
   const workers: Worker[] = roster
     .map((name, index) => ({
-      id: `${house.id}-worker-${index}`,
+      id: `${location.id}-worker-${index}`,
       name,
       bookingCount: counts.get(name) ?? 0,
-      planConfirmed: (houseIndex + index) % 3 !== 0,
+      planConfirmed: (locationIndex + index) % 3 !== 0,
     }))
     .sort((a, b) => b.bookingCount - a.bookingCount || a.name.localeCompare(b.name));
 
@@ -174,32 +174,32 @@ function buildHouseData(house: House, houseIndex: number): HouseData {
   );
 
   return {
-    house,
+    location,
     workers,
     bookings,
     requestsToAccept: bookings.filter((b) => b.status === 'requested' && b.start >= today).length,
     bookingsToApprove: endedRecently.filter((_, index) => index % 3 === 0).length,
     plansToReview: workers.filter((worker) => !worker.planConfirmed).length,
-    unreadMessages: (houseIndex % 3) + 1,
+    unreadMessages: (locationIndex % 3) + 1,
   };
 }
 
-const cache = new Map<string, HouseData>();
+const cache = new Map<string, LocationData>();
 
-export function getHouseData(houseId: string): HouseData {
-  const cached = cache.get(houseId);
+export function getLocationData(locationId: string): LocationData {
+  const cached = cache.get(locationId);
   if (cached) return cached;
 
-  const houseIndex = Math.max(
+  const locationIndex = Math.max(
     0,
-    HOUSES.findIndex((house) => house.id === houseId),
+    LOCATIONS.findIndex((location) => location.id === locationId),
   );
-  const data = buildHouseData(HOUSES[houseIndex], houseIndex);
-  cache.set(houseId, data);
+  const data = buildLocationData(LOCATIONS[locationIndex], locationIndex);
+  cache.set(locationId, data);
   return data;
 }
 
-export function findHouse(houseId: string | null): House | null {
-  if (!houseId) return null;
-  return HOUSES.find((house) => house.id === houseId) ?? null;
+export function findLocation(locationId: string | null): Location | null {
+  if (!locationId) return null;
+  return LOCATIONS.find((location) => location.id === locationId) ?? null;
 }

@@ -6,11 +6,11 @@ import { Button } from '../components/ui/Button';
 import { Card as UiCard } from '../components/ui/Card';
 import { EntityLink } from '../components/ui/EntityLink';
 import { IconButton } from '../components/ui/IconButton';
-import { HOUSES, type HouseData } from '../data/houses';
+import { LOCATIONS, type LocationData } from '../data/locations';
 import {
   ACCOUNT_SECTIONS,
   CAN_EDIT_ORGANISATION_DETAILS,
-  HOUSE_SECTIONS,
+  LOCATION_SECTIONS,
   MANAGER_NAME,
   ORGANISATION_NAME,
   ORGANISATION_SECTIONS,
@@ -337,18 +337,18 @@ function Password() {
   );
 }
 
-function SupportPlan({ houseName }: { houseName: string }) {
+function SupportPlan({ locationName }: { locationName: string }) {
   return (
     <SettingsCard title="Support plan">
       <p className="text-sm text-text-strong">
-        Manage the support plan shared with workers booked for {houseName}.
+        Manage the support plan shared with workers booked for {locationName}.
       </p>
       <Button type="button">View support plan</Button>
     </SettingsCard>
   );
 }
 
-function HouseName({ initialName }: { initialName: string }) {
+function LocationName({ initialName }: { initialName: string }) {
   const [name, setName] = useState(initialName);
 
   return (
@@ -359,11 +359,11 @@ function HouseName({ initialName }: { initialName: string }) {
   );
 }
 
-function HousePicture({ houseName }: { houseName: string }) {
+function LocationPicture({ locationName }: { locationName: string }) {
   return (
     <SettingsCard title="Location picture">
       <div className="flex items-center gap-4">
-        <Avatar name={houseName} size="lg" />
+        <Avatar name={locationName} size="lg" />
         <Button type="button" size="small">
           Choose file
         </Button>
@@ -376,28 +376,28 @@ function HousePicture({ houseName }: { houseName: string }) {
 const PEOPLE = [
   {
     name: MANAGER_NAME,
-    houseAccess: 'Can manage bookings, team and location settings',
-    visibleHouses: HOUSES.map(({ name }) => name),
+    locationAccess: 'Can manage bookings, team and location settings',
+    visibleLocations: LOCATIONS.map(({ name }) => name),
   },
   {
     name: 'Dom Green',
-    houseAccess: 'Can manage bookings and view the team',
-    visibleHouses: HOUSES.slice(0, 3).map(({ name }) => name),
+    locationAccess: 'Can manage bookings and view the team',
+    visibleLocations: LOCATIONS.slice(0, 3).map(({ name }) => name),
   },
   {
     name: 'Priya Shah',
-    houseAccess: 'Can view bookings and message the team',
-    visibleHouses: HOUSES.slice(0, 2).map(({ name }) => name),
+    locationAccess: 'Can view bookings and message the team',
+    visibleLocations: LOCATIONS.slice(0, 2).map(({ name }) => name),
   },
 ];
 
 function PeopleList({
   scope,
-  houseName,
+  locationName,
   canEdit = true,
 }: {
-  scope: 'house' | 'organisation';
-  houseName: string;
+  scope: 'location' | 'organisation';
+  locationName: string;
   canEdit?: boolean;
 }) {
   return (
@@ -412,9 +412,9 @@ function PeopleList({
             <div className="min-w-0 flex-1">
               <EntityLink as="span">{person.name}</EntityLink>
               <p className="mt-1 text-sm text-text-secondary">
-                {scope === 'house'
-                  ? `${person.houseAccess} in ${houseName}.`
-                  : `Can see ${person.visibleHouses.join(', ')}.`}
+                {scope === 'location'
+                  ? `${person.locationAccess} in ${locationName}.`
+                  : `Can see ${person.visibleLocations.join(', ')}.`}
               </p>
             </div>
             <IconButton
@@ -433,12 +433,12 @@ function PeopleList({
   );
 }
 
-function HouseSection({
+function LocationSection({
   section,
   data,
 }: {
   section: string;
-  data: HouseData;
+  data: LocationData;
 }) {
   switch (section) {
     case 'preferences':
@@ -481,13 +481,13 @@ function HouseSection({
     case 'covid':
       return <CovidRequirements />;
     case 'support-plan':
-      return <SupportPlan houseName={data.house.name} />;
-    case 'house-name':
-      return <HouseName initialName={data.house.name} />;
-    case 'house-picture':
-      return <HousePicture houseName={data.house.name} />;
+      return <SupportPlan locationName={data.location.name} />;
+    case 'location-name':
+      return <LocationName initialName={data.location.name} />;
+    case 'location-picture':
+      return <LocationPicture locationName={data.location.name} />;
     case 'people':
-      return <PeopleList scope="house" houseName={data.house.name} />;
+      return <PeopleList scope="location" locationName={data.location.name} />;
     default:
       return null;
   }
@@ -499,7 +499,7 @@ function OrganisationSection({
   canEdit,
 }: {
   section: string;
-  data: HouseData;
+  data: LocationData;
   canEdit: boolean;
 }) {
   switch (section) {
@@ -513,7 +513,7 @@ function OrganisationSection({
       return (
         <PeopleList
           scope="organisation"
-          houseName={data.house.name}
+          locationName={data.location.name}
           canEdit={canEdit}
         />
       );
@@ -585,20 +585,20 @@ function SettingsPage({
   );
 }
 
-export function ManageHouseSettings({
+export function ManageLocationSettings({
   data,
   path,
 }: {
-  data: HouseData;
+  data: LocationData;
   path: string;
 }) {
   return (
     <SettingsPage
       title="Manage this location"
       path={path}
-      basePath={ROUTES.manageHouse}
-      sections={HOUSE_SECTIONS}
-      renderSection={(section) => <HouseSection section={section} data={data} />}
+      basePath={ROUTES.manageLocation}
+      sections={LOCATION_SECTIONS}
+      renderSection={(section) => <LocationSection section={section} data={data} />}
     />
   );
 }
@@ -608,7 +608,7 @@ export function OrganisationSettings({
   path,
   canEdit = CAN_EDIT_ORGANISATION_DETAILS,
 }: {
-  data: HouseData;
+  data: LocationData;
   path: string;
   canEdit?: boolean;
 }) {

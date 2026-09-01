@@ -1,4 +1,5 @@
-const HOUSE_KEY = 'hm.lastHouseId';
+const LOCATION_KEY = 'hm.lastLocationId';
+const LEGACY_HOUSE_KEY = 'hm.lastHouseId';
 const SIGNED_IN_KEY = 'hm.signedIn';
 
 function read(key: string): string | null {
@@ -25,16 +26,17 @@ function remove(key: string): void {
   }
 }
 
-export function readLastHouseId(): string | null {
-  return read(HOUSE_KEY);
+export function readLastLocationId(): string | null {
+  return read(LOCATION_KEY) ?? read(LEGACY_HOUSE_KEY);
 }
 
-export function writeLastHouseId(houseId: string): void {
-  write(HOUSE_KEY, houseId);
+export function writeLastLocationId(locationId: string): void {
+  write(LOCATION_KEY, locationId);
 }
 
-export function clearLastHouseId(): void {
-  remove(HOUSE_KEY);
+export function clearLastLocationId(): void {
+  remove(LOCATION_KEY);
+  remove(LEGACY_HOUSE_KEY);
 }
 
 export function readSignedIn(): boolean {

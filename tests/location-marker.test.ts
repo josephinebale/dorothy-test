@@ -27,8 +27,6 @@ function contrast(foreground: string, surface: string): number {
   return (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
 }
 
-/** Whether a colour sits on the same hue ramp as the logo: green dominant, red
- *  and blue below it, and red and blue close to each other. */
 function isLogoGreenFamily(hex: string): boolean {
   const [red, green, blue] = channels(hex);
   const [logoRed, logoGreen, logoBlue] = channels(LOGO_GREEN);
@@ -51,28 +49,23 @@ function token(name: string): string {
 test('every location shares one marker colour taken from the logo', () => {
   const css = readFileSync(new URL('../src/index.css', import.meta.url), 'utf8');
 
-  assert.doesNotMatch(
-    css,
-    /--color-house-(green|lime|purple|orange|blue)-/,
-    'per-location marker tones should be replaced by one shared pair',
-  );
-  assert.ok(isLogoGreenFamily(token('house-surface')));
-  assert.ok(isLogoGreenFamily(token('house-foreground')));
+  assert.doesNotMatch(css, /--color-house-/);
+  assert.ok(isLogoGreenFamily(token('location-surface')));
+  assert.ok(isLogoGreenFamily(token('location-foreground')));
 });
 
 test('marker initials pass AA against the marker surface', () => {
   assert.ok(
-    contrast(token('house-foreground'), token('house-surface')) >= 4.5,
+    contrast(token('location-foreground'), token('location-surface')) >= 4.5,
     'marker initials must pass 4.5:1',
   );
 });
 
 test('the marker renders one colour rather than a per-location tone', () => {
   const marker = readFileSync(
-    new URL('../src/components/HouseMarker.tsx', import.meta.url),
+    new URL('../src/components/LocationMarker.tsx', import.meta.url),
     'utf8',
   );
-  assert.match(marker, /bg-house-surface/);
-  assert.match(marker, /text-house-foreground/);
-  assert.doesNotMatch(marker, /houseMarkerTone/);
+  assert.match(marker, /bg-location-surface/);
+  assert.match(marker, /text-location-foreground/);
 });

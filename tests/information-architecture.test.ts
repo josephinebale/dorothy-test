@@ -4,7 +4,7 @@ import test from 'node:test';
 import {
   ACCOUNT_SECTIONS,
   CAN_EDIT_ORGANISATION_DETAILS,
-  HOUSE_SECTIONS,
+  LOCATION_SECTIONS,
   MANAGER_NAME,
   ORGANISATION_NAME,
   ORGANISATION_SECTIONS,
@@ -15,7 +15,7 @@ import {
 } from '../src/lib/informationArchitecture.ts';
 
 test('settings sections are split by scope without changing existing labels', () => {
-  assert.deepEqual(HOUSE_SECTIONS.map(({ label }) => label), [
+  assert.deepEqual(LOCATION_SECTIONS.map(({ label }) => label), [
     'Support worker preferences',
     'Support areas',
     'Specialised support',
@@ -51,12 +51,14 @@ test('the account menu contains personal destinations only', () => {
 
 test('each settings scope has one route and a stable default section', () => {
   assert.deepEqual(ROUTES, {
-    manageHouse: '/manage-house',
+    manageLocation: '/manage-location',
     organisationSettings: '/organisation-settings',
     yourAccount: '/your-account',
   });
-  assert.equal(sectionFromPath('/manage-house', HOUSE_SECTIONS), 'preferences');
-  assert.equal(sectionFromPath('/manage-house/people', HOUSE_SECTIONS), 'people');
+  assert.equal(sectionFromPath('/manage-location', LOCATION_SECTIONS), 'preferences');
+  assert.equal(sectionFromPath('/manage-location/people', LOCATION_SECTIONS), 'people');
+  assert.equal(sectionFromPath('/manage-location/location-name', LOCATION_SECTIONS), 'location-name');
+  assert.equal(sectionFromPath('/manage-house/house-name', LOCATION_SECTIONS), 'location-name');
   assert.equal(sectionFromPath('/your-account/privacy', ACCOUNT_SECTIONS), 'privacy');
 });
 

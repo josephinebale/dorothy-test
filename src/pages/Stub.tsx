@@ -1,4 +1,4 @@
-import type { House } from '../data/houses';
+import type { Location } from '../data/locations';
 import { PageHeading } from '../components/PageHeading';
 import { Card } from '../components/ui/Card';
 
@@ -17,16 +17,16 @@ export const STUB_TITLES: Record<string, string> = {
 
 type StubProps = {
   title: string;
-  house: House;
+  location: Location;
 };
 
-export function Stub({ title, house }: StubProps) {
+export function Stub({ title, location }: StubProps) {
   return (
     <div className="width-main-column">
       <PageHeading title={title} />
       <Card className="p-6">
         <p className="max-w-content text-sm text-text-strong">
-          Placeholder page for {house.name}. This section is not built in this prototype, it is here
+          Placeholder page for {location.name}. This section is not built in this prototype, it is here
           so the structure can be navigated end to end.
         </p>
       </Card>

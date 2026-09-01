@@ -3,7 +3,7 @@ export const MANAGER_NAME = 'Helen Dawson';
 export const CAN_EDIT_ORGANISATION_DETAILS = false;
 
 export const ROUTES = {
-  manageHouse: '/manage-house',
+  manageLocation: '/manage-location',
   organisationSettings: '/organisation-settings',
   yourAccount: '/your-account',
 } as const;
@@ -13,14 +13,14 @@ export type SettingsSection = {
   label: string;
 };
 
-export const HOUSE_SECTIONS: SettingsSection[] = [
+export const LOCATION_SECTIONS: SettingsSection[] = [
   { id: 'preferences', label: 'Support worker preferences' },
   { id: 'support-areas', label: 'Support areas' },
   { id: 'specialised', label: 'Specialised support' },
   { id: 'covid', label: 'COVID-19 requirements' },
   { id: 'support-plan', label: 'Support plan' },
-  { id: 'house-name', label: 'Location name' },
-  { id: 'house-picture', label: 'Location picture' },
+  { id: 'location-name', label: 'Location name' },
+  { id: 'location-picture', label: 'Location picture' },
   { id: 'people', label: 'People' },
 ];
 
@@ -46,12 +46,18 @@ export const PERSONAL_MENU_ITEMS = [
   { label: 'Password', path: '/your-account/password' },
 ] as const;
 
+const LEGACY_SECTION_IDS: Record<string, string> = {
+  'house-name': 'location-name',
+  'house-picture': 'location-picture',
+};
+
 export function sectionFromPath(
   path: string,
   sections: SettingsSection[],
 ): string {
   const requested = path.split('/').filter(Boolean).at(-1);
-  return sections.find(({ id }) => id === requested)?.id ?? sections[0].id;
+  const id = requested ? (LEGACY_SECTION_IDS[requested] ?? requested) : undefined;
+  return sections.find((section) => section.id === id)?.id ?? sections[0].id;
 }
 
 export function menuIndexAfterKey(

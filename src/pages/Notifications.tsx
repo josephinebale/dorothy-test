@@ -1,6 +1,6 @@
 import { Calendar, CalendarCheck, ClipboardList, MessageCircle } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
-import type { HouseData } from '../data/houses';
+import type { LocationData } from '../data/locations';
 import { PageHeading } from '../components/PageHeading';
 import { Card } from '../components/ui/Card';
 import { addDays, formatLongDate, startOfDay } from '../lib/date';
@@ -15,13 +15,13 @@ type Item = {
   path: string;
 };
 
-function buildItems(data: HouseData): Item[] {
+function buildItems(data: LocationData): Item[] {
   const today = startOfDay(new Date());
 
   const items: Item[] = [
     {
       title: `${data.unreadMessages} unread ${data.unreadMessages === 1 ? 'message' : 'messages'}`,
-      description: `From workers at ${data.house.name}.`,
+      description: `From workers at ${data.location.name}.`,
       Icon: MessageCircle,
       date: today,
       path: '/messages',
@@ -45,14 +45,14 @@ function buildItems(data: HouseData): Item[] {
       description: 'These workers have not confirmed the latest support plan.',
       Icon: ClipboardList,
       date: addDays(today, -4),
-      path: '/manage-house/support-plan',
+      path: '/manage-location/support-plan',
     },
   ];
 
   return items;
 }
 
-export function Notifications({ data }: { data: HouseData }) {
+export function Notifications({ data }: { data: LocationData }) {
   const items = buildItems(data);
 
   return (
