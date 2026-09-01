@@ -43,7 +43,7 @@ test('the account and location triggers share one centred treatment', () => {
 
   assert.match(
     css,
-    /\.header-menu-trigger \{[\s\S]*?height: 2\.25rem;[\s\S]*?align-items: center;[\s\S]*?gap: var\(--space-2\);/,
+    /\.header-menu-trigger \{[\s\S]*?height: 2\.25rem;[\s\S]*?align-items: center;[\s\S]*?gap: var\(--space-3\);/,
   );
   assert.match(header, /className="header-menu-trigger -mr-4"/);
   assert.match(switcher, /className="header-menu-trigger location-switcher-trigger/);

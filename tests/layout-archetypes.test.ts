@@ -36,6 +36,13 @@ test('page shell is 1440px with a two-tier header', () => {
   assert.match(css, /--header-nav-height:\s*3rem/);
 });
 
+test('the Dashboard heading keeps Request booking and drops Report incident', () => {
+  assert.match(dashboard, /<RequestBookingButton \/>/);
+  assert.doesNotMatch(dashboard, /Report incident/);
+  assert.doesNotMatch(dashboard, /report-incident/);
+  assert.match(bookings, /Report incident/);
+});
+
 test('pages declare their distinct layout archetype', () => {
   assert.match(bookings, /layout-rail-content/);
   assert.match(settings, /layout-rail-content/);

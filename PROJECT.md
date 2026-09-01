@@ -145,14 +145,14 @@ Two tiers, `max-w-page` + `px-8` on both. The header is **not sticky** — it sc
 - `.ui-button--default` is **unlayered CSS**: `height: 2.25rem; padding: 0 var(--space-4)` (16px). Header dropdown triggers also carry the later `.header-menu-trigger`, which intentionally gives both account and location controls 36px height and 8px horizontal padding. The account right-edge pull-back remains `-mr-4`.
 - `.ui-button` already `inline-flex` + `align-items: center` + `gap: var(--space-2)`.
 - An input placed beside a button must come down to the button’s 36px (`h-9`), not the other way round: button height is unlayered CSS, so a Tailwind height on the button is a silent no-op. Stacked form fields with labels stay 40px (`h-10`). Any row mixing controls also needs `items-center`, or the default stretch top-aligns them (this was the Messages search row: 40 / 36 / 28px, all top-aligned).
-- `.header-menu-trigger` supplies the shared location/account height, radius, gap, transparent rest state, and subtle hover. Both use one ChevronDown which rotates while open.
+- `.header-menu-trigger` supplies the shared location/account height, radius, 12px gap (`--space-3`, same as list rows next to an avatar), transparent rest state, and subtle hover. Both use one ChevronDown which rotates while open.
 - Badge: 18px height, `min-width: 1.125rem`, 6px horizontal padding (`calc(var(--space-1) * 1.5)`), `leading-none` / flex centre, and `tabular-nums`. Digits are already centred by the flex box — 4px padding made the pill look cramped rather than off-centre, so the fix was air, not alignment. Two digits render 27.5px wide, one digit 19.7px. Colour remains `#D6244A` (about 4.99:1 with white, so no token change was needed). Header utility badges are overlaid at the top-right with a 2px surface-coloured separation ring; the Bookings nav badge remains inline.
 - A button uses an icon or a text label, not both. Identity (Helen’s avatar and the location marker) and menu chevrons are not decorative and stay. Icon-only controls keep accessible labels. Remaining icons stay `h-5 w-5` (`tests/icon-size.test.ts`).
 - Location marker: `h-9 w-9 rounded-lg`, no border/ring, one green for every location (`#E6F2E8` / `#216B2D`).
 
 ## Visual consistency rules
 
-- Standard page shell: 32px top padding and 24px between `PageHeading` and the first content block. Do not remove page headings, including Dashboard.
+- Standard page shell: 32px top padding and 24px between `PageHeading` and the first content block. Do not remove page headings, including Dashboard. Dashboard’s heading action is **Request booking** only; **Report incident** stays on booking cards, not the Dashboard.
 - One heading block per page, like Team: title, description, and the page action inline in the same row. Bookings keeps **Bookings** as its title with **Request booking** on the right; the selected view (`activeLabel` — Confirmed, Requested, and so on) and its “Showing 1 – 40 of N …” count head the results column instead, next to the rail that changes them. Folding the view name into the page heading was tried and reverted.
 - Colour signals status or interactivity. On the Dashboard week grid, only `requested` cards are tinted because they need a decision; `confirmed` and `ended` cards stay white with quiet status pills.
 - Booking prices use neutral tags, not success green.

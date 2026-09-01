@@ -1,7 +1,5 @@
 import type { LocationData } from '../data/locations';
 import { PageHeading, RequestBookingButton } from '../components/PageHeading';
-import { Button } from '../components/ui/Button';
-import { href } from '../lib/router';
 import { BookingsWeek } from './dashboard/BookingsWeek';
 import { NotificationStrip } from './dashboard/NotificationStrip';
 import { TeamPanel } from './dashboard/TeamPanel';
@@ -12,12 +10,7 @@ export function Dashboard({ data }: { data: LocationData }) {
       <div className="min-w-0 flex-1">
         <PageHeading
           title="Dashboard"
-          actions={
-            <>
-              <RequestBookingButton />
-              <Button href={href('/report-incident')}>Report incident</Button>
-            </>
-          }
+          actions={<RequestBookingButton />}
         />
         <div className="space-y-6">
           <NotificationStrip data={data} />
