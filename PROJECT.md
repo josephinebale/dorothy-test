@@ -90,9 +90,11 @@ Each location:
 
 - **10–18** regular workers from a shared name pool
 - Bookings seeded relative to **today** (stable between reloads, week view always includes today)
-- Pattern is **24/7 SIL**: overlapping daytime shifts plus an overnight sleepover
+- Pattern is **24/7 SIL**: daytime shifts plus an overnight sleepover
+- Volume is deliberately **light for research sessions**: a day is **2–4 bookings** (one to three day shifts plus the overnight) and a week 16–24, against 35 for a full roster. Every day fits inside `COLLAPSED_BOOKINGS_PER_DAY`, so nothing hides behind the expander and the sleepover shows without expanding.
+- Day staffing **varies day to day** (`daytimeCountFor`) around each location's `DAYTIME_COUNTS` base, weighted towards the base and above. Uniform columns made the week grid read as a wall. Raise `DAYTIME_COUNTS` to go back to a dense roster.
 - A worker is **not booked twice on the same day**
-- Status mix: `confirmed` | `requested` | `ended`
+- Status mix: `confirmed` | `requested` | `ended`. At most **three requested bookings per week per location** (`assignRequested`), on different days, so the week grid shows a few decisions waiting without filling every column.
 
 Avatars: photo files in `src/assets/avatars/`, keyed in `src/data/avatars.ts`. Helen uses `helen-dawson.jpg`. Square = place (`LocationMarker`). Circle = person (`Avatar`).
 
@@ -112,7 +114,7 @@ Submit writes a `requested` booking and goes to `#/bookings/request/{id}`. Detai
 
 **Requested** list cards use `href(/bookings/request/${booking.id})`. Confirmed cards still stay on `/bookings`.
 
-Dashboard week grid collapses to **4 bookings per day** with show more / Show less (`COLLAPSED_BOOKINGS_PER_DAY`).
+Dashboard week grid collapses to **4 bookings per day** with show more / Show less (`COLLAPSED_BOOKINGS_PER_DAY`). At current seeded volume no day reaches that cap, so the expander stays hidden; it still covers denser weeks and session-created requests.
 
 ## Worker profiles
 
@@ -151,11 +153,11 @@ Two tiers, `max-w-page` + `px-8` on both. The header is **not sticky** — it sc
 ## Visual consistency rules
 
 - Standard page shell: 32px top padding and 24px between `PageHeading` and the first content block. Do not remove page headings, including Dashboard.
-- One heading block per page, like Team: title, description, and the page action inline in the same row. On Bookings that heading is the selected view (`activeLabel` — Confirmed, Requested, and so on) with its “Showing 1 – 40 of 129 …” count as the description and **Request booking** on the right. The view name is not repeated as a second heading below.
+- One heading block per page, like Team: title, description, and the page action inline in the same row. Bookings keeps **Bookings** as its title with **Request booking** on the right; the selected view (`activeLabel` — Confirmed, Requested, and so on) and its “Showing 1 – 40 of N …” count head the results column instead, next to the rail that changes them. Folding the view name into the page heading was tried and reverted.
 - Colour signals status or interactivity. On the Dashboard week grid, only `requested` cards are tinted because they need a decision; `confirmed` and `ended` cards stay white with quiet status pills.
 - Booking prices use neutral tags, not success green.
 - List rows keep one line: avatar, name, then row actions right-aligned and centred against the avatar. The Dashboard’s Most booked workers rows use 36px icon-only `IconButton`s (`MessageSquare` for Message, `Calendar` for Book) with `aria-label` and a matching tooltip, so a narrow column does not push actions onto a second line.
-- Rail navigation on Bookings and all Settings scopes uses the same active treatment: 2px brand left marker, `px-3 py-2`, and quiet selected background.
+- Rail navigation on Bookings and all Settings scopes uses the same active treatment: **4px** body-text left marker, `px-3 py-2`, quiet blue selected background (`bg-info-surface`), and **bold labels at rest**. The marker takes body text colour rather than brand blue, matching the active nav underline in the header.
 - Dividers stay only where they separate adjacent content that would otherwise read as one group. The line above Bookings filters is intentionally absent; the rail’s 16px gap separates navigation from filters.
 
 ## Layout archetypes

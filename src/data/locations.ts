@@ -1,4 +1,4 @@
-import { addDays, startOfDay } from '../lib/date.ts';
+import { addDays, startOfDay, startOfWeek } from '../lib/date.ts';
 
 export type BookingStatus = 'confirmed' | 'requested' | 'ended';
 
@@ -79,8 +79,13 @@ const WORKER_POOL = [
 /** Regulars a CPA SIL house would typically book with (core plus casuals). */
 const WORKERS_PER_LOCATION = [14, 11, 15, 13, 16];
 
-/** Daytime shifts before the overnight sleepover. 24/7 houses run 2–4 overlapping day staff. */
-const DAYTIME_COUNTS = [4, 2, 4, 3, 4];
+/**
+ * Daytime shifts before the overnight sleepover. A real 24/7 house runs 2–4
+ * overlapping day staff, but a full roster makes the dashboard week unreadable
+ * in a session, so the prototype shows a lighter day: one or two day shifts plus
+ * the overnight, which also keeps every day inside the grid without an expander.
+ */
+const DAYTIME_COUNTS = [2, 1, 2, 2, 2];
 
 /** Seeded so the placeholder roster and shifts stay identical between reloads. */
 function seededRandom(seed: number): () => number {
@@ -110,6 +115,7 @@ function rosterFor(locationIndex: number): string[] {
 }
 
 const DAYTIME_SHIFTS: Record<number, { hour: number; minutes: number; hours: number }[]> = {
+  1: [{ hour: 7, minutes: 0, hours: 14 }],
   2: [
     { hour: 7, minutes: 0, hours: 9 },
     { hour: 16, minutes: 0, hours: 6 },
@@ -127,6 +133,19 @@ const DAYTIME_SHIFTS: Record<number, { hour: number; minutes: number; hours: num
   ],
 };
 
+/**
+ * Day staffing moves around the base level, so the week reads as a roster rather
+ * than a wall of identical columns. The busiest day is three day shifts plus the
+ * overnight, which still fits the dashboard grid without an expander.
+ */
+function daytimeCountFor(locationIndex: number, random: () => number): number {
+  const base = DAYTIME_COUNTS[locationIndex];
+  const roll = random();
+  if (roll < 0.2) return Math.max(1, base - 1);
+  if (roll < 0.65) return base;
+  return Math.min(3, base + 1);
+}
+
 function pickWorker(roster: string[], used: Set<string>, random: () => number): string {
   const available = roster.filter((name) => !used.has(name));
   const pool = available.length > 0 ? available : roster;
@@ -135,9 +154,49 @@ function pickWorker(roster: string[], used: Set<string>, random: () => number): 
   return slice[Math.floor(random() * slice.length)];
 }
 
-function statusFor(offset: number, end: Date, now: Date, random: () => number): BookingStatus {
+function statusFor(offset: number, end: Date, now: Date): BookingStatus {
   if (offset < 0 || (offset === 0 && end < now)) return 'ended';
-  return random() < 0.1 ? 'requested' : 'confirmed';
+  return 'confirmed';
+}
+
+const MAX_REQUESTED_PER_WEEK = 3;
+
+/* Requested cards tint the week, but one per day reads as noise. Cap at three
+   a week, on different days, so the calendar still shows a decision waiting
+   without filling every column. */
+function assignRequested(bookings: Booking[], random: () => number): void {
+  const byWeek = new Map<string, Booking[]>();
+  for (const booking of bookings) {
+    const key = startOfWeek(booking.start).toISOString();
+    const week = byWeek.get(key) ?? [];
+    week.push(booking);
+    byWeek.set(key, week);
+  }
+
+  for (const week of byWeek.values()) {
+    const byDay = new Map<string, Booking[]>();
+    for (const booking of week) {
+      const key = startOfDay(booking.start).toISOString();
+      const day = byDay.get(key) ?? [];
+      day.push(booking);
+      byDay.set(key, day);
+    }
+
+    const days = [...byDay.keys()];
+    for (let i = days.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(random() * (i + 1));
+      const swap = days[i];
+      days[i] = days[j];
+      days[j] = swap;
+    }
+
+    for (const day of days.slice(0, Math.min(MAX_REQUESTED_PER_WEEK, days.length))) {
+      const pool = byDay.get(day) ?? [];
+      const confirmed = pool.filter((booking) => booking.status === 'confirmed');
+      const pickFrom = confirmed.length > 0 ? confirmed : pool;
+      pickFrom[Math.floor(random() * pickFrom.length)].status = 'requested';
+    }
+  }
 }
 
 function buildBookings(location: Location, locationIndex: number, roster: string[]): Booking[] {
@@ -145,11 +204,12 @@ function buildBookings(location: Location, locationIndex: number, roster: string
   const today = startOfDay(new Date());
   const now = new Date();
   const bookings: Booking[] = [];
-  const daytime = DAYTIME_SHIFTS[DAYTIME_COUNTS[locationIndex]];
 
   for (let offset = -14; offset <= 27; offset += 1) {
     const day = addDays(today, offset);
+    const daytime = DAYTIME_SHIFTS[daytimeCountFor(locationIndex, random)];
     const used = new Set<string>();
+    const dayBookings: Booking[] = [];
     let slot = 0;
 
     for (const shift of daytime) {
@@ -158,13 +218,13 @@ function buildBookings(location: Location, locationIndex: number, roster: string
       const start = at(day, shift.hour, shift.minutes);
       const end = new Date(start.getTime() + shift.hours * 3600 * 1000);
 
-      bookings.push({
+      dayBookings.push({
         id: `${location.id}-${offset}-${slot}`,
         locationId: location.id,
         workerName,
         start,
         end,
-        status: statusFor(offset, end, now, random),
+        status: statusFor(offset, end, now),
         sleepover: false,
         createdByMe: random() < 0.7,
       });
@@ -175,18 +235,21 @@ function buildBookings(location: Location, locationIndex: number, roster: string
     const sleepoverStart = at(day, 21, 0);
     const sleepoverEnd = at(addDays(day, 1), 7, 0);
 
-    bookings.push({
+    dayBookings.push({
       id: `${location.id}-${offset}-${slot}`,
       locationId: location.id,
       workerName: sleepoverWorker,
       start: sleepoverStart,
       end: sleepoverEnd,
-      status: statusFor(offset, sleepoverEnd, now, random),
+      status: statusFor(offset, sleepoverEnd, now),
       sleepover: true,
       createdByMe: random() < 0.7,
     });
+
+    bookings.push(...dayBookings);
   }
 
+  assignRequested(bookings, random);
   return bookings.sort((a, b) => a.start.getTime() - b.start.getTime());
 }
 

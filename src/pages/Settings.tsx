@@ -437,9 +437,9 @@ function SettingsPage({
               key={item.id}
               href={href(`${basePath}/${item.id}`)}
               aria-current={active ? 'page' : undefined}
-              className={`flex w-full items-center border-l-2 px-3 py-2 text-left text-sm ${
+              className={`flex w-full items-center border-l-4 px-3 py-2 text-left text-sm font-bold ${
                 active
-                  ? 'border-brand bg-info-surface font-medium text-text'
+                  ? 'border-text bg-info-surface text-text'
                   : 'border-transparent text-text-strong hover:bg-surface-subtle'
               }`}
             >

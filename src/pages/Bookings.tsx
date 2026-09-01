@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Check, Clock3, MapPin, Moon, Repeat2, X } from 'lucide-react';
 import { Avatar } from '../components/Avatar';
-import { PageHeading, RequestBookingButton } from '../components/PageHeading';
+import { RequestBookingButton } from '../components/PageHeading';
 import { PinnedQuestion } from '../components/PinnedQuestion';
 import { Badge } from '../components/ui/Badge';
 import { Tag } from '../components/ui/Tag';
@@ -212,22 +212,13 @@ export function Bookings({ data, view }: { data: LocationData; view: BookingView
 
   return (
     <div>
-      <PageHeading
-        title={activeLabel}
-        description={
-          <>
-            Showing {filteredBookings.length > 0 ? 1 : 0} -{' '}
-            {Math.min(filteredBookings.length, 40)} of {filteredBookings.length}{' '}
-            {view === 'confirmed'
-              ? 'upcoming bookings that have been accepted by a worker.'
-              : 'bookings.'}
-          </>
-        }
-        actions={<RequestBookingButton />}
-      />
-
+      {/* Each column opens with its own heading, so the two headings start level
+          while each keeps its own gap to the content beneath it. */}
       <div className="grid layout-rail-content items-start gap-6">
-      <aside className="space-y-4">
+      <div>
+      <h1 className="text-xl font-bold text-text">Bookings</h1>
+
+      <aside className="mt-6 space-y-4">
         <nav className="relative space-y-1" aria-label="Booking status">
           <PinnedQuestion
             questionId="bookings-status"
@@ -240,9 +231,9 @@ export function Bookings({ data, view }: { data: LocationData; view: BookingView
                 key={item.id}
                 type="button"
                 onClick={() => navigate(bookingsViewPath(item.id))}
-                className={`flex w-full items-center gap-2 border-l-2 px-3 py-2 text-left text-sm font-medium ${
+                className={`flex w-full items-center gap-2 border-l-4 px-3 py-2 text-left text-sm font-bold ${
                   active
-                    ? 'border-brand bg-info-surface text-text'
+                    ? 'border-text bg-info-surface text-text'
                     : 'border-transparent text-text-strong hover:bg-surface-selected'
                 }`}
               >
@@ -335,8 +326,24 @@ export function Bookings({ data, view }: { data: LocationData; view: BookingView
           </div>
         </Card>
       </aside>
+      </div>
 
-      <section>
+      <div>
+      <div className="flex items-start justify-between gap-6">
+        <div className="min-w-0">
+          <h2 className="text-lg font-bold text-text">{activeLabel}</h2>
+          <p className="mt-1 max-w-content text-sm text-text-strong">
+            Showing {filteredBookings.length > 0 ? 1 : 0} - {Math.min(filteredBookings.length, 40)} of{' '}
+            {filteredBookings.length}{' '}
+            {view === 'confirmed'
+              ? 'upcoming bookings that have been accepted by a worker.'
+              : 'bookings.'}
+          </p>
+        </div>
+        <RequestBookingButton />
+      </div>
+
+      <section className="mt-6">
         {filteredBookings.length > 0 ? (
           <div className="space-y-4">
             {filteredBookings.slice(0, 40).map((booking) => (
@@ -354,6 +361,7 @@ export function Bookings({ data, view }: { data: LocationData; view: BookingView
           </Card>
         )}
       </section>
+      </div>
       </div>
     </div>
   );

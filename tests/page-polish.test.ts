@@ -15,18 +15,23 @@ test('Bookings separates navigation and filters with space instead of a redundan
   assert.doesNotMatch(beforeFilter, /pt-4/);
 });
 
-test('the Bookings view heading and its count sit in the Request booking row', () => {
+test('each Bookings column heads itself, so both headings start level', () => {
   const bookings = source('../src/pages/Bookings.tsx');
-  const team = source('../src/pages/Team.tsx');
-  const heading = bookings.slice(
-    bookings.indexOf('<PageHeading'),
-    bookings.indexOf('actions={<RequestBookingButton />}') + 40,
-  );
+  const gridAt = bookings.indexOf('layout-rail-content');
+  const titleAt = bookings.indexOf('>Bookings</h1>');
+  const viewAt = bookings.indexOf('{activeLabel}</h2>');
 
-  assert.match(team, /description=[\s\S]*?actions=\{<RequestBookingButton \/>\}/);
-  assert.match(heading, /title=\{activeLabel\}/);
-  assert.match(heading, /Showing \{/);
-  assert.doesNotMatch(bookings, /<h2[^>]*>\{activeLabel\}<\/h2>/);
+  /* Each column opens with its own heading and sets its own gap, so the taller
+     right-hand heading cannot push the rail away from the page title. */
+  assert.ok(gridAt > -1 && gridAt < titleAt, 'title sits inside the rail grid');
+  assert.ok(titleAt < viewAt, 'title column comes first');
+  assert.match(
+    bookings,
+    /<h1 className="text-xl font-bold text-text">Bookings<\/h1>\s*<aside className="mt-6 space-y-4">/,
+  );
+  assert.match(bookings, /<h2 className="text-lg font-bold text-text">\{activeLabel\}<\/h2>/);
+  assert.match(bookings, /Showing \{filteredBookings\.length > 0 \? 1 : 0\}/);
+  assert.match(bookings, /<section className="mt-6">/);
 });
 
 test('booking prices use a neutral tag because price is information, not status', () => {
@@ -69,12 +74,18 @@ test('conversation rows are separated by one line, with none after the last', ()
   assert.doesNotMatch(row, /ui-target-row[^`]*border-b/);
 });
 
-test('settings and bookings use the same quiet active rail treatment', () => {
+test('settings and bookings share one definite active rail treatment', () => {
   const settings = source('../src/pages/Settings.tsx');
+  const bookings = source('../src/pages/Bookings.tsx');
 
-  assert.match(settings, /border-l-2 px-3 py-2/);
-  assert.match(settings, /border-brand bg-info-surface font-medium text-text/);
-  assert.doesNotMatch(settings, /border-l-4/);
+  for (const [name, rail] of [['settings', settings], ['bookings', bookings]] as const) {
+    /* Labels carry weight at rest, and the active row takes a 4px marker over a
+       quiet blue fill, so the selected view is legible at a glance. */
+    assert.match(rail, /border-l-4 px-3 py-2/, `${name} rail marker`);
+    assert.match(rail, /font-bold/, `${name} rail label weight`);
+    assert.match(rail, /border-text bg-info-surface text-text/, `${name} active row`);
+    assert.doesNotMatch(rail, /border-l-2 px-3 py-2/, `${name} keeps no thin marker`);
+  }
 });
 
 test('booking detail sections use one 24px gap without a redundant divider', () => {
