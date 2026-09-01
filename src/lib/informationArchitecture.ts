@@ -15,12 +15,8 @@ export type SettingsSection = {
 
 export const LOCATION_SECTIONS: SettingsSection[] = [
   { id: 'preferences', label: 'Support worker preferences' },
-  { id: 'support-areas', label: 'Support areas' },
-  { id: 'specialised', label: 'Specialised support' },
-  { id: 'covid', label: 'COVID-19 requirements' },
   { id: 'support-plan', label: 'Support plan' },
   { id: 'location-name', label: 'Location name' },
-  { id: 'location-picture', label: 'Location picture' },
   { id: 'people', label: 'People' },
 ];
 
@@ -32,18 +28,11 @@ export const ORGANISATION_SECTIONS: SettingsSection[] = [
 ];
 
 export const ACCOUNT_SECTIONS: SettingsSection[] = [
-  { id: 'about-you', label: 'About you' },
-  { id: 'profile-picture', label: 'Profile picture' },
   { id: 'account', label: 'Account' },
-  { id: 'privacy', label: 'Privacy' },
-  { id: 'password', label: 'Password' },
 ];
 
 export const PERSONAL_MENU_ITEMS = [
-  { label: 'Profile', path: '/your-account/about-you' },
-  { label: 'Account', path: '/your-account/account' },
-  { label: 'Privacy', path: '/your-account/privacy' },
-  { label: 'Password', path: '/your-account/password' },
+  { label: 'Your account', path: '/your-account' },
 ] as const;
 
 const LEGACY_SECTION_IDS: Record<string, string> = {

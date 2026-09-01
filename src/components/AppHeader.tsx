@@ -1,14 +1,7 @@
 import { useEffect, useRef } from 'react';
 import {
-  Bell,
   ChevronDown,
   ChevronUp,
-  CircleUser,
-  LogOut,
-  LockKeyhole,
-  MessageCircle,
-  Shield,
-  Settings,
 } from 'lucide-react';
 import type { Location } from '../data/locations';
 import {
@@ -36,13 +29,6 @@ const NAV_ITEMS = [
   { label: 'Bookings', path: '/bookings' },
   { label: 'Team', path: TEAM_ROUTE },
 ];
-
-const ACCOUNT_ICONS = {
-  Profile: CircleUser,
-  Account: Settings,
-  Privacy: Shield,
-  Password: LockKeyhole,
-};
 
 type AppHeaderProps = {
   location: Location;
@@ -76,7 +62,10 @@ export function AppHeader({
   return (
     <header className="app-header sticky top-0 z-20">
       <div className="app-header-identity">
-        <div className="app-header-row mx-auto flex max-w-page items-center gap-4 px-8">
+        <div
+          className="app-header-row mx-auto flex max-w-page items-center justify-between gap-4 px-8"
+          style={{ height: 'var(--header-identity-height)' }}
+        >
           <a
             href={href('/')}
             aria-label="Hireup for Providers dashboard"
@@ -89,11 +78,9 @@ export function AppHeader({
             <Button
               href={href('/messages')}
               variant="ghost"
-              size="small"
               aria-label={messagesAccessibleName(unreadMessages)}
               className={path === '/messages' ? 'bg-surface-selected' : ''}
             >
-              <MessageCircle className="h-5 w-5 shrink-0" />
               <span>Messages</span>
               <Badge count={unreadMessages} />
             </Button>
@@ -101,28 +88,25 @@ export function AppHeader({
             <Button
               href={href('/notifications')}
               variant="ghost"
-              size="small"
               aria-label={notificationsName}
               className={path === '/notifications' ? 'bg-surface-selected' : ''}
             >
-              <Bell className="h-5 w-5 shrink-0" />
               <span>Notifications</span>
               <Badge count={unreadNotifications} />
             </Button>
 
-            <span aria-hidden="true" className="h-6 w-px shrink-0 bg-border-subtle" />
-
-            <div className="relative">
+            <div className="relative flex items-center">
               <Button
                 ref={accountMenu.triggerRef}
                 type="button"
                 variant="ghost"
-                size="small"
+                size="default"
                 onClick={accountMenu.toggle}
                 onKeyDown={accountMenu.onTriggerKeyDown}
                 aria-haspopup="menu"
                 aria-expanded={accountMenu.open}
                 aria-label={accountName}
+                className="-mr-4"
               >
                 <Avatar name={MANAGER_NAME} size="md" />
                 <span className="max-w-40 truncate">Helen</span>
@@ -142,22 +126,25 @@ export function AppHeader({
                     onKeyDown={accountMenu.onMenuKeyDown}
                     className="py-1"
                   >
-                    {PERSONAL_MENU_ITEMS.map(({ label, path: itemPath }) => {
-                      const Icon = ACCOUNT_ICONS[label];
-                      return (
-                        <a
-                          key={itemPath}
-                          role="menuitem"
-                          tabIndex={-1}
-                          href={href(itemPath)}
-                          onClick={() => accountMenu.close()}
-                          className="flex items-center gap-3 px-3 py-2 text-sm text-text-strong hover:bg-surface-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
-                        >
-                          <Icon className="h-5 w-5 shrink-0 text-text-strong" />
-                          {label}
-                        </a>
-                      );
-                    })}
+                    <p className="px-3 py-2 text-sm font-bold text-text">
+                      {MANAGER_NAME}
+                    </p>
+                    {PERSONAL_MENU_ITEMS.map(({ label, path: itemPath }) => (
+                      <a
+                        key={itemPath}
+                        role="menuitem"
+                        tabIndex={-1}
+                        href={href(itemPath)}
+                        onClick={() => accountMenu.close()}
+                        className="block px-3 py-2 text-sm text-text-strong hover:bg-surface-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+                      >
+                        {label}
+                      </a>
+                    ))}
+                    <div
+                      role="separator"
+                      className="border-t border-border-subtle"
+                    />
                     <button
                       role="menuitem"
                       tabIndex={-1}
@@ -166,9 +153,8 @@ export function AppHeader({
                         accountMenu.close();
                         onSignOut();
                       }}
-                      className="flex w-full items-center gap-3 border-t border-border-subtle px-3 py-2 text-left text-sm text-text-strong hover:bg-surface-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+                      className="w-full px-3 py-2 text-left text-sm text-text-strong hover:bg-surface-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
                     >
-                      <LogOut className="h-5 w-5 shrink-0 text-text-strong" />
                       Log out
                     </button>
                   </div>
@@ -189,7 +175,13 @@ export function AppHeader({
         <div className="min-w-0 flex-1 overflow-x-auto">
           <nav className="flex h-full w-max items-stretch gap-8" aria-label="Main">
             {NAV_ITEMS.map((item) => {
-              const active = item.path === '/' ? path === '/' : path.startsWith(item.path);
+              const bookingRequestRoute =
+                item.path === '/bookings' &&
+                (path === '/request-booking' ||
+                  path.startsWith('/bookings/request/'));
+              const active =
+                bookingRequestRoute ||
+                (item.path === '/' ? path === '/' : path.startsWith(item.path));
               const count = item.label === 'Bookings' ? bookingsBadge : 0;
 
               return (
@@ -203,7 +195,7 @@ export function AppHeader({
                       ? bookingsAccessibleName(bookingsBadge)
                       : item.label
                   }
-                  className={`main-nav-link shrink-0 text-sm ${
+                  className={`main-nav-link h-full shrink-0 text-sm ${
                     active
                       ? 'main-nav-link--active font-medium text-text'
                       : 'font-normal text-text-strong'

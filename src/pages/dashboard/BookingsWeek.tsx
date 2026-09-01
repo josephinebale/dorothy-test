@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { ChevronDown, ChevronLeft, ChevronRight, ChevronUp } from 'lucide-react';
 import type { Booking, LocationData } from '../../data/locations';
+import { PinnedQuestion } from '../../components/PinnedQuestion';
 import { StatusPill } from '../../components/StatusPill';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
@@ -17,10 +18,12 @@ import {
   weekdayShort,
 } from '../../lib/date';
 
-const CARD_TONES: Record<Booking['status'], 'success' | 'pending' | 'neutral'> = {
-  confirmed: 'success',
+/* Confirmed is the norm and ended is history, so neither earns a tint. Only a
+   booking waiting on a decision colours its card. */
+const CARD_TONES: Record<Booking['status'], 'default' | 'pending'> = {
+  confirmed: 'default',
   requested: 'pending',
-  ended: 'neutral',
+  ended: 'default',
 };
 
 const COLLAPSED_BOOKINGS_PER_DAY = 4;
@@ -76,6 +79,7 @@ export function BookingsWeek({ data }: { data: LocationData }) {
           <h2 className="flex items-center gap-2 text-md font-bold text-text">
             <span>Bookings for {formatWeekRange(weekStart, weekEnd)}:</span>
             <Tag>{inWeek.length}</Tag>
+            <PinnedQuestion questionId="dashboard-week" />
           </h2>
           <p className="mt-1 max-w-content text-sm text-text-secondary">
             Times are displayed in the local time of the booking.

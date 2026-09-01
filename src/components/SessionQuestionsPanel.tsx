@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
-import { Copy, Trash2, X } from 'lucide-react';
+import { Trash2, X } from 'lucide-react';
+import { DISCUSSION_QUESTIONS } from '../data/discussionQuestions';
 import {
   formatSessionNotes,
   pageLabel,
   readSessionQuestions,
+  SESSION_QUESTIONS_CHANGE_EVENT,
   writeSessionQuestions,
   type SessionQuestionsState,
 } from '../lib/sessionQuestions';
@@ -17,6 +19,18 @@ type SessionQuestionsPanelProps = {
   onClose: () => void;
 };
 
+const generalQuestionGroups = DISCUSSION_QUESTIONS
+  .filter((question) => question.type === 'general')
+  .reduce<Array<{ page: string; questionIds: string[] }>>((groups, question) => {
+    const existing = groups.find((group) => group.page === question.page);
+    if (existing) {
+      existing.questionIds.push(question.id);
+    } else {
+      groups.push({ page: question.page, questionIds: [question.id] });
+    }
+    return groups;
+  }, []);
+
 export function SessionQuestionsPanel({ path, onClose }: SessionQuestionsPanelProps) {
   const [state, setState] = useState<SessionQuestionsState>(readSessionQuestions);
   const [quickNote, setQuickNote] = useState('');
@@ -25,6 +39,17 @@ export function SessionQuestionsPanel({ path, onClose }: SessionQuestionsPanelPr
   useEffect(() => {
     writeSessionQuestions(state);
   }, [state]);
+
+  useEffect(() => {
+    const syncQuestions = (event: Event) => {
+      const next = (event as CustomEvent<SessionQuestionsState>).detail;
+      if (next) setState(next);
+    };
+    window.addEventListener(SESSION_QUESTIONS_CHANGE_EVENT, syncQuestions);
+    return () => {
+      window.removeEventListener(SESSION_QUESTIONS_CHANGE_EVENT, syncQuestions);
+    };
+  }, []);
 
   const updateQuestion = (
     id: string,
@@ -136,31 +161,40 @@ export function SessionQuestionsPanel({ path, onClose }: SessionQuestionsPanelPr
         </div>
 
         <div className="border-t border-border-subtle pt-4">
-          <h3 className="text-sm font-bold text-text">Planned questions</h3>
+          <h3 className="text-sm font-bold text-text">Discussion guide</h3>
         </div>
 
-        {state.questions.map((question, index) => (
-          <div key={question.id}>
-            <label className="block text-sm font-medium text-text">
-              Question {index + 1}
-              <textarea
-                value={question.text}
-                onChange={(event) => updateQuestion(question.id, 'text', event.target.value)}
-                rows={2}
-                className="mt-1 w-full resize-y rounded border border-border bg-surface px-3 py-2 text-sm font-normal text-text"
-              />
-            </label>
-            <label className="mt-2 block text-xs font-medium text-text-secondary">
-              Notes
-              <textarea
-                value={question.note}
-                onChange={(event) => updateQuestion(question.id, 'note', event.target.value)}
-                placeholder="Add what was said"
-                rows={3}
-                className="mt-1 w-full resize-y rounded border border-border bg-surface px-3 py-2 text-sm font-normal text-text"
-              />
-            </label>
-          </div>
+        {generalQuestionGroups.map(({ page, questionIds }) => (
+          <section key={page} className="space-y-3">
+            <h4 className="text-xs font-bold text-text-secondary">{pageLabel(page)}</h4>
+            {questionIds.map((questionId) => {
+              const question = state.questions.find((item) => item.id === questionId);
+              if (!question) return null;
+              return (
+                <div key={question.id}>
+                  <label className="block text-xs font-medium text-text-secondary">
+                    Question
+                    <textarea
+                      value={question.text}
+                      onChange={(event) => updateQuestion(question.id, 'text', event.target.value)}
+                      rows={2}
+                      className="mt-1 w-full resize-y rounded border border-border bg-surface px-3 py-2 text-sm font-normal text-text"
+                    />
+                  </label>
+                  <label className="mt-2 block text-xs font-medium text-text-secondary">
+                    Answer
+                    <textarea
+                      value={question.note}
+                      onChange={(event) => updateQuestion(question.id, 'note', event.target.value)}
+                      placeholder="Add what was said"
+                      rows={3}
+                      className="mt-1 w-full resize-y rounded border border-border bg-surface px-3 py-2 text-sm font-normal text-text"
+                    />
+                  </label>
+                </div>
+              );
+            })}
+          </section>
         ))}
 
         <label className="block border-t border-border-subtle pt-4 text-sm font-medium text-text">
@@ -184,7 +218,6 @@ export function SessionQuestionsPanel({ path, onClose }: SessionQuestionsPanelPr
           onClick={copyAll}
           size="small"
         >
-          <Copy className="h-5 w-5" />
           Copy all notes
         </Button>
         {copyStatus === 'copied' && (

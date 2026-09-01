@@ -17,12 +17,8 @@ import {
 test('settings sections are split by scope without changing existing labels', () => {
   assert.deepEqual(LOCATION_SECTIONS.map(({ label }) => label), [
     'Support worker preferences',
-    'Support areas',
-    'Specialised support',
-    'COVID-19 requirements',
     'Support plan',
     'Location name',
-    'Location picture',
     'People',
   ]);
   assert.deepEqual(ORGANISATION_SECTIONS.map(({ label }) => label), [
@@ -32,21 +28,26 @@ test('settings sections are split by scope without changing existing labels', ()
     'People',
   ]);
   assert.deepEqual(ACCOUNT_SECTIONS.map(({ label }) => label), [
-    'About you',
-    'Profile picture',
     'Account',
-    'Privacy',
-    'Password',
   ]);
 });
 
-test('the account menu contains personal destinations only', () => {
+test('the account menu exposes one account destination', () => {
   assert.deepEqual(PERSONAL_MENU_ITEMS, [
-    { label: 'Profile', path: '/your-account/about-you' },
-    { label: 'Account', path: '/your-account/account' },
-    { label: 'Privacy', path: '/your-account/privacy' },
-    { label: 'Password', path: '/your-account/password' },
+    { label: 'Your account', path: '/your-account' },
   ]);
+});
+
+test('the account menu is full name, account destination, divider, then log out', () => {
+  const header = readFileSync(
+    new URL('../src/components/AppHeader.tsx', import.meta.url),
+    'utf8',
+  );
+
+  assert.match(header, /<p[^>]*>\s*\{MANAGER_NAME\}\s*<\/p>/);
+  assert.match(header, /PERSONAL_MENU_ITEMS\.map/);
+  assert.match(header, /role="separator"/);
+  assert.doesNotMatch(header, /ACCOUNT_ICONS|<LogOut/);
 });
 
 test('each settings scope has one route and a stable default section', () => {
@@ -59,7 +60,7 @@ test('each settings scope has one route and a stable default section', () => {
   assert.equal(sectionFromPath('/manage-location/people', LOCATION_SECTIONS), 'people');
   assert.equal(sectionFromPath('/manage-location/location-name', LOCATION_SECTIONS), 'location-name');
   assert.equal(sectionFromPath('/manage-house/house-name', LOCATION_SECTIONS), 'location-name');
-  assert.equal(sectionFromPath('/your-account/privacy', ACCOUNT_SECTIONS), 'privacy');
+  assert.equal(sectionFromPath('/your-account/privacy', ACCOUNT_SECTIONS), 'account');
 });
 
 test('organisation editing is controlled by one flag', () => {
@@ -75,6 +76,36 @@ test('financial details reuse the shared organisation name', () => {
   );
   assert.match(settingsSource, /useState\(ORGANISATION_NAME\)/);
   assert.doesNotMatch(settingsSource, /Hireup Demonstration Co/);
+});
+
+test('the account page folds photo and password fields into one section', () => {
+  const settingsSource = readFileSync(
+    new URL('../src/pages/Settings.tsx', import.meta.url),
+    'utf8',
+  );
+  const account = settingsSource.slice(
+    settingsSource.indexOf('function Account()'),
+    settingsSource.indexOf('function SupportPlan'),
+  );
+
+  assert.match(account, /Email address/);
+  assert.match(account, /Profile photo/);
+  assert.match(account, /<Avatar name=\{MANAGER_NAME\}/);
+  assert.match(account, /Choose file/);
+  assert.match(account, /label="Password"/);
+  assert.doesNotMatch(settingsSource, /function AboutYou|function ProfilePicture|function PrivacySettings|function Password/);
+});
+
+test('location settings exclude consumer matching, COVID, and picture sections', () => {
+  const settingsSource = readFileSync(
+    new URL('../src/pages/Settings.tsx', import.meta.url),
+    'utf8',
+  );
+
+  assert.doesNotMatch(
+    settingsSource,
+    /function CovidRequirements|function LocationPicture|case 'support-areas'|case 'specialised'|case 'covid'|case 'location-picture'/,
+  );
 });
 
 test('arrow keys wrap through menu items', () => {

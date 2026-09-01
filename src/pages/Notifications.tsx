@@ -2,6 +2,7 @@ import { Calendar, CalendarCheck, ClipboardList, MessageCircle } from 'lucide-re
 import type { LucideIcon } from 'lucide-react';
 import type { LocationData } from '../data/locations';
 import { PageHeading } from '../components/PageHeading';
+import { PinnedQuestion } from '../components/PinnedQuestion';
 import { Card } from '../components/ui/Card';
 import { addDays, formatLongDate, startOfDay } from '../lib/date';
 import { EMPTY_STATES } from '../lib/pageContent';
@@ -69,20 +70,26 @@ export function Notifications({ data }: { data: LocationData }) {
           </p>
         </Card>
       ) : (
-        <Card as="ul" divided>
-          {items.map(({ title, description, Icon, date, path }) => (
-            <li key={title} className="ui-target-row flex items-start gap-3 p-4">
-              <Icon className="h-5 w-5 shrink-0 text-text-strong" />
-              <div className="min-w-0 flex-1">
-                <a href={href(path)} className="ui-target-row__link">
-                  {title}
-                </a>
-                <p className="mt-1 text-sm text-text-secondary">{description}</p>
-              </div>
-              <span className="shrink-0 text-sm text-text-tertiary">{formatLongDate(date)}</span>
-            </li>
-          ))}
-        </Card>
+        <div className="relative">
+          <PinnedQuestion
+            questionId="notifications-list"
+            className="absolute -top-3 right-3 z-10"
+          />
+          <Card as="ul" divided>
+            {items.map(({ title, description, Icon, date, path }) => (
+              <li key={title} className="ui-target-row flex items-start gap-3 p-4">
+                <Icon className="h-5 w-5 shrink-0 text-text-strong" />
+                <div className="min-w-0 flex-1">
+                  <a href={href(path)} className="ui-target-row__link">
+                    {title}
+                  </a>
+                  <p className="mt-1 text-sm text-text-secondary">{description}</p>
+                </div>
+                <span className="shrink-0 text-sm text-text-tertiary">{formatLongDate(date)}</span>
+              </li>
+            ))}
+          </Card>
+        </div>
       )}
     </div>
   );

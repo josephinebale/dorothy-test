@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Info, MoreHorizontal } from 'lucide-react';
 import { Avatar } from '../components/Avatar';
 import { PageHeading } from '../components/PageHeading';
+import { PinnedQuestion } from '../components/PinnedQuestion';
 import { Badge } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
@@ -177,6 +178,7 @@ export function Messages({ data, onUnreadChange }: MessagesProps) {
             <Button type="submit">
               Search
             </Button>
+            <PinnedQuestion questionId="messages-conversations" />
           </form>
 
           <ul className="min-h-0 flex-1 overflow-auto">

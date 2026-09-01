@@ -34,8 +34,8 @@ npm run lint
   page treatment.
 - **Messages**, scoped to the selected location: conversation list, empty state, and a thread view
   matching the existing Messages layout.
-- **Stub pages** for Settings and everything in the account menu, so the remaining structure can
-  be navigated end to end.
+- **Settings** for this location, the organisation, and Helen’s account. The account menu goes to
+  Your account or Log out. See `PROJECT.md` for which sections remain.
 
 ## Session questions (for research sessions)
 
@@ -43,11 +43,14 @@ The question-mark button at the bottom right opens one **Session questions** pan
 
 - **Quick note** adds an in-the-moment note tagged with the screen that is currently open. Quick
   notes appear in a running list and can be deleted individually.
-- Four editable starter questions each have an answer area, followed by an **Other notes** area.
+- General discussion-guide questions are grouped by page and each has an editable question and
+  answer area, followed by an **Other notes** area.
+- Small neutral dots beside selected UI elements open a pinned question and answer field. They are
+  always visible and do not block the prototype’s normal interactions.
 - Everything is saved in the browser under `hm.sessionQuestions`, so it survives a reload during a
   session.
-- **Copy all notes** copies the page-tagged quick notes, planned questions and answers, and other
-  notes as plain text ready to paste into a shared document.
+- **Copy all notes** copies quick notes, general questions, element-pinned questions with page and
+  element context, and other notes as plain text ready to paste into a shared document.
 
 ## Testing the first-run experience
 
@@ -63,7 +66,13 @@ placeholder roster and bookings. Private street addresses are not used. Bookings
 a fixed seed relative to today, so the data is stable between reloads but the week view always
 includes today. See `src/data/locations.ts`.
 
+## Booking requests
+
+The prototype includes a three-step booking request flow for location and time, support details,
+and worker selection. Submitted requests appear in the Requested bookings list and open into a
+status and detail view. Created requests are kept for the current app session rather than sent
+to a backend.
+
 ## Not built
 
-Booking creation or request flows, Jobs, profile editing, settings content, and multi-location
-aggregate views.
+Jobs, profile editing, settings content, and multi-location aggregate views.

@@ -3,6 +3,7 @@ import type { LucideIcon } from 'lucide-react';
 import type { LocationData } from '../../data/locations';
 import { NOTIFICATION_EMPTY_DESCRIPTIONS } from '../../lib/pageContent';
 import { href } from '../../lib/router';
+import { PinnedQuestion } from '../../components/PinnedQuestion';
 import { Card } from '../../components/ui/Card';
 
 type StripCard = {
@@ -58,7 +59,10 @@ export function NotificationStrip({ data }: { data: LocationData }) {
   return (
     <section>
       <div className="mb-3 flex items-baseline justify-between gap-4">
-        <h2 className="text-md font-bold text-text">Notifications</h2>
+        <div className="flex items-center gap-2">
+          <h2 className="text-md font-bold text-text">Notifications</h2>
+          <PinnedQuestion questionId="dashboard-attention" />
+        </div>
         <a
           href={href('/notifications')}
           className="rounded text-sm text-brand underline hover:text-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"

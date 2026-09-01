@@ -6,11 +6,11 @@ const LABELS: Record<BookingStatus, string> = {
   ended: 'Shift ended',
 };
 
-/** Solid rather than tinted, so the pill reads against a Card of the same status tone. */
+/** Solid carries a decision that is still waiting; tinted only reports state. */
 const STYLES: Record<BookingStatus, string> = {
-  confirmed: 'bg-success text-surface',
+  confirmed: 'bg-success-surface text-success',
   requested: 'bg-pending text-surface',
-  ended: 'bg-neutral text-surface',
+  ended: 'bg-neutral-surface text-neutral',
 };
 
 export function StatusPill({ status }: { status: BookingStatus }) {

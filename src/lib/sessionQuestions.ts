@@ -1,5 +1,6 @@
 import { ROUTES } from './informationArchitecture.ts';
 import { TEAM_ROUTE } from './pageContent.ts';
+import { DISCUSSION_QUESTIONS } from '../data/discussionQuestions.ts';
 
 export type SessionQuestion = {
   id: string;
@@ -20,6 +21,7 @@ export type SessionQuestionsState = {
 };
 
 const KEY = 'hm.sessionQuestions';
+export const SESSION_QUESTIONS_CHANGE_EVENT = 'hm.sessionQuestions:change';
 
 const PAGE_LABELS: Record<string, string> = {
   '/': 'Dashboard',
@@ -40,19 +42,25 @@ const PAGE_LABELS: Record<string, string> = {
   '/request-booking': 'Request booking',
 };
 
-const STARTER_QUESTIONS = [
-  'What do you expect to find on this dashboard?',
-  'How do you keep track of upcoming bookings today?',
-  'What would you do if a booking needed attention?',
-  'Is anything missing for managing this location?',
-];
+function mergeCanonicalQuestions(saved: SessionQuestion[]): SessionQuestion[] {
+  const savedById = new Map(saved.map((question) => [question.id, question]));
+  const canonicalIds = new Set(DISCUSSION_QUESTIONS.map((question) => question.id));
+
+  return [
+    ...DISCUSSION_QUESTIONS.map((question) => {
+      const existing = savedById.get(question.id);
+      return existing ?? { id: question.id, text: question.text, note: '' };
+    }),
+    ...saved.filter((question) => !canonicalIds.has(question.id)),
+  ];
+}
 
 export function createDefaultSessionQuestions(): SessionQuestionsState {
   return {
     quickNotes: [],
-    questions: STARTER_QUESTIONS.map((text, index) => ({
-      id: `question-${index + 1}`,
-      text,
+    questions: DISCUSSION_QUESTIONS.map((question) => ({
+      id: question.id,
+      text: question.text,
       note: '',
     })),
     otherNotes: '',
@@ -60,13 +68,15 @@ export function createDefaultSessionQuestions(): SessionQuestionsState {
 }
 
 export function pageLabel(path: string): string {
+  if (path === '/request-booking') return 'Request booking';
+  if (path.startsWith('/bookings/request/')) return 'Requested booking';
   if (
     path === ROUTES.manageLocation ||
     path.startsWith(`${ROUTES.manageLocation}/`) ||
     path === '/manage-house' ||
     path.startsWith('/manage-house/')
   ) {
-    return 'Manage this location';
+    return 'Location settings';
   }
   if (
     path === ROUTES.organisationSettings ||
@@ -123,7 +133,11 @@ export function parseSessionQuestions(raw: string | null): SessionQuestionsState
       return createDefaultSessionQuestions();
     }
 
-    return { quickNotes, questions: state.questions, otherNotes: state.otherNotes };
+    return {
+      quickNotes,
+      questions: mergeCanonicalQuestions(state.questions),
+      otherNotes: state.otherNotes,
+    };
   } catch {
     return createDefaultSessionQuestions();
   }
@@ -140,9 +154,27 @@ export function readSessionQuestions(): SessionQuestionsState {
 export function writeSessionQuestions(state: SessionQuestionsState): void {
   try {
     window.localStorage.setItem(KEY, JSON.stringify(state));
+    window.dispatchEvent(
+      new CustomEvent<SessionQuestionsState>(SESSION_QUESTIONS_CHANGE_EVENT, {
+        detail: state,
+      }),
+    );
   } catch {
     // Prototype only; a blocked storage API just means session notes are not remembered.
   }
+}
+
+export function setSessionQuestionNote(
+  state: SessionQuestionsState,
+  id: string,
+  note: string,
+): SessionQuestionsState {
+  return {
+    ...state,
+    questions: state.questions.map((question) =>
+      question.id === id ? { ...question, note } : question,
+    ),
+  };
 }
 
 export function formatSessionNotes(state: SessionQuestionsState): string {
@@ -157,17 +189,47 @@ export function formatSessionNotes(state: SessionQuestionsState): string {
     });
   }
 
-  lines.push('');
-  lines.push('Session questions');
-  lines.push('');
+  const answersById = new Map(state.questions.map((question) => [question.id, question]));
+  const canonicalIds = new Set(DISCUSSION_QUESTIONS.map((question) => question.id));
+  const general = DISCUSSION_QUESTIONS.filter(
+    (question) => question.type === 'general' && answersById.has(question.id),
+  );
+  const pinned = DISCUSSION_QUESTIONS.filter(
+    (question) => question.type === 'element' && answersById.has(question.id),
+  );
+  const custom = state.questions.filter((question) => !canonicalIds.has(question.id));
 
-  state.questions.forEach((question, index) => {
-    lines.push(`${index + 1}. ${question.text.trim() || 'Untitled question'}`);
-    lines.push(`Notes: ${question.note.trim() || '—'}`);
-    lines.push('');
+  lines.push('', 'General questions');
+  let currentPage = '';
+  general.forEach((question, index) => {
+    if (question.page !== currentPage) {
+      currentPage = question.page;
+      lines.push('', pageLabel(question.page));
+    }
+    const answer = answersById.get(question.id);
+    lines.push(`${index + 1}. ${answer?.text.trim() || question.text}`);
+    lines.push(`Notes: ${answer?.note.trim() || '—'}`);
   });
 
-  lines.push('Other notes');
+  lines.push('', 'Element-pinned questions');
+  pinned.forEach((question, index) => {
+    const answer = answersById.get(question.id);
+    lines.push('');
+    lines.push(`${index + 1}. ${pageLabel(question.page)} — ${question.elementHint}`);
+    lines.push(answer?.text.trim() || question.text);
+    lines.push(`Notes: ${answer?.note.trim() || '—'}`);
+  });
+
+  if (custom.length > 0) {
+    lines.push('', 'Other planned questions');
+    custom.forEach((question, index) => {
+      lines.push('');
+      lines.push(`${index + 1}. ${question.text.trim() || 'Untitled question'}`);
+      lines.push(`Notes: ${question.note.trim() || '—'}`);
+    });
+  }
+
+  lines.push('', 'Other notes');
   lines.push(state.otherNotes.trim() || '—');
 
   return lines.join('\n');

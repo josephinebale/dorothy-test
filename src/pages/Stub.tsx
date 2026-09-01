@@ -12,7 +12,6 @@ export const STUB_TITLES: Record<string, string> = {
   '/contact': 'Contact us',
   '/terms': 'Terms of use',
   '/privacy': 'Privacy policy',
-  '/request-booking': 'Request booking',
 };
 
 type StubProps = {

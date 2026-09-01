@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { Check, Clock3, MapPin, Moon, Repeat2, X } from 'lucide-react';
 import { Avatar } from '../components/Avatar';
 import { PageHeading, RequestBookingButton } from '../components/PageHeading';
+import { PinnedQuestion } from '../components/PinnedQuestion';
 import { Badge } from '../components/ui/Badge';
 import { Tag } from '../components/ui/Tag';
 import { Button } from '../components/ui/Button';
@@ -106,15 +107,19 @@ function bookingsForView(data: LocationData, view: BookingView): Booking[] {
 
 function BookingCard({ booking, data }: { booking: Booking; data: LocationData }) {
   const hours = durationHours(booking);
+  const detailHref =
+    booking.status === 'requested'
+      ? href(`/bookings/request/${booking.id}`)
+      : href('/bookings');
 
   return (
     <Card as="article" className="ui-target-row p-4">
       <h3>
-        <a href={href('/bookings')} className="ui-target-row__link">
+        <a href={detailHref} className="ui-target-row__link">
           {bookingTitle(booking)}
         </a>
       </h3>
-      <Tag tone="success" className="mt-2">
+      <Tag tone="neutral" className="mt-2">
         {priceFor(booking)}
       </Tag>
 
@@ -211,7 +216,11 @@ export function Bookings({ data }: { data: LocationData }) {
 
       <div className="grid layout-rail-content items-start gap-6">
       <aside className="space-y-4">
-        <nav className="space-y-1" aria-label="Booking status">
+        <nav className="relative space-y-1" aria-label="Booking status">
+          <PinnedQuestion
+            questionId="bookings-status"
+            className="absolute top-1 right-1 z-10"
+          />
           {VIEWS.map((item) => {
             const active = view === item.id;
             return (
@@ -234,9 +243,11 @@ export function Bookings({ data }: { data: LocationData }) {
           })}
         </nav>
 
-        <div className="border-t border-border-subtle pt-4">
         <Card as="section" className="p-4">
-          <h2 className="text-sm font-bold text-text">Filter results</h2>
+          <div className="flex items-center justify-between gap-2">
+            <h2 className="text-sm font-bold text-text">Filter results</h2>
+            <PinnedQuestion questionId="bookings-filters" />
+          </div>
 
           <div className="mt-3 space-y-4">
           <label className="block text-xs font-medium text-text">
@@ -311,7 +322,6 @@ export function Bookings({ data }: { data: LocationData }) {
           </div>
           </div>
         </Card>
-        </div>
       </aside>
 
       <section>

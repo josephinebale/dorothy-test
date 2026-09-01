@@ -6,7 +6,7 @@ export function Badge({ count }: { count: number }) {
   if (!display) return null;
 
   return (
-    <span aria-hidden="true" className="ui-badge ui-badge--attention">
+    <span aria-hidden="true" className="ui-badge ui-badge--attention inline-flex items-center justify-center leading-none">
       {display}
     </span>
   );

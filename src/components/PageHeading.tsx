@@ -1,5 +1,4 @@
 import type { ReactNode } from 'react';
-import { Plus } from 'lucide-react';
 import { href } from '../lib/router';
 import { Button } from './ui/Button';
 
@@ -10,7 +9,6 @@ export function RequestBookingButton() {
       variant="primary"
       className="shrink-0"
     >
-      <Plus className="h-5 w-5" />
       Request booking
     </Button>
   );

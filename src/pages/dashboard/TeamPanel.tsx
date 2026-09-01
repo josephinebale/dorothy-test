@@ -1,6 +1,6 @@
-import { Calendar, MessageCircle } from 'lucide-react';
 import type { LocationData } from '../../data/locations';
 import { Avatar } from '../../components/Avatar';
+import { PinnedQuestion } from '../../components/PinnedQuestion';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
 import { EntityLink } from '../../components/ui/EntityLink';
@@ -13,7 +13,10 @@ export function TeamPanel({ data }: { data: LocationData }) {
   return (
     <div>
       <div className="flex items-baseline justify-between gap-4">
-        <h2 className="text-md font-bold text-text">Most booked workers</h2>
+        <div className="flex items-center gap-2">
+          <h2 className="text-md font-bold text-text">Most booked workers</h2>
+          <PinnedQuestion questionId="dashboard-worker-order" />
+        </div>
         <a
           href={href(TEAM_ROUTE)}
           className="rounded text-sm text-brand underline hover:text-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
@@ -52,7 +55,6 @@ export function TeamPanel({ data }: { data: LocationData }) {
                   className="whitespace-nowrap"
                   aria-label={`Message ${worker.name}`}
                 >
-                  <MessageCircle className="h-5 w-5 shrink-0" />
                   Message
                 </Button>
                 <Button
@@ -62,7 +64,6 @@ export function TeamPanel({ data }: { data: LocationData }) {
                   className="whitespace-nowrap"
                   aria-label={`Book ${worker.name}`}
                 >
-                  <Calendar className="h-5 w-5 shrink-0" />
                   Book
                 </Button>
               </div>

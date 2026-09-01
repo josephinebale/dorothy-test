@@ -2,6 +2,7 @@ import { useState, type ReactNode } from 'react';
 import { MoreHorizontal } from 'lucide-react';
 import { Avatar } from '../components/Avatar';
 import { PageHeading } from '../components/PageHeading';
+import { PinnedQuestion } from '../components/PinnedQuestion';
 import { Button } from '../components/ui/Button';
 import { Card as UiCard } from '../components/ui/Card';
 import { EntityLink } from '../components/ui/EntityLink';
@@ -171,44 +172,6 @@ function OrganisationDetails({ canEdit }: { canEdit: boolean }) {
   );
 }
 
-function AboutYou() {
-  const [firstName, setFirstName] = useState('Helen');
-  const [lastName, setLastName] = useState('Dawson');
-  const [preferred, setPreferred] = useState('Helen');
-
-  return (
-    <SettingsCard title="About you" intro={<PrivacyNote />}>
-      <div className="grid grid-cols-2 gap-4">
-        <Field label="First name" value={firstName} onChange={setFirstName} />
-        <Field label="Last name" value={lastName} onChange={setLastName} />
-      </div>
-      <Field label="Preferred name" value={preferred} onChange={setPreferred} />
-      <SaveButton />
-    </SettingsCard>
-  );
-}
-
-function ProfilePicture() {
-  return (
-    <SettingsCard
-      title="Profile picture"
-      intro={
-        <p className="mt-1 text-sm text-text-strong">
-          This photo is shown on your organisation profile.
-        </p>
-      }
-    >
-      <div className="flex items-center gap-4">
-        <Avatar name="Helen Dawson" size="lg" />
-        <Button type="button" size="small">
-          Choose file
-        </Button>
-      </div>
-      <SaveButton />
-    </SettingsCard>
-  );
-}
-
 function PreferenceList({ title, options }: { title: string; options: string[] }) {
   const [selected, setSelected] = useState<Record<string, boolean>>({});
 
@@ -268,70 +231,23 @@ function Documents({ canEdit }: { canEdit: boolean }) {
   );
 }
 
-function CovidRequirements() {
-  const [status, setStatus] = useState('up-to-date');
-
-  return (
-    <SettingsCard title="COVID-19 requirements">
-      <label className="block text-sm font-medium text-text">
-        Vaccination status
-        <select
-          value={status}
-          onChange={(event) => setStatus(event.target.value)}
-          className="mt-1 h-10 w-full rounded border border-border bg-surface px-3 text-sm font-normal text-text"
-        >
-          <option value="up-to-date">Up to date</option>
-          <option value="not-required">Not required</option>
-          <option value="prefer-not">Prefer not to say</option>
-        </select>
-      </label>
-      <SaveButton />
-    </SettingsCard>
-  );
-}
-
 function Account() {
   const [email, setEmail] = useState('helen.dawson@hireupdemo.com');
+  const [password, setPassword] = useState('');
 
   return (
     <SettingsCard title="Account" intro={<PrivacyNote />}>
       <Field label="Email address" value={email} onChange={setEmail} type="email" />
-      <SaveButton />
-    </SettingsCard>
-  );
-}
-
-function PrivacySettings() {
-  const [sharePlan, setSharePlan] = useState(true);
-  const [marketing, setMarketing] = useState(false);
-
-  return (
-    <SettingsCard title="Privacy">
-      <CheckRow
-        label="Share the latest support plan with booked workers"
-        checked={sharePlan}
-        onChange={setSharePlan}
-      />
-      <CheckRow
-        label="Receive product updates by email"
-        checked={marketing}
-        onChange={setMarketing}
-      />
-      <SaveButton />
-    </SettingsCard>
-  );
-}
-
-function Password() {
-  const [current, setCurrent] = useState('');
-  const [next, setNext] = useState('');
-  const [confirm, setConfirm] = useState('');
-
-  return (
-    <SettingsCard title="Password">
-      <Field label="Current password" value={current} onChange={setCurrent} type="password" />
-      <Field label="New password" value={next} onChange={setNext} type="password" />
-      <Field label="Confirm new password" value={confirm} onChange={setConfirm} type="password" />
+      <div>
+        <p className="text-sm font-medium text-text">Profile photo</p>
+        <div className="mt-1 flex items-center gap-4">
+          <Avatar name={MANAGER_NAME} size="lg" />
+          <Button type="button" size="small">
+            Choose file
+          </Button>
+        </div>
+      </div>
+      <Field label="Password" value={password} onChange={setPassword} type="password" />
       <SaveButton />
     </SettingsCard>
   );
@@ -354,20 +270,6 @@ function LocationName({ initialName }: { initialName: string }) {
   return (
     <SettingsCard title="Location name">
       <Field label="Name" value={name} onChange={setName} />
-      <SaveButton />
-    </SettingsCard>
-  );
-}
-
-function LocationPicture({ locationName }: { locationName: string }) {
-  return (
-    <SettingsCard title="Location picture">
-      <div className="flex items-center gap-4">
-        <Avatar name={locationName} size="lg" />
-        <Button type="button" size="small">
-          Choose file
-        </Button>
-      </div>
       <SaveButton />
     </SettingsCard>
   );
@@ -453,39 +355,10 @@ function LocationSection({
           ]}
         />
       );
-    case 'support-areas':
-      return (
-        <PreferenceList
-          title="Support areas"
-          options={[
-            'Personal care',
-            'Community access',
-            'Domestic assistance',
-            'Transport',
-            'Social and recreational',
-          ]}
-        />
-      );
-    case 'specialised':
-      return (
-        <PreferenceList
-          title="Specialised support"
-          options={[
-            'Complex bowel care',
-            'Enteral feeding',
-            'Catheter care',
-            'Ventilator management',
-          ]}
-        />
-      );
-    case 'covid':
-      return <CovidRequirements />;
     case 'support-plan':
       return <SupportPlan locationName={data.location.name} />;
     case 'location-name':
       return <LocationName initialName={data.location.name} />;
-    case 'location-picture':
-      return <LocationPicture locationName={data.location.name} />;
     case 'people':
       return <PeopleList scope="location" locationName={data.location.name} />;
     default:
@@ -524,16 +397,8 @@ function OrganisationSection({
 
 function AccountSection({ section }: { section: string }) {
   switch (section) {
-    case 'about-you':
-      return <AboutYou />;
-    case 'profile-picture':
-      return <ProfilePicture />;
     case 'account':
       return <Account />;
-    case 'privacy':
-      return <PrivacySettings />;
-    case 'password':
-      return <Password />;
     default:
       return null;
   }
@@ -557,7 +422,11 @@ function SettingsPage({
     <div>
       <PageHeading title={title} />
       <div className="grid layout-rail-content items-start gap-6">
-      <nav className="space-y-1" aria-label={title}>
+      <nav className="relative space-y-1" aria-label={title}>
+        <PinnedQuestion
+          questionId="settings-sections"
+          className="absolute top-1 right-1 z-10"
+        />
         {sections.map((item) => {
           const active = section === item.id;
           return (
@@ -565,9 +434,9 @@ function SettingsPage({
               key={item.id}
               href={href(`${basePath}/${item.id}`)}
               aria-current={active ? 'page' : undefined}
-              className={`flex w-full items-center border-l-4 px-2 py-3 text-left text-sm ${
+              className={`flex w-full items-center border-l-2 px-3 py-2 text-left text-sm ${
                 active
-                  ? 'border-brand font-medium text-text'
+                  ? 'border-brand bg-info-surface font-medium text-text'
                   : 'border-transparent text-text-strong hover:bg-surface-subtle'
               }`}
             >
@@ -594,7 +463,7 @@ export function ManageLocationSettings({
 }) {
   return (
     <SettingsPage
-      title="Manage this location"
+      title="Location settings"
       path={path}
       basePath={ROUTES.manageLocation}
       sections={LOCATION_SECTIONS}

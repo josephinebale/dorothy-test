@@ -13,6 +13,7 @@ import {
 import { href } from '../lib/router';
 import { useKeyboardMenu } from '../lib/useKeyboardMenu';
 import { LocationMarker } from './LocationMarker';
+import { PinnedQuestion } from './PinnedQuestion';
 import { Card } from './ui/Card';
 
 type LocationSwitcherProps = {
@@ -25,7 +26,7 @@ const MENU_ROW =
   'flex w-full items-center gap-3 px-3 py-2 text-left text-sm font-medium text-text-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand';
 
 const MANAGEMENT_ITEMS = [
-  { label: 'Manage this location', path: ROUTES.manageLocation, Icon: House },
+  { label: 'Location settings', path: ROUTES.manageLocation, Icon: House },
   {
     label: 'Organisation settings',
     path: ROUTES.organisationSettings,
@@ -37,7 +38,7 @@ export function LocationSwitcher({ location, onSelect }: LocationSwitcherProps) 
   const menu = useKeyboardMenu();
 
   return (
-    <div className="relative shrink-0">
+    <div className="relative flex shrink-0 items-center gap-1">
       <button
         ref={menu.triggerRef}
         type="button"
@@ -46,7 +47,7 @@ export function LocationSwitcher({ location, onSelect }: LocationSwitcherProps) 
         aria-haspopup="menu"
         aria-expanded={menu.open}
         aria-label={`Switch location. Current location: ${location.name}`}
-        className="location-switcher-trigger focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+        className="location-switcher-trigger -ml-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
       >
         <LocationMarker location={location} />
         <span className="min-w-0 truncate text-sm font-medium text-text">
@@ -58,6 +59,7 @@ export function LocationSwitcher({ location, onSelect }: LocationSwitcherProps) 
           <ChevronDown className="h-5 w-5 shrink-0 text-text-tertiary" />
         )}
       </button>
+      <PinnedQuestion questionId="access-context" />
 
       {menu.open && (
         <Card className="absolute top-full left-0 z-20 mt-1 w-72 shadow-lg">

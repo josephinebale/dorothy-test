@@ -194,6 +194,14 @@ body {
   height: 2rem;
 }
 
+.pinned-question-trigger {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-color: var(--color-border-subtle);
+  border-radius: 9999px;
+  background: var(--color-surface);
+}
+
 .ui-icon-button--bordered {
   border-color: var(--color-border);
   background: var(--color-surface);
@@ -319,12 +327,12 @@ body {
 
 .ui-badge {
   display: inline-flex;
-  min-width: 0.875rem;
-  height: 0.875rem;
+  min-width: 1.125rem;
+  height: 1.125rem;
   align-items: center;
   justify-content: center;
   border-radius: 9999px;
-  padding-inline: calc(var(--space-1) / 2);
+  padding-inline: var(--space-1);
   font-size: var(--text-xs);
   line-height: 1;
   font-weight: var(--font-weight-medium);

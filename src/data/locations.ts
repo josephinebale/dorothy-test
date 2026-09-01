@@ -20,11 +20,17 @@ export type Booking = {
   id: string;
   locationId: string;
   workerName: string;
+  requestedWorkerNames?: string[];
   start: Date;
   end: Date;
   status: BookingStatus;
   sleepover: boolean;
   createdByMe: boolean;
+  address?: string;
+  description?: string;
+  driving?: 'not-required' | 'worker-vehicle' | 'location-vehicle';
+  financeReference?: string;
+  frequency?: 'one-off' | 'weekly' | 'fortnightly';
 };
 
 export type LocationData = {
