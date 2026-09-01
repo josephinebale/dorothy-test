@@ -4,7 +4,6 @@ import {
   EMPTY_STATES,
   NOTIFICATION_EMPTY_DESCRIPTIONS,
   TEAM_ROUTE,
-  financeReference,
 } from '../src/lib/pageContent.ts';
 
 test('Team uses one public route', () => {
@@ -26,7 +25,7 @@ test('every empty state explains what is absent and what makes it appear', () =>
   });
   assert.deepEqual(EMPTY_STATES.team, {
     title: 'No team members to show',
-    description: 'Team members booked for this house will appear here.',
+    description: 'Team members booked for this location will appear here.',
   });
   assert.deepEqual(EMPTY_STATES.notifications, {
     title: 'No notifications',
@@ -42,7 +41,7 @@ test('every empty state explains what is absent and what makes it appear', () =>
   });
   assert.deepEqual(EMPTY_STATES.dashboardTeam, {
     title: 'No team members yet',
-    description: 'Team members will appear after they’re booked for this house.',
+    description: 'Team members will appear after they’re booked for this location.',
   });
   assert.deepEqual(EMPTY_STATES.archivedConversations, {
     title: 'No archived conversations',
@@ -52,11 +51,4 @@ test('every empty state explains what is absent and what makes it appear', () =>
     title: 'No conversation selected',
     description: 'Select a conversation to display it here.',
   });
-});
-
-test('finance reference gives each value its own label', () => {
-  assert.deepEqual(financeReference('Bellbird Court', 'Brian R'), [
-    { label: 'House', value: 'Bellbird Court' },
-    { label: 'Worker', value: 'Brian R' },
-  ]);
 });

@@ -50,7 +50,8 @@ export function Team({ data }: { data: HouseData }) {
               <IconButton
                 type="button"
                 aria-label={`More options for ${worker.name}`}
-                className="ui-target-row__action"
+                data-tooltip={`More options for ${worker.name}`}
+                className="ui-target-row__action ui-tooltip"
               >
                 <MoreHorizontal className="h-5 w-5" />
               </IconButton>
@@ -60,7 +61,7 @@ export function Team({ data }: { data: HouseData }) {
       ) : (
         <Card className="px-6 py-12 text-center">
           <p className="text-lg font-bold text-text">{EMPTY_STATES.team.title}</p>
-          <p className="mt-1 text-sm text-text-secondary">
+          <p className="mt-1 max-w-content mx-auto text-sm text-text-secondary">
             {EMPTY_STATES.team.description}
           </p>
         </Card>

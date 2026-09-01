@@ -51,7 +51,7 @@
   --radius-sm: var(--radius-control);
   --radius-lg: var(--radius-surface);
 
-  --container-page: 67.5rem;
+  --container-page: 90rem;
   --container-content: 43.75rem;
 
   --spacing: var(--space-1);
@@ -84,9 +84,13 @@
 
   --footer-gap: var(--space-7);
 
+  /* Tier 1 carries the global scope, tier 2 the working scope, so the nav
+     underline has a row bottom to anchor to. */
   --header-identity-height: 3rem;
   --header-nav-height: 3.5rem;
-  --narrow-column-width: 13.75rem;
+  /* Scaled with the page so the narrow column keeps a readable share of the row
+     rather than thinning out as the container widens. */
+  --narrow-column-width: 20rem;
 
   /* Mirrors the page shell's px-8 and the Dashboard row's gap-6, so the derived
      main column below stays correct if either utility changes. */
@@ -335,9 +339,31 @@ body {
   color: var(--color-surface);
 }
 
-.ui-badge--neutral {
-  background: var(--color-neutral-surface);
-  color: var(--color-neutral);
+/* A label, not a control: roomier than .ui-badge so a count stays readable
+   beside a heading. The border keeps both tones the same height. */
+.ui-tag {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  padding: var(--space-1) var(--space-2);
+  font-size: var(--text-xs);
+  line-height: var(--text-xs--line-height);
+  font-weight: var(--font-weight-medium);
+  white-space: nowrap;
+}
+
+/* A tinted grey would match the page background, so this tone separates with a
+   surface and a hairline instead. */
+.ui-tag--neutral {
+  border-color: var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-strong);
+}
+
+.ui-tag--success {
+  background: var(--color-success-surface);
+  color: var(--color-success);
 }
 
 .avatar {
@@ -395,17 +421,85 @@ body {
   max-height: var(--panel-max-height);
 }
 
-.header-identity {
-  height: var(--header-identity-height);
+/* Two hairlines only: one between the tiers, one under the whole header. */
+.app-header {
   overflow: visible;
+  background: var(--color-surface);
+  box-shadow: 0 1px 0 var(--color-border-subtle);
 }
 
-.header-identity-control:focus-visible {
-  z-index: 10;
+.app-header-identity {
+  border-bottom: 1px solid var(--color-border-subtle);
 }
 
-.header-navigation {
+.app-header-row {
+  height: var(--header-identity-height);
+}
+
+.app-header-nav-row {
   height: var(--header-nav-height);
+}
+
+.house-switcher-trigger {
+  display: inline-flex;
+  max-width: 16rem;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-2);
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  text-align: left;
+  color: var(--color-text);
+}
+
+.house-switcher-trigger:hover {
+  background: var(--color-surface-subtle);
+}
+
+.ui-tooltip {
+  position: relative;
+}
+
+.ui-tooltip::after {
+  position: absolute;
+  top: calc(100% + var(--space-2));
+  left: 50%;
+  z-index: 30;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+  background: var(--color-text);
+  color: var(--color-surface);
+  font-size: var(--text-xs);
+  line-height: var(--text-xs--line-height);
+  white-space: nowrap;
+  content: attr(data-tooltip);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-50%);
+}
+
+.ui-tooltip:hover::after,
+.ui-tooltip:focus-visible::after {
+  opacity: 1;
+}
+
+/* The underline sits on the tier's bottom edge, so the label is nudged down to
+   stay optically centred against it. */
+.main-nav-link {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  border-bottom: 2px solid transparent;
+  padding-top: 2px;
+}
+
+.main-nav-link:hover {
+  border-bottom-color: var(--color-border);
+}
+
+.main-nav-link--active {
+  border-bottom-color: var(--color-brand);
 }
 
 .main-nav-link:focus-visible {

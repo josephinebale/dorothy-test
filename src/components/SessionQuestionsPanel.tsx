@@ -10,6 +10,7 @@ import {
 import { Button } from './ui/Button';
 import { Card } from './ui/Card';
 import { IconButton } from './ui/IconButton';
+import { Tag } from './ui/Tag';
 
 type SessionQuestionsPanelProps = {
   path: string;
@@ -71,7 +72,8 @@ export function SessionQuestionsPanel({ path, onClose }: SessionQuestionsPanelPr
           type="button"
           onClick={onClose}
           aria-label="Close session questions"
-          className="ml-auto text-text-secondary"
+          data-tooltip="Close"
+          className="ml-auto ui-tooltip text-text-secondary"
         >
           <X className="h-4 w-4" />
         </IconButton>
@@ -110,9 +112,7 @@ export function SessionQuestionsPanel({ path, onClose }: SessionQuestionsPanelPr
               {state.quickNotes.map((note) => (
                 <li key={note.id} className="flex items-start gap-2 px-3 py-2">
                   <div className="min-w-0 flex-1">
-                    <span className="inline-block rounded bg-surface-selected px-2 py-1 text-xs font-medium text-text-strong">
-                      {pageLabel(note.path)}
-                    </span>
+                    <Tag>{pageLabel(note.path)}</Tag>
                     <p className="mt-1 text-sm text-text">{note.text}</p>
                   </div>
                   <IconButton

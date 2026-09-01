@@ -13,7 +13,6 @@ import {
 import { href } from '../lib/router';
 import { useKeyboardMenu } from '../lib/useKeyboardMenu';
 import { HouseMarker } from './HouseMarker';
-import { Button } from './ui/Button';
 import { Card } from './ui/Card';
 
 type HouseSwitcherProps = {
@@ -26,7 +25,7 @@ const MENU_ROW =
   'flex w-full items-center gap-3 px-3 py-2 text-left text-sm font-medium text-text-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand';
 
 const MANAGEMENT_ITEMS = [
-  { label: 'Manage this house', path: ROUTES.manageHouse, Icon: HouseIcon },
+  { label: 'Manage this location', path: ROUTES.manageHouse, Icon: HouseIcon },
   {
     label: 'Organisation settings',
     path: ROUTES.organisationSettings,
@@ -38,33 +37,34 @@ export function HouseSwitcher({ house, onSelect }: HouseSwitcherProps) {
   const menu = useKeyboardMenu();
 
   return (
-    <div className="relative">
-      <Button
+    <div className="relative shrink-0">
+      <button
         ref={menu.triggerRef}
         type="button"
-        size="small"
         onClick={menu.toggle}
         onKeyDown={menu.onTriggerKeyDown}
         aria-haspopup="menu"
         aria-expanded={menu.open}
-        aria-label={`Switch house. Current house: ${house.name}`}
-        className="max-w-full text-left"
+        aria-label={`Switch location. Current location: ${house.name}`}
+        className="house-switcher-trigger focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
       >
         <HouseMarker house={house} />
-        <span className="min-w-0 truncate">{house.name}</span>
+        <span className="min-w-0 truncate text-sm font-medium text-text">
+          {house.name}
+        </span>
         {menu.open ? (
-          <ChevronUp className="h-4 w-4 text-text-tertiary" />
+          <ChevronUp className="h-4 w-4 shrink-0 text-text-tertiary" />
         ) : (
-          <ChevronDown className="h-4 w-4 text-text-tertiary" />
+          <ChevronDown className="h-4 w-4 shrink-0 text-text-tertiary" />
         )}
-      </Button>
+      </button>
 
       {menu.open && (
         <Card className="absolute top-full left-0 z-20 mt-1 w-72 shadow-lg">
           <div
             ref={menu.menuRef}
             role="menu"
-            aria-label="House and organisation"
+            aria-label="Location and organisation"
             onKeyDown={menu.onMenuKeyDown}
           >
             <div className="py-1">
@@ -115,7 +115,6 @@ export function HouseSwitcher({ house, onSelect }: HouseSwitcherProps) {
                   onClick={() => menu.close()}
                   className={`${MENU_ROW} hover:bg-surface-subtle`}
                 >
-                  {/* Sized to the marker so labels line up across both groups */}
                   <span className="flex h-6 w-6 shrink-0 items-center justify-center">
                     <Icon className="h-4 w-4" />
                   </span>

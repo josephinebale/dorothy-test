@@ -6,6 +6,7 @@ import {
   CircleUser,
   LogOut,
   LockKeyhole,
+  MessageCircle,
   Shield,
   Settings,
 } from 'lucide-react';
@@ -33,7 +34,6 @@ import { Card } from './ui/Card';
 const NAV_ITEMS = [
   { label: 'Dashboard', path: '/' },
   { label: 'Bookings', path: '/bookings' },
-  { label: 'Messages', path: '/messages' },
   { label: 'Team', path: TEAM_ROUTE },
 ];
 
@@ -70,10 +70,13 @@ export function AppHeader({
     activeNavRef.current?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
   }, [path]);
 
+  const notificationsName = notificationsAccessibleName(unreadNotifications);
+  const accountName = accountAccessibleName(MANAGER_NAME);
+
   return (
-    <header className="sticky top-0 z-20 bg-surface">
-      <div className="border-b border-border-subtle">
-        <div className="header-identity mx-auto flex max-w-page items-center justify-between gap-8 px-8">
+    <header className="app-header sticky top-0 z-20">
+      <div className="app-header-identity">
+        <div className="app-header-row mx-auto flex max-w-page items-center gap-4 px-8">
           <a
             href={href('/')}
             aria-label="Hireup for Providers dashboard"
@@ -82,113 +85,112 @@ export function AppHeader({
             <Logo />
           </a>
 
-          <div className="flex shrink-0 items-center gap-4">
+          <div className="flex flex-1 items-center justify-end gap-3">
+            <Button
+              href={href('/messages')}
+              variant="ghost"
+              size="small"
+              aria-label={messagesAccessibleName(unreadMessages)}
+              className={path === '/messages' ? 'bg-surface-selected' : ''}
+            >
+              <MessageCircle className="h-4 w-4 shrink-0" />
+              <span>Messages</span>
+              <Badge count={unreadMessages} />
+            </Button>
+
             <Button
               href={href('/notifications')}
               variant="ghost"
-              aria-label={notificationsAccessibleName(unreadNotifications)}
-              className={`header-identity-control ${
-                path === '/notifications' ? 'bg-surface-selected' : ''
-              }`}
+              size="small"
+              aria-label={notificationsName}
+              className={path === '/notifications' ? 'bg-surface-selected' : ''}
             >
-              <Bell className="h-5 w-5 shrink-0" />
-              Notifications
+              <Bell className="h-4 w-4 shrink-0" />
+              <span>Notifications</span>
               <Badge count={unreadNotifications} />
             </Button>
 
-            <span
-              aria-hidden="true"
-              className="h-6 w-px shrink-0 bg-border-subtle"
-            />
+            <span aria-hidden="true" className="h-6 w-px shrink-0 bg-border-subtle" />
 
             <div className="relative">
-            <Button
-              ref={accountMenu.triggerRef}
-              type="button"
-              variant="ghost"
-              onClick={accountMenu.toggle}
-              onKeyDown={accountMenu.onTriggerKeyDown}
-              aria-haspopup="menu"
-              aria-expanded={accountMenu.open}
-              aria-label={accountAccessibleName(MANAGER_NAME)}
-              className="header-identity-control"
-            >
-              <Avatar name={MANAGER_NAME} size="sm" />
-              <span className="max-w-40 truncate">{MANAGER_NAME}</span>
-              {accountMenu.open ? (
-                <ChevronUp className="h-4 w-4 shrink-0" />
-              ) : (
-                <ChevronDown className="h-4 w-4 shrink-0" />
-              )}
-            </Button>
+              <Button
+                ref={accountMenu.triggerRef}
+                type="button"
+                variant="ghost"
+                size="small"
+                onClick={accountMenu.toggle}
+                onKeyDown={accountMenu.onTriggerKeyDown}
+                aria-haspopup="menu"
+                aria-expanded={accountMenu.open}
+                aria-label={accountName}
+              >
+                <Avatar name={MANAGER_NAME} size="sm" />
+                <span className="max-w-40 truncate">{MANAGER_NAME}</span>
+                {accountMenu.open ? (
+                  <ChevronUp className="h-4 w-4 shrink-0 text-text-tertiary" />
+                ) : (
+                  <ChevronDown className="h-4 w-4 shrink-0 text-text-tertiary" />
+                )}
+              </Button>
 
-            {accountMenu.open && (
-              <Card className="absolute top-full right-0 z-20 mt-1 w-72 shadow-lg">
-                <div
-                  ref={accountMenu.menuRef}
-                  role="menu"
-                  aria-label="Your account"
-                  onKeyDown={accountMenu.onMenuKeyDown}
-                  className="py-1"
-                >
-                {PERSONAL_MENU_ITEMS.map(({ label, path: itemPath }) => {
-                  const Icon = ACCOUNT_ICONS[label];
-                  return (
-                  <a
-                    key={itemPath}
-                    role="menuitem"
-                    tabIndex={-1}
-                    href={href(itemPath)}
-                    onClick={() => accountMenu.close()}
-                    className="flex items-center gap-3 px-3 py-2 text-sm text-text-strong hover:bg-surface-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+              {accountMenu.open && (
+                <Card className="absolute top-full right-0 z-20 mt-1 w-72 shadow-lg">
+                  <div
+                    ref={accountMenu.menuRef}
+                    role="menu"
+                    aria-label="Your account"
+                    onKeyDown={accountMenu.onMenuKeyDown}
+                    className="py-1"
                   >
-                    <Icon className="h-4 w-4 shrink-0 text-text-strong" />
-                    {label}
-                  </a>
-                  );
-                })}
-                <button
-                  role="menuitem"
-                  tabIndex={-1}
-                  type="button"
-                  onClick={() => {
-                    accountMenu.close();
-                    onSignOut();
-                  }}
-                  className="flex w-full items-center gap-3 border-t border-border-subtle px-3 py-2 text-left text-sm text-text-strong hover:bg-surface-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
-                >
-                  <LogOut className="h-4 w-4 shrink-0 text-text-strong" />
-                  Log out
-                </button>
-                </div>
-              </Card>
-            )}
+                    {PERSONAL_MENU_ITEMS.map(({ label, path: itemPath }) => {
+                      const Icon = ACCOUNT_ICONS[label];
+                      return (
+                        <a
+                          key={itemPath}
+                          role="menuitem"
+                          tabIndex={-1}
+                          href={href(itemPath)}
+                          onClick={() => accountMenu.close()}
+                          className="flex items-center gap-3 px-3 py-2 text-sm text-text-strong hover:bg-surface-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+                        >
+                          <Icon className="h-4 w-4 shrink-0 text-text-strong" />
+                          {label}
+                        </a>
+                      );
+                    })}
+                    <button
+                      role="menuitem"
+                      tabIndex={-1}
+                      type="button"
+                      onClick={() => {
+                        accountMenu.close();
+                        onSignOut();
+                      }}
+                      className="flex w-full items-center gap-3 border-t border-border-subtle px-3 py-2 text-left text-sm text-text-strong hover:bg-surface-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+                    >
+                      <LogOut className="h-4 w-4 shrink-0 text-text-strong" />
+                      Log out
+                    </button>
+                  </div>
+                </Card>
+              )}
             </div>
           </div>
         </div>
       </div>
 
-      <div className="border-b border-border-subtle">
-        <div className="header-navigation mx-auto flex max-w-page items-stretch px-8">
-          <div className="flex shrink-0 items-center">
-            <HouseSwitcher house={house} onSelect={onSelectHouse} />
-          </div>
+      <div className="app-header-nav-row mx-auto flex max-w-page items-stretch px-8">
+        <div className="flex shrink-0 items-center">
+          <HouseSwitcher house={house} onSelect={onSelectHouse} />
+        </div>
 
-          <span
-            aria-hidden="true"
-            className="mx-6 h-6 w-px shrink-0 self-center bg-border-subtle"
-          />
+        <span aria-hidden="true" className="mx-6 h-6 w-px shrink-0 self-center bg-border-subtle" />
 
-          <div className="min-w-0 flex-1 overflow-x-auto">
+        <div className="min-w-0 flex-1 overflow-x-auto">
           <nav className="flex h-full w-max items-stretch gap-8" aria-label="Main">
             {NAV_ITEMS.map((item) => {
               const active = item.path === '/' ? path === '/' : path.startsWith(item.path);
-              const count =
-                item.label === 'Bookings'
-                  ? bookingsBadge
-                  : item.label === 'Messages'
-                    ? unreadMessages
-                    : 0;
+              const count = item.label === 'Bookings' ? bookingsBadge : 0;
 
               return (
                 <a
@@ -199,14 +201,12 @@ export function AppHeader({
                   aria-label={
                     item.label === 'Bookings'
                       ? bookingsAccessibleName(bookingsBadge)
-                      : item.label === 'Messages'
-                        ? messagesAccessibleName(unreadMessages)
-                        : item.label
+                      : item.label
                   }
-                  className={`flex h-full shrink-0 items-center gap-2 border-b-2 pt-1 text-sm main-nav-link ${
+                  className={`main-nav-link shrink-0 text-sm ${
                     active
-                      ? 'border-brand font-medium text-text'
-                      : 'border-transparent text-text-strong hover:bg-surface-subtle hover:text-text'
+                      ? 'main-nav-link--active font-medium text-text'
+                      : 'font-normal text-text-strong'
                   }`}
                 >
                   <span>{item.label}</span>
@@ -215,7 +215,6 @@ export function AppHeader({
               );
             })}
           </nav>
-          </div>
         </div>
       </div>
     </header>

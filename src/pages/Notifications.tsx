@@ -27,7 +27,7 @@ function buildItems(data: HouseData): Item[] {
       path: '/messages',
     },
     {
-      title: `${data.requestsToAccept} booking requests waiting to be accepted`,
+      title: `${data.requestsToAccept} ${data.requestsToAccept === 1 ? 'request' : 'requests'} waiting to be accepted`,
       description: 'Workers have not yet responded to these requests.',
       Icon: Calendar,
       date: addDays(today, -1),
@@ -64,7 +64,7 @@ export function Notifications({ data }: { data: HouseData }) {
           <p className="text-lg font-bold text-text">
             {EMPTY_STATES.notifications.title}
           </p>
-          <p className="mt-1 text-sm text-text-secondary">
+          <p className="mt-1 max-w-content text-sm text-text-secondary">
             {EMPTY_STATES.notifications.description}
           </p>
         </Card>

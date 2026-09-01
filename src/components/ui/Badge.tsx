@@ -1,17 +1,12 @@
 import { badgeDisplay } from '../header-utils';
 
-export function Badge({
-  count,
-  tone = 'attention',
-}: {
-  count: number;
-  tone?: 'attention' | 'neutral';
-}) {
+/** An alert count on something interactive. Use `Tag` for a plain label. */
+export function Badge({ count }: { count: number }) {
   const display = badgeDisplay(count);
   if (!display) return null;
 
   return (
-    <span aria-hidden="true" className={`ui-badge ui-badge--${tone}`}>
+    <span aria-hidden="true" className="ui-badge ui-badge--attention">
       {display}
     </span>
   );

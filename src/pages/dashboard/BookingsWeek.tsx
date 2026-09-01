@@ -2,10 +2,10 @@ import { useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import type { Booking, HouseData } from '../../data/houses';
 import { StatusPill } from '../../components/StatusPill';
-import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
 import { IconButton } from '../../components/ui/IconButton';
+import { Tag } from '../../components/ui/Tag';
 import { EMPTY_STATES } from '../../lib/pageContent';
 import {
   addDays,
@@ -61,9 +61,9 @@ export function BookingsWeek({ data }: { data: HouseData }) {
         <div>
           <h2 className="flex items-center gap-2 text-md font-bold text-text">
             <span>Bookings for {formatWeekRange(weekStart, weekEnd)}:</span>
-            <Badge count={inWeek.length} tone="neutral" />
+            <Tag>{inWeek.length}</Tag>
           </h2>
-          <p className="mt-1 text-sm text-text-secondary">
+          <p className="mt-1 max-w-content text-sm text-text-secondary">
             Times are displayed in the local time of the booking.
           </p>
         </div>
@@ -81,7 +81,9 @@ export function BookingsWeek({ data }: { data: HouseData }) {
             bordered
             size="small"
             onClick={() => setWeekOffset((value) => value - 1)}
+            className="ui-tooltip"
             aria-label="Previous week"
+            data-tooltip="Previous week"
           >
             <ChevronLeft className="h-4 w-4" />
           </IconButton>
@@ -90,7 +92,9 @@ export function BookingsWeek({ data }: { data: HouseData }) {
             bordered
             size="small"
             onClick={() => setWeekOffset((value) => value + 1)}
+            className="ui-tooltip"
             aria-label="Next week"
+            data-tooltip="Next week"
           >
             <ChevronRight className="h-4 w-4" />
           </IconButton>
@@ -124,7 +128,7 @@ export function BookingsWeek({ data }: { data: HouseData }) {
             <p className="text-lg font-bold text-text">
               {EMPTY_STATES.bookingsWeek.title}
             </p>
-            <p className="mt-1 text-sm text-text-secondary">
+            <p className="mt-1 mx-auto max-w-content text-sm text-text-secondary">
               {EMPTY_STATES.bookingsWeek.description}
             </p>
           </div>

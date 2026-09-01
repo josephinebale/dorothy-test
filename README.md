@@ -1,6 +1,6 @@
 # House Manager dashboard prototype
 
-A prototype of the provider experience for a House Manager who runs a single SIL house, built to
+A prototype of the provider experience for a House Manager who runs a single SIL location, built to
 match the existing Hireup for Providers UI. React, Vite and Tailwind, no other dependencies.
 
 ## Running it
@@ -20,19 +20,19 @@ npm run lint
 
 ## What is built
 
-- **Dashboard**, scoped to the selected house: a notifications strip, the week view of upcoming
+- **Dashboard**, scoped to the selected location: a notifications strip, the week view of upcoming
   bookings with week navigation, and a Team panel showing the most booked workers for that
-  house.
-- **House switcher** in the global nav, next to the logo. Switching keeps you on the page you are on
-  and swaps the house context.
-- **First run**: with no remembered house, you land on a "Choose your house" screen. After that you
-  go straight into your last house on every visit. The choice is stored in the browser's
+  location.
+- **Location switcher** in the global nav. Switching keeps you on the page you are on
+  and swaps the location context.
+- **First run**: with no remembered location, you land on a "Choose your location" screen. After that you
+  go straight into your last location on every visit. The choice is stored in the browser's
   local storage.
-- **Bookings**, scoped to the selected house: status views, worker and date filters, a
+- **Bookings**, scoped to the selected location: status views, worker and date filters, a
   "Bookings I have created" toggle, and booking detail cards.
-- **Team**, scoped to the selected house: an alphabetical worker list using the existing Team
+- **Team**, scoped to the selected location: an alphabetical worker list using the existing Team
   page treatment.
-- **Messages**, scoped to the selected house: conversation list, empty state, and a thread view
+- **Messages**, scoped to the selected location: conversation list, empty state, and a thread view
   matching the existing Messages layout.
 - **Stub pages** for Settings and everything in the account menu, so the remaining structure can
   be navigated end to end.
@@ -53,16 +53,16 @@ The question-mark button at the bottom right opens one **Session questions** pan
 
 The account menu (top right) has **Log out**. That screen offers:
 
-- **Log back in** — returns you to the house you were last in.
-- **Log in as a new user** — forgets the remembered house so you see "Choose your house" again.
+- **Log back in** — returns you to the location you were last in.
+- **Log in as a new user** — forgets the remembered location so you see "Choose your location" again.
 
 ## Placeholder data
 
-Five houses with placeholder names, each with its own roster and its own bookings. Bookings are
+Five locations with placeholder names, each with its own roster and its own bookings. Bookings are
 generated from a fixed seed relative to today, so the data is stable between reloads but the week
 view always includes today. See `src/data/houses.ts`.
 
 ## Not built
 
-Booking creation or request flows, Jobs, profile editing, settings content, and multi-house
+Booking creation or request flows, Jobs, profile editing, settings content, and multi-location
 aggregate views.

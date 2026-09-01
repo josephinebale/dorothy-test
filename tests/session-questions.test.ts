@@ -67,7 +67,7 @@ test('copy summary includes page-tagged quick notes, questions, and other notes'
 });
 
 test('new settings routes keep readable research-note labels', () => {
-  assert.equal(pageLabel('/manage-house/people'), 'Manage this house');
+  assert.equal(pageLabel('/manage-house/people'), 'Manage this location');
   assert.equal(pageLabel('/organisation-settings/documents'), 'Organisation settings');
   assert.equal(pageLabel('/your-account/privacy'), 'Your account');
 });

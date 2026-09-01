@@ -26,8 +26,9 @@ export function SessionQuestions({ path }: { path: string }) {
           bordered
           onClick={() => setOpen((current) => !current)}
           aria-label="Session questions"
+          data-tooltip="Session questions"
           aria-expanded={open}
-          className="session-questions-button pointer-events-auto"
+          className="session-questions-button pointer-events-auto ui-tooltip"
         >
           <CircleHelp className="h-4 w-4" />
         </IconButton>

@@ -24,10 +24,16 @@ const team = readFileSync(
   'utf8',
 );
 
-test('all split layouts share one 260px narrow-column token', () => {
-  assert.match(css, /--narrow-column-width:\s*16\.25rem/);
+test('all split layouts share one 320px narrow-column token', () => {
+  assert.match(css, /--narrow-column-width:\s*20rem/);
   assert.doesNotMatch(css, /--sidebar-(?:bookings|team|settings)-width/);
   assert.doesNotMatch(css, /--messages-list-width/);
+});
+
+test('page shell is 1440px with a two-tier header', () => {
+  assert.match(css, /--container-page:\s*90rem/);
+  assert.match(css, /--header-identity-height:\s*3rem/);
+  assert.match(css, /--header-nav-height:\s*3\.5rem/);
 });
 
 test('pages declare their distinct layout archetype', () => {
@@ -38,6 +44,6 @@ test('pages declare their distinct layout archetype', () => {
 });
 
 test('Team keeps a narrow measure without centring its left edge', () => {
-  assert.match(team, /className="max-w-content"/);
+  assert.match(team, /className="width-main-column"/);
   assert.doesNotMatch(team, /mx-auto max-w-content/);
 });

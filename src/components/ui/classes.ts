@@ -3,6 +3,7 @@ export type ButtonSize = 'default' | 'small';
 export type IconButtonSize = 'default' | 'small';
 export type AvatarSize = 'sm' | 'md' | 'lg';
 export type CardTone = 'default' | 'success' | 'pending' | 'neutral' | 'subtle';
+export type TagTone = 'neutral' | 'success';
 
 export function buttonClasses(variant: ButtonVariant, size: ButtonSize): string {
   return `ui-button ui-button--${variant} ui-button--${size}`;
@@ -14,6 +15,10 @@ export function iconButtonClasses(size: IconButtonSize): string {
 
 export function cardClasses(tone: CardTone, divided: boolean): string {
   return `ui-card ui-card--${tone}${divided ? ' ui-card--divided' : ''}`;
+}
+
+export function tagClasses(tone: TagTone): string {
+  return `ui-tag ui-tag--${tone}`;
 }
 
 export function avatarToken(size: AvatarSize): string {

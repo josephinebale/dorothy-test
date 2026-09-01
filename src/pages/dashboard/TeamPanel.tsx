@@ -1,3 +1,4 @@
+import { Calendar, MessageCircle } from 'lucide-react';
 import type { HouseData } from '../../data/houses';
 import { Avatar } from '../../components/Avatar';
 import { Button } from '../../components/ui/Button';
@@ -26,7 +27,7 @@ export function TeamPanel({ data }: { data: HouseData }) {
           <p className="text-lg font-bold text-text">
             {EMPTY_STATES.dashboardTeam.title}
           </p>
-          <p className="mt-1 text-sm text-text-secondary">
+          <p className="mt-1 max-w-content text-sm text-text-secondary">
             {EMPTY_STATES.dashboardTeam.description}
           </p>
         </Card>
@@ -38,14 +39,12 @@ export function TeamPanel({ data }: { data: HouseData }) {
                 <Avatar name={worker.name} size="sm" />
                 <EntityLink
                   href={href(TEAM_ROUTE)}
-                  className="ui-target-row__link min-w-0 truncate"
+                  className="ui-target-row__link ui-target-row__link--text min-w-0 flex-1 truncate"
                 >
                   {worker.name}
                 </EntityLink>
               </div>
-
-              {/* Aligned to the row's content edge, not the name, so each row has one left edge. */}
-              <div className="ui-target-row__action mt-1 flex items-center gap-2">
+              <div className="ui-target-row__action mt-3 flex items-center gap-2">
                 <Button
                   href={href('/messages')}
                   variant="secondary"
@@ -53,6 +52,7 @@ export function TeamPanel({ data }: { data: HouseData }) {
                   className="whitespace-nowrap"
                   aria-label={`Message ${worker.name}`}
                 >
+                  <MessageCircle className="h-4 w-4 shrink-0" />
                   Message
                 </Button>
                 <Button
@@ -62,6 +62,7 @@ export function TeamPanel({ data }: { data: HouseData }) {
                   className="whitespace-nowrap"
                   aria-label={`Book ${worker.name}`}
                 >
+                  <Calendar className="h-4 w-4 shrink-0" />
                   Book
                 </Button>
               </div>

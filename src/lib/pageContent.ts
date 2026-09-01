@@ -13,7 +13,7 @@ export const EMPTY_STATES = {
   },
   team: {
     title: 'No team members to show',
-    description: 'Team members booked for this house will appear here.',
+    description: 'Team members booked for this location will appear here.',
   },
   notifications: {
     title: 'No notifications',
@@ -29,7 +29,7 @@ export const EMPTY_STATES = {
   },
   dashboardTeam: {
     title: 'No team members yet',
-    description: 'Team members will appear after they’re booked for this house.',
+    description: 'Team members will appear after they’re booked for this location.',
   },
   archivedConversations: {
     title: 'No archived conversations',
@@ -40,10 +40,3 @@ export const EMPTY_STATES = {
     description: 'Select a conversation to display it here.',
   },
 } as const;
-
-export function financeReference(house: string, worker: string) {
-  return [
-    { label: 'House', value: house },
-    { label: 'Worker', value: worker },
-  ];
-}

@@ -19,8 +19,8 @@ export function SignedOut({
 
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="border-b border-border-subtle bg-surface">
-        <div className="header-identity mx-auto flex max-w-page items-center px-8">
+      <header className="app-header">
+        <div className="app-header-row mx-auto flex max-w-page items-center px-8">
           <Logo />
         </div>
       </header>

@@ -20,8 +20,8 @@ test('settings sections are split by scope without changing existing labels', ()
     'Specialised support',
     'COVID-19 requirements',
     'Support plan',
-    'House name',
-    'House picture',
+    'Location name',
+    'Location picture',
     'People',
   ]);
   assert.deepEqual(ORGANISATION_SECTIONS.map(({ label }) => label), [

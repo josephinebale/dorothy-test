@@ -44,7 +44,7 @@ const STARTER_QUESTIONS = [
   'What do you expect to find on this dashboard?',
   'How do you keep track of upcoming bookings today?',
   'What would you do if a booking needed attention?',
-  'Is anything missing for managing this house?',
+  'Is anything missing for managing this location?',
 ];
 
 export function createDefaultSessionQuestions(): SessionQuestionsState {
@@ -64,7 +64,7 @@ export function pageLabel(path: string): string {
     path === ROUTES.manageHouse ||
     path.startsWith(`${ROUTES.manageHouse}/`)
   ) {
-    return 'Manage this house';
+    return 'Manage this location';
   }
   if (
     path === ROUTES.organisationSettings ||

@@ -5,7 +5,7 @@ import { NOTIFICATION_EMPTY_DESCRIPTIONS } from '../../lib/pageContent';
 import { href } from '../../lib/router';
 import { Card } from '../../components/ui/Card';
 
-type Card = {
+type StripCard = {
   title: string;
   description: string;
   Icon: LucideIcon;
@@ -16,15 +16,15 @@ function plural(count: number, singular: string, pluralForm: string): string {
   return count === 1 ? singular : pluralForm;
 }
 
-function buildCards(data: HouseData): Card[] {
+function buildCards(data: HouseData): StripCard[] {
   const { requestsToAccept, bookingsToApprove } = data;
 
   return [
     {
       title:
         requestsToAccept > 0
-          ? `${requestsToAccept} booking ${plural(requestsToAccept, 'request', 'requests')} waiting to be accepted`
-          : 'No booking requests waiting to be accepted',
+          ? `${requestsToAccept} ${plural(requestsToAccept, 'request', 'requests')} waiting to be accepted`
+          : 'No requests waiting to be accepted',
       description:
         requestsToAccept > 0
           ? 'Review and manage your booking requests.'

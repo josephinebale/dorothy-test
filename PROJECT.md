@@ -3,7 +3,7 @@
 Folder: `/Users/josephine/Downloads/dorothy-test`  
 Stack: React 19 + TypeScript + Vite 6 + Tailwind 4. No other runtime dependencies. Icons: `lucide-react`.
 
-This is a research prototype of **Hireup for Providers**, for a House Manager who runs one SIL house at a time. It should feel like the existing product, not a redesign. Do not invent new visual language, new tokens, or new dependencies unless asked.
+This is a research prototype of **Hireup for Providers**, for a House Manager who runs one SIL location at a time. It should feel like the existing product, not a redesign. Do not invent new visual language, new tokens, or new dependencies unless asked.
 
 Dev server: `npm run dev` → http://localhost:3020/ (hash routes, e.g. `#/bookings`).  
 Typecheck: `npm run lint` (`tsc --noEmit`).  
@@ -17,13 +17,13 @@ Live: https://josephinebale.github.io/dorothy-test/ (GitHub Pages via `.github/w
 
 ## Constraints for anyone changing this
 
-- House scope is ambient. The selected house persists across Dashboard, Bookings, Team, Messages. Do not add house as an in-section filter.
+- Location scope is ambient. The selected location persists across Dashboard, Bookings, Team, Messages. Do not add location as an in-section filter.
 - In-section filters are attributes only: date, status, “Bookings I have created”.
 - Keep labels that already exist unless asked to change them. Do not resolve open research questions in copy.
 - Prefer tokens and primitives. Brand constants stay exact (see tokens).
 - This folder is a standalone prototype, not the Argos repo.
 
-Not built (stay stubbed unless asked): booking creation/request flows, Jobs, real profile editing, real document upload, multi-house aggregate views, incident-report form content.
+Not built (stay stubbed unless asked): booking creation/request flows, Jobs, real profile editing, real document upload, multi-location aggregate views, incident-report form content.
 
 ---
 
@@ -33,8 +33,8 @@ Every menu answers: what am I acting on?
 
 | Scope | Switchable? | Where it lives |
 |---|---|---|
-| House | Yes | House switcher in header **tier 2**; most work |
-| Organisation | No. One org per House Manager | House menu → Organisation settings |
+| Location | Yes | Location switcher in header **tier 2**; most work |
+| Organisation | No. One org per House Manager | Location menu → Organisation settings |
 | You | No | Account control in tier 1 → Your account |
 
 Source: `src/lib/informationArchitecture.ts`
@@ -53,19 +53,19 @@ localStorage (`src/lib/session.ts`):
 
 | Key | Meaning |
 |---|---|
-| `hm.lastHouseId` | Last selected house. Returning users skip “Choose your house”. |
+| `hm.lastHouseId` | Last selected location. Returning users skip “Choose your location”. |
 | `hm.signedIn` | `'false'` means signed out. Anything else (including missing) is signed in. |
 | `hm.sessionQuestions` | Research panel: questions, answers, quick notes, other notes |
 
 Flow in `src/App.tsx`:
 
 1. Not signed in → `SignedOut` (centred `max-w-content` — leave it centred)
-2. Signed in, no house → `ChooseHouse` (left-aligned `width-main-column`)
-3. Signed in with house → header + page + Session questions + footer
+2. Signed in, no location → `ChooseHouse` (left-aligned `width-main-column`)
+3. Signed in with location → header + page + Session questions + footer
 
-Log out is on the account menu. Signed-out screen: **Log back in** (keep last house) or **Log in as a new user** (clear last house).
+Log out is on the account menu. Signed-out screen: **Log back in** (keep last location) or **Log in as a new user** (clear last location).
 
-Choose house description: “Select the house you manage supports for. You can change this at any time.”
+Choose location description: “Select the location you typically manage supports for. You can change this at any time.”
 
 ---
 
@@ -75,35 +75,45 @@ Choose house description: “Select the house you manage supports for. You can c
 
 Heights (CSS): `--header-identity-height` 3rem (48px), `--header-nav-height` 3.5rem (56px). Inverted on purpose: identity is quieter; the scoped row dominates.
 
-Both tiers share `max-w-page` and `px-8` with the page body, so logo, house switcher, and page titles share one left edge.
+Both tiers share `max-w-page` and `px-8` with the page body, so logo, location switcher, and page titles share one left edge.
 
-**Tier 1 — identity** (`.header-identity`)
+Surface: white, with exactly two hairlines — one between the tiers (`.app-header-identity` bottom border) and one under the whole header (`.app-header` box shadow). No borders around the controls themselves.
+
+**Tier 1 — identity** (`.app-header-identity` > `.app-header-row`)
 
 - Left: Hireup lockup (`Logo` from `src/assets/logo-provider.svg`, inline vector).
-- Right: Notifications control, hairline divider, then account control. Both are ghost `Button`s (labelled, not icon-only). Class `header-identity-control`.
+- Right: Messages, Notifications, hairline divider, then account. All are ghost `Button`s (labelled, not icon-only), borderless, with a quiet hover fill.
+  - Messages: MessageCircle + “Messages” + `Badge` when unread > 0. Goes to `/messages`. Accessible name from `messagesAccessibleName`.
   - Notifications: Bell + “Notifications” + `Badge` when count > 0. Goes to `/notifications`. Accessible name from `notificationsAccessibleName`.
   - Account: avatar + “Helen Dawson” + chevron. Menu is personal only (Profile, Account, Privacy, Password, Log out). Keyboard: `useKeyboardMenu`.
 
-**Tier 2 — scope + nav** (`.header-navigation`)
+**Tier 2 — scope + nav** (`.app-header-nav-row`)
 
-Reads as a sentence: these sections, inside this house.
+Reads as a sentence: these sections, inside this location.
 
-- Left: house switcher (`HouseSwitcher`).
+- Left: location switcher (`HouseSwitcher`).
 - Hairline divider.
-- Nav: Dashboard `/` · Bookings `/bookings` · Messages `/messages` · Team `/team` (`TEAM_ROUTE`).
+- Nav: Dashboard `/` · Bookings `/bookings` · Team `/team` (`TEAM_ROUTE`).
 
-Count badges sit **beside** the label, not on an icon. Zero → no badge. Cap 99+. Accessible names in `header-utils.ts`. Active: brand underline flush with the bottom of the row. Hover quieter than active.
+Count badges sit **beside** the label, not on an icon. Zero → no badge. Cap 99+. Accessible names in `header-utils.ts`. Active: brand underline flush with the bottom of the row (`.main-nav-link--active`). Hover is a quiet grey underline, never a filled pill — the underline needs this tier's bottom edge to anchor to.
 
-House control face: `HouseMarker` (rounded square, per-house colour) + house name + chevron. Organisation name is **not** on the face.
+Location control face: `HouseMarker` (rounded square, per-location colour) + location name + chevron, on one line. Borderless with a hover fill, not an outlined box. Organisation name is **not** on the face; it heads the menu instead.
 
-House menu (`left-0` under the control), two groups, one quiet row treatment:
+Location menu (`left-0` under the control), two groups, one quiet row treatment:
 
-1. Organisation name as a plain label, then the house list (marker, name, suburb and state). Current house: check next to the name, `bg-surface-selected`.
-2. Divider, then “Manage this house”, then “Organisation settings”.
+1. Organisation name as a plain label, then the location list (marker, name, suburb and state). Current location: check next to the name, `bg-surface-selected`.
+2. Divider, then “Manage this location”, then “Organisation settings”.
 
-House rows are choices, not `EntityLink`s.
+Location rows are choices, not `EntityLink`s.
 
-`HouseMarker` + `src/lib/houseMarker.ts`: five tones (indigo, teal, amber, rose, violet), surface + foreground, AA contrast. Same square in the button and every menu row. Circles are for people only.
+### Shape rule: square is a place, circle is a person
+
+Shape carries the meaning, so the two marker styles are consistent rather than arbitrary.
+
+- **Rounded square = location.** `HouseMarker` + `src/lib/houseMarker.ts`: five tones (indigo, teal, amber, rose, violet), surface + foreground, AA contrast, colour derived from the location id so a location keeps its colour. Used in the switcher face, every location menu row, and the Choose your location list.
+- **Circle = person.** `Avatar`: real photo where one exists (`src/data/avatars.ts`), otherwise a dark circular initials fallback. No ring. Used for workers and the account holder.
+
+Never a circular initials mark for a location, and never a square photo for a person. Helen Dawson has no portrait asset, so the account control shows circular “HD” initials.
 
 ---
 
@@ -119,14 +129,14 @@ Compact logo (links to dashboard) · Help Centre · Knowledge hub · Contact Us 
 
 ## Layout: one narrow column, one main column
 
-`--narrow-column-width: 13.75rem` (**220px**). Used wherever a page has a narrower column and a wider one, regardless of side: Bookings rail + filter card, Settings rails, Dashboard Team aside, Messages conversation list.
+`--narrow-column-width: 20rem` (**320px**). Used wherever a page has a narrower column and a wider one, regardless of side: Bookings rail + filter card, Settings rails, Dashboard Team aside, Messages conversation list.
 
-Do not go below 210px. 220px was chosen after stacking the Bookings filter buttons, which used to force 260px.
+The narrow column is sized against the page, not fixed: at 1080 it was 220px, and it scaled to 320px when the page went to 1440 so the two columns stay in proportion (roughly **1 : 3.2**) rather than the narrow one thinning out. If the page width changes again, rescale this token to hold that ratio. Floor is 210px.
 
 `--main-column-width` is **derived**, not hardcoded:
 
 ```
-page (1080) − 2 × page inline padding (32) − aside (220) − gap (24) = 772px
+page (1440) − 2 × page inline padding (32) − aside (320) − gap (24) = 1032px
 ```
 
 Utility `.width-main-column`: left-aligned, max that width (and `100% − aside − gap` below the page max). Applied to Team, Notifications, Stub, ChooseHouse. Empty space on the right (where Dashboard has the aside) is intended so the left edge stays put when switching tabs.
@@ -145,29 +155,29 @@ Team page: `width-main-column`, left-aligned (not `mx-auto`). Do not centre it.
 
 ## Pages and routes
 
-Page shell: `mx-auto w-full max-w-page px-8 pt-8 pb-4` (`src/App.tsx`). Page titles: `PageHeading` (optional `description` and `actions`). Page title type: `text-xl font-bold`.
+Page shell: `mx-auto w-full max-w-page px-8 pt-8 pb-4` (`src/App.tsx`), where `--container-page` is **1440px**. Page titles: `PageHeading` (optional `description` and `actions`). Page title type: `text-xl font-bold`.
 
 | Path | Page | Notes |
 |---|---|---|
 | `/` | Dashboard | Notification strip, week of bookings, **Most booked** aside. Heading actions: Request booking (primary) then Report incident (secondary). `layout-content-aside`, `items-baseline`. |
-| `/bookings` | Bookings | Status rail (Requested, Confirmed, Waiting for submission, Ready to approve, Next invoice, Invoiced). Filters: worker, date from/to, “Bookings I have created”. Apply filters = full-width **secondary**; Reset = full-width **ghost** beneath it. |
-| `/messages` | Messages | House-scoped conversations. List is 220px. |
-| `/team` | Team | House-scoped workers, alphabetical list + overflow. Route is `/team`, never `/workers`. |
+| `/bookings` | Bookings | Status rail (Requested, Confirmed, Waiting for submission, Ready to approve, Next invoice, Invoiced). Filters: worker, date from/to, “Bookings I have created”. Apply filters and Reset sit **side by side**, both **secondary** (outlined), `flex-1` so they split the card in equal halves. Neither is blue: the page's only primary is Request booking. |
+| `/messages` | Messages | Location-scoped conversations. List uses the narrow column. |
+| `/team` | Team | Location-scoped workers, alphabetical list + overflow. Route is `/team`, never `/workers`. |
 | `/notifications` | Notifications | Full list matching the dashboard strip. |
-| `/manage-house`… | Manage this house | Left rail + cards. Default: Support worker preferences. Rail items have **no chevron** (active = blue left border + medium weight), matching Bookings status rail. |
+| `/manage-house`… | Manage this location | Left rail + cards. Default: Support worker preferences. Rail items have **no chevron** (active = blue left border + medium weight), matching Bookings status rail. |
 | `/organisation-settings`… | Organisation settings | Gated by `CAN_EDIT_ORGANISATION_DETAILS`. |
 | `/your-account`… | Your account | `/settings` also lands here. |
 | `/report-incident`, `/request-booking`, footer stubs | Stub | `width-main-column`. |
 
 Settings section IDs (append to base path, e.g. `#/manage-house/people`):
 
-Manage this house: `preferences`, `support-areas`, `specialised`, `covid`, `support-plan`, `house-name`, `house-picture`, `people`  
+Manage this location: `preferences`, `support-areas`, `specialised`, `covid`, `support-plan`, `house-name`, `house-picture`, `people`  
 Organisation: `organisation`, `financial`, `documents`, `people`  
 Your account: `about-you`, `profile-picture`, `account`, `privacy`, `password`
 
 Keep section **labels** unchanged unless asked.
 
-**People** is one list used at house and organisation scope. Row: avatar, name, secondary line, overflow. House line: what they can do in this house. Org line: which houses they can see.
+**People** is one list used at location and organisation scope. Row: avatar, name, secondary line, overflow. Location line: what they can do in this location. Org line: which locations they can see.
 
 ---
 
@@ -181,7 +191,7 @@ Keep section **labels** unchanged unless asked.
 
 **Week grid** (`BookingsWeek.tsx`)
 
-- Day columns gained ~6px when the aside went 260 → 220 (104.3px → 110px; inner 88 → 94). **“Pialligo, ACT” now stays on one line.**
+- Day column is **147px** at the 1440 page width (1032 main ÷ 7). **“Pialligo, ACT” stays on one line.**
 - Status pills: solid fill (`StatusPill`), `flex w-full items-center justify-center`, label centred. Do not tint pills the same as the Card tone.
 - Empty days: “No bookings”.
 - Data generator (`houses.ts`): today always has ≥2 shifts; yesterday always has ≥1 completed shift except when today is Monday (no earlier day in the displayed week).
@@ -190,11 +200,11 @@ Keep section **labels** unchanged unless asked.
 
 Each worker row:
 
-- Line 1: avatar + name (`EntityLink`, stretched-link pattern).
-- Line 2: **Message** and **Book** as small **secondary** buttons (border, white fill, 4px radius), **no icons**, left-aligned to the **avatar / row content edge**, not indented under the name. 8px between the two buttons. 8px from name to buttons; ~25px from buttons to the next worker.
-- Name is the primary target (bold 700). Buttons are quieter (medium 500, bordered). Layered above the stretched link (`ui-target-row__action`). Hover fill on a button is deeper than the row hover so they stay distinct.
+- Line 1: avatar + name (`EntityLink` to `/team`, stretched-link pattern, **blue and underlined** like the original — `.ui-target-row__link--text`).
+- Line 2: **Message** (`MessageCircle`) and **Book** (`Calendar`) as small **secondary** buttons (border, white fill, 4px radius), icon then label. Not indented: they start on the **row's content edge, level with the avatar's left edge**, so each row has one left edge for both lines. 8px between the two buttons, `mt-3` from the name line; the row-to-row gap stays wider (24px) so each row still reads as one unit.
+- Name is the primary target. Buttons are quieter (medium 500, bordered). Layered above the stretched link (`ui-target-row__action`). Hover fill on a button is deeper than the row hover so they stay distinct.
 
-Avatar photos have **no ring**. Initials avatars are dark fill, light letters (people only; houses use `HouseMarker`).
+Avatar photos have **no ring**. Initials avatars are dark fill, light letters (people only; locations use `HouseMarker`).
 
 ---
 
@@ -244,9 +254,14 @@ Buttons: default 36px, small 32px. IconButton matches. Request booking is primar
 
 ## UI primitives
 
-`src/components/ui/`: `Button`, `IconButton`, `Card`, `EntityLink`, `Badge`, `classes.ts`.
+`src/components/ui/`: `Button`, `IconButton`, `Card`, `EntityLink`, `Badge`, `Tag`, `classes.ts`.
 
 Also: `Avatar`, `HouseMarker`, `PageHeading`, `StatusPill`, `Logo`.
+
+Counts and labels — pick by whether the thing is interactive:
+
+- `Badge` — alert count sitting on a control. 14px, red `--color-badge`, `aria-hidden`, hidden at 0. Header nav and Messages rows only.
+- `Tag` — non-interactive label. 26px, 12px medium, 4px radius. `neutral` is a white fill with a `--color-border` hairline; a tinted grey would match `--color-page` and disappear. `success` is `--color-success-surface`. Used for the week-heading count, booking price, and session-note page label.
 
 StatusPill solid:
 
@@ -270,7 +285,7 @@ Panel: quick notes tagged with current page, four editable starter questions, Ot
 
 ## Placeholder data
 
-`src/data/houses.ts` — five houses:
+`src/data/houses.ts` — five locations:
 
 - Bellbird Court, Pialligo ACT (`bellbird-court`) — typical default
 - Kingfisher Place, Wollongong NSW
@@ -284,7 +299,7 @@ Each has its own roster and bookings, seeded relative to **today**. Avatars: `sr
 
 ## Known issues / next likely work
 
-**Messages list at 220px.** Name and full date (`24 Aug 2026`) share one line. Header text area is ~147px; dates take ~64–73px. **Charlies K** and **Geoffrey L** truncate. Proposed fix (not done): move the date onto the preview line, right-aligned opposite the unread badge, so the name gets the full width. Do not make Messages an exception to `--narrow-column-width` unless asked.
+**Messages list.** Name and full date (`24 Aug 2026`) share one line, which truncated **Charlies K** and **Geoffrey L** while `--narrow-column-width` was 220px. At 320px nothing truncates, so this is resolved for now. If the token narrows again, move the date onto the preview line (right-aligned opposite the unread badge) rather than making Messages an exception to `--narrow-column-width`.
 
 ---
 
@@ -294,15 +309,15 @@ Empty states: title + description (what is absent, what makes something appear).
 
 The word for the worker list is **Team** in nav, Team page, route (`/team`), and “View team”. The Dashboard aside heading is **Most booked** (the ordering, not the concept name).
 
-Finance on a booking card: two labelled rows (House, Worker), not a middle-dot pair.
+Booking cards do **not** repeat Location and Worker as labelled rows. The worker is already in the nested box; the location is already the page’s selected context.
 
 ---
 
 ## Open research (do not “solve” in UI)
 
-Whether a House Manager should switch houses. The switcher is visible on purpose.
+Whether a House Manager should switch locations. The switcher is visible on purpose.
 
-Whether the Team list should stay house-scoped. It is house-scoped.
+Whether the Team list should stay location-scoped. It is location-scoped.
 
 Whether a House Manager can edit organisation details. Flag is off; layout exists for both states.
 
@@ -326,7 +341,7 @@ src/components/StatusPill.tsx
 src/components/header-utils.ts
 src/components/SessionQuestions.tsx
 src/components/SessionQuestionsPanel.tsx
-src/components/ui/{Button,IconButton,Card,EntityLink,Badge,classes}.ts(x)
+src/components/ui/{Button,IconButton,Card,EntityLink,Badge,Tag,classes}.ts(x)
 src/data/{houses,avatars,conversations}.ts
 src/lib/router.ts
 src/lib/session.ts
@@ -360,9 +375,9 @@ tests/*.test.ts
 | Knowledge hub | Footer, beside Help centre |
 | Invoices | Bookings views “Next invoice” and “Invoiced” |
 | Report incident | Dashboard heading (after Request booking) and booking cards |
-| Support plan | Manage this house rail |
+| Support plan | Manage this location rail |
 | Organisation details / Financial / Documents | Organisation settings |
-| Support worker preferences / Support areas / Specialised / COVID-19 | Manage this house |
-| House name / House picture / People (house) | Manage this house |
+| Support worker preferences / Support areas / Specialised / COVID-19 | Manage this location |
+| Location name / Location picture / People (location) | Manage this location |
 | People (org) | Organisation settings |
 | About you / Profile picture / Account / Privacy / Password | Your account |

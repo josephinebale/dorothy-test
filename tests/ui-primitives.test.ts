@@ -5,6 +5,7 @@ import {
   buttonClasses,
   cardClasses,
   iconButtonClasses,
+  tagClasses,
 } from '../src/components/ui/classes.ts';
 
 test('Button classes expose every supported variant and size', () => {
@@ -26,6 +27,11 @@ test('Card exposes a quiet nested-surface tone without changing its shape', () =
     cardClasses('default', true),
     'ui-card ui-card--default ui-card--divided',
   );
+});
+
+test('Tag exposes the two tones the product labels use', () => {
+  assert.equal(tagClasses('neutral'), 'ui-tag ui-tag--neutral');
+  assert.equal(tagClasses('success'), 'ui-tag ui-tag--success');
 });
 
 test('Avatar names map to exactly three token values', () => {

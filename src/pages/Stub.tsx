@@ -25,7 +25,7 @@ export function Stub({ title, house }: StubProps) {
     <div className="width-main-column">
       <PageHeading title={title} />
       <Card className="p-6">
-        <p className="text-sm text-text-strong">
+        <p className="max-w-content text-sm text-text-strong">
           Placeholder page for {house.name}. This section is not built in this prototype, it is here
           so the structure can be navigated end to end.
         </p>

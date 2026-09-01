@@ -352,7 +352,7 @@ function HouseName({ initialName }: { initialName: string }) {
   const [name, setName] = useState(initialName);
 
   return (
-    <SettingsCard title="House name">
+    <SettingsCard title="Location name">
       <Field label="Name" value={name} onChange={setName} />
       <SaveButton />
     </SettingsCard>
@@ -361,7 +361,7 @@ function HouseName({ initialName }: { initialName: string }) {
 
 function HousePicture({ houseName }: { houseName: string }) {
   return (
-    <SettingsCard title="House picture">
+    <SettingsCard title="Location picture">
       <div className="flex items-center gap-4">
         <Avatar name={houseName} size="lg" />
         <Button type="button" size="small">
@@ -376,7 +376,7 @@ function HousePicture({ houseName }: { houseName: string }) {
 const PEOPLE = [
   {
     name: MANAGER_NAME,
-    houseAccess: 'Can manage bookings, team and house settings',
+    houseAccess: 'Can manage bookings, team and location settings',
     visibleHouses: HOUSES.map(({ name }) => name),
   },
   {
@@ -421,6 +421,8 @@ function PeopleList({
               type="button"
               disabled={!canEdit}
               aria-label={`More options for ${person.name}`}
+              data-tooltip={`More options for ${person.name}`}
+              className="ui-tooltip"
             >
               <MoreHorizontal className="h-5 w-5" />
             </IconButton>
@@ -592,7 +594,7 @@ export function ManageHouseSettings({
 }) {
   return (
     <SettingsPage
-      title="Manage this house"
+      title="Manage this location"
       path={path}
       basePath={ROUTES.manageHouse}
       sections={HOUSE_SECTIONS}

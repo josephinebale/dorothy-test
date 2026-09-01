@@ -3,12 +3,13 @@ import { Check, Clock3, MapPin, Moon, Repeat2, X } from 'lucide-react';
 import { Avatar } from '../components/Avatar';
 import { PageHeading, RequestBookingButton } from '../components/PageHeading';
 import { Badge } from '../components/ui/Badge';
+import { Tag } from '../components/ui/Tag';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 import { EntityLink } from '../components/ui/EntityLink';
 import type { Booking, HouseData } from '../data/houses';
 import { formatTime, startOfDay } from '../lib/date';
-import { EMPTY_STATES, financeReference } from '../lib/pageContent';
+import { EMPTY_STATES, TEAM_ROUTE } from '../lib/pageContent';
 import { href } from '../lib/router';
 
 type BookingView =
@@ -113,22 +114,19 @@ function BookingCard({ booking, data }: { booking: Booking; data: HouseData }) {
           {bookingTitle(booking)}
         </a>
       </h3>
-      <span className="mt-2 inline-block rounded bg-success-surface px-2 py-1 text-xs font-medium text-success">
+      <Tag tone="success" className="mt-2">
         {priceFor(booking)}
-      </span>
-      <dl className="mt-2 space-y-1 text-xs text-text-secondary">
-        {financeReference(data.house.name, booking.workerName).map(({ label, value }) => (
-          <div key={label} className="flex gap-2">
-            <dt className="font-medium text-text-strong">{label}:</dt>
-            <dd>{value}</dd>
-          </div>
-        ))}
-      </dl>
+      </Tag>
 
       <Card tone="subtle" className="mt-4 flex items-center gap-3 p-3">
         <Avatar name={booking.workerName} size="lg" />
         <div>
-          <EntityLink as="span">{booking.workerName}</EntityLink>
+          <EntityLink
+            href={href(TEAM_ROUTE)}
+            className="ui-target-row__action ui-target-row__link--text"
+          >
+            {booking.workerName}
+          </EntityLink>
           <p className="mt-1 flex items-center gap-1 text-xs text-text-secondary">
             {booking.status === 'confirmed' && <Check className="h-4 w-4 text-success" />}
             {booking.status === 'confirmed' ? 'Worker confirmed' : 'Waiting for worker response'}
@@ -297,16 +295,16 @@ export function Bookings({ data }: { data: HouseData }) {
             Bookings I have created
           </label>
 
-          <div className="space-y-1">
-            <Button type="button" variant="secondary" size="small" className="w-full">
+          <div className="flex gap-2">
+            <Button type="button" variant="secondary" size="small" className="flex-1">
               Apply filters
             </Button>
             <Button
               type="button"
-              variant="ghost"
+              variant="secondary"
               onClick={resetFilters}
               size="small"
-              className="w-full"
+              className="flex-1"
             >
               Reset
             </Button>
@@ -318,7 +316,7 @@ export function Bookings({ data }: { data: HouseData }) {
 
       <section>
         <h2 className="text-lg font-bold text-text">{activeLabel}</h2>
-        <p className="mt-1 text-sm text-text-strong">
+        <p className="mt-1 max-w-content text-sm text-text-strong">
           Showing {filteredBookings.length > 0 ? 1 : 0} - {Math.min(filteredBookings.length, 40)} of{' '}
           {filteredBookings.length}{' '}
           {view === 'confirmed' ? 'upcoming bookings that have been accepted by a worker.' : 'bookings.'}
@@ -335,7 +333,7 @@ export function Bookings({ data }: { data: HouseData }) {
             <p className="text-lg font-bold text-text">
               {EMPTY_STATES.bookingsFiltered.title}
             </p>
-            <p className="mt-1 text-sm text-text-secondary">
+            <p className="mt-1 mx-auto max-w-content text-sm text-text-secondary">
               {EMPTY_STATES.bookingsFiltered.description}
             </p>
           </Card>

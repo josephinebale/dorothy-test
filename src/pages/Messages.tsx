@@ -185,7 +185,7 @@ export function Messages({ data, onUnreadChange }: MessagesProps) {
                 <p className="text-lg font-bold text-text">
                   {EMPTY_STATES.conversations.title}
                 </p>
-                <p className="mt-1 text-sm text-text-secondary">
+                <p className="mt-1 max-w-content mx-auto text-sm text-text-secondary">
                   {EMPTY_STATES.conversations.description}
                 </p>
               </li>
@@ -252,7 +252,7 @@ export function Messages({ data, onUnreadChange }: MessagesProps) {
               <p className="mt-4 text-lg font-bold text-text">
                 {EMPTY_STATES.archivedConversations.title}
               </p>
-              <p className="mt-1 text-sm text-text-secondary">
+              <p className="mt-1 max-w-content text-sm text-text-secondary">
                 {EMPTY_STATES.archivedConversations.description}
               </p>
             </div>
@@ -279,6 +279,8 @@ export function Messages({ data, onUnreadChange }: MessagesProps) {
                   type="button"
                   size="small"
                   aria-label="More actions"
+                  data-tooltip="More actions"
+                  className="ui-tooltip"
                 >
                   <MoreHorizontal className="h-5 w-5" />
                 </IconButton>
@@ -340,7 +342,7 @@ export function Messages({ data, onUnreadChange }: MessagesProps) {
               <p className="mt-4 text-lg font-bold text-text">
                 {EMPTY_STATES.conversationSelection.title}
               </p>
-              <p className="mt-1 text-sm text-text-secondary">
+              <p className="mt-1 max-w-content text-sm text-text-secondary">
                 {EMPTY_STATES.conversationSelection.description}
               </p>
             </div>

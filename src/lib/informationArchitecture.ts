@@ -19,8 +19,8 @@ export const HOUSE_SECTIONS: SettingsSection[] = [
   { id: 'specialised', label: 'Specialised support' },
   { id: 'covid', label: 'COVID-19 requirements' },
   { id: 'support-plan', label: 'Support plan' },
-  { id: 'house-name', label: 'House name' },
-  { id: 'house-picture', label: 'House picture' },
+  { id: 'house-name', label: 'Location name' },
+  { id: 'house-picture', label: 'Location picture' },
   { id: 'people', label: 'People' },
 ];
 
