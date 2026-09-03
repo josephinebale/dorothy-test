@@ -36,7 +36,7 @@ export function bookingViewFromPath(path: string): BookingViewId | null {
 export const NOTIFICATION_EMPTY_DESCRIPTIONS = {
   requests: "We'll let you know when a booking request needs your attention.",
   approvals: "We'll let you know when a booking needs your approval.",
-  applicants: "We'll let you know when a worker applies.",
+  messages: "We'll let you know when you have a new message.",
 } as const;
 
 export const EMPTY_STATES = {

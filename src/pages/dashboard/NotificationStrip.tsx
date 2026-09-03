@@ -1,6 +1,7 @@
-import { Briefcase, Calendar, CalendarCheck } from 'lucide-react';
+import { Calendar, CalendarCheck, MessageSquare } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import type { LocationData } from '../../data/locations';
+import { unreadMessagesFromDescription } from '../../data/conversations';
 import { NOTIFICATION_EMPTY_DESCRIPTIONS, bookingsViewPath } from '../../lib/pageContent';
 import { href } from '../../lib/router';
 import { PinnedQuestion } from '../../components/PinnedQuestion';
@@ -18,7 +19,7 @@ function plural(count: number, singular: string, pluralForm: string): string {
 }
 
 function buildCards(data: LocationData): StripCard[] {
-  const { requestsToAccept, bookingsToApprove } = data;
+  const { requestsToAccept, bookingsToApprove, unreadMessages, location } = data;
 
   return [
     {
@@ -46,9 +47,16 @@ function buildCards(data: LocationData): StripCard[] {
       path: bookingsToApprove > 0 ? bookingsViewPath('approve') : undefined,
     },
     {
-      title: 'No new job applicants',
-      description: NOTIFICATION_EMPTY_DESCRIPTIONS.applicants,
-      Icon: Briefcase,
+      title:
+        unreadMessages > 0
+          ? `${unreadMessages} unread ${plural(unreadMessages, 'message', 'messages')}`
+          : 'No unread messages',
+      description:
+        unreadMessages > 0
+          ? unreadMessagesFromDescription(location.id)
+          : NOTIFICATION_EMPTY_DESCRIPTIONS.messages,
+      Icon: MessageSquare,
+      path: unreadMessages > 0 ? '/messages' : undefined,
     },
   ];
 }

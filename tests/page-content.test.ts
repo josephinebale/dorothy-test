@@ -43,7 +43,7 @@ test('notification empty copy uses one contraction and one notification verb', (
   assert.deepEqual(NOTIFICATION_EMPTY_DESCRIPTIONS, {
     requests: "We'll let you know when a booking request needs your attention.",
     approvals: "We'll let you know when a booking needs your approval.",
-    applicants: "We'll let you know when a worker applies.",
+    messages: "We'll let you know when you have a new message.",
   });
 });
 

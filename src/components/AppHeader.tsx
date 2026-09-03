@@ -179,7 +179,7 @@ export function AppHeader({
       </div>
 
       <div className="app-header-nav-row mx-auto flex max-w-page items-stretch overflow-x-auto px-8">
-          <nav className="-ml-3 flex h-full w-max items-stretch" aria-label="Main">
+          <nav className="flex h-full w-max items-stretch" aria-label="Main">
             {NAV_ITEMS.map((item) => {
               const bookingRequestRoute =
                 item.path === '/bookings' &&

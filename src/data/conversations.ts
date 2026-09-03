@@ -106,3 +106,27 @@ export function totalUnreadMessages(): number {
     0,
   );
 }
+
+export function unreadWorkerNamesForLocation(locationId: string): string[] {
+  return buildAllConversations()
+    .filter((item) => item.locationId === locationId && item.unread > 0)
+    .map((item) => item.workerName);
+}
+
+export function unreadMessagesFromDescription(locationId: string): string {
+  const unread = buildAllConversations().filter(
+    (item) => item.locationId === locationId && item.unread > 0,
+  );
+  const names = unread.map((item) => item.workerName);
+  if (names.length === 0) return '';
+
+  const locationName = unread[0].locationName;
+  const from =
+    names.length === 1
+      ? names[0]
+      : names.length === 2
+        ? `${names[0]} and ${names[1]}`
+        : `${names.slice(0, -1).join(', ')}, and ${names[names.length - 1]}`;
+
+  return `From ${from} on the ${locationName} team.`;
+}

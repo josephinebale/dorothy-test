@@ -1,11 +1,12 @@
-import { Calendar, CalendarCheck, ClipboardList, MessageCircle } from 'lucide-react';
+import { Calendar, CalendarCheck, ClipboardList, MessageSquare } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import type { LocationData } from '../data/locations';
 import { PageHeading } from '../components/PageHeading';
 import { PinnedQuestion } from '../components/PinnedQuestion';
 import { Card } from '../components/ui/Card';
+import { unreadMessagesFromDescription } from '../data/conversations';
 import { addDays, formatLongDate, startOfDay } from '../lib/date';
-import { EMPTY_STATES, bookingsViewPath } from '../lib/pageContent';
+import { EMPTY_STATES, TEAM_ROUTE, bookingsViewPath } from '../lib/pageContent';
 import { href } from '../lib/router';
 
 type Item = {
@@ -22,8 +23,8 @@ function buildItems(data: LocationData): Item[] {
   const items: Item[] = [
     {
       title: `${data.unreadMessages} unread ${data.unreadMessages === 1 ? 'message' : 'messages'}`,
-      description: `From workers at ${data.location.name}.`,
-      Icon: MessageCircle,
+      description: unreadMessagesFromDescription(data.location.id),
+      Icon: MessageSquare,
       date: today,
       path: '/messages',
     },
@@ -42,11 +43,11 @@ function buildItems(data: LocationData): Item[] {
       path: bookingsViewPath('approve'),
     },
     {
-      title: `${data.plansToReview} support plans to review`,
-      description: 'These workers have not confirmed the latest support plan.',
+      title: `${data.plansToReview} ${data.plansToReview === 1 ? 'worker has' : 'workers have'} not confirmed the support plan`,
+      description: 'Remind them to read and confirm the latest support plan.',
       Icon: ClipboardList,
       date: addDays(today, -4),
-      path: '/manage-location/support-plan',
+      path: TEAM_ROUTE,
     },
   ];
 
@@ -80,7 +81,10 @@ export function Notifications({ data }: { data: LocationData }) {
               <li key={title} className="ui-target-row flex items-start gap-3 p-4">
                 <Icon className="h-5 w-5 shrink-0 text-text-strong" />
                 <div className="min-w-0 flex-1">
-                  <a href={href(path)} className="ui-target-row__link">
+                  <a
+                    href={href(path)}
+                    className="ui-target-row__link ui-target-row__link--text"
+                  >
                     {title}
                   </a>
                   <p className="mt-1 text-sm text-text-secondary">{description}</p>

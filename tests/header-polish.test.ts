@@ -166,7 +166,7 @@ test('every nav link fills the row so one underline serves them all', () => {
   const header = source('../src/components/AppHeader.tsx');
   const css = source('../src/index.css');
 
-  assert.match(header, /<nav className="-ml-3 flex h-full w-max items-stretch"/);
+  assert.match(header, /<nav className="flex h-full w-max items-stretch"/);
   assert.match(header, /main-nav-link h-full shrink-0 text-sm/);
   assert.match(
     css,
@@ -180,6 +180,16 @@ test('hovering a nav link fills the whole block in an existing quiet surface', (
   assert.match(css, /\.main-nav-link \{[\s\S]*?padding-inline: var\(--space-3\);/);
   assert.match(css, /\.main-nav-link:hover \{\s*background: var\(--color-info-surface\);\s*\}/);
   assert.doesNotMatch(css, /\.main-nav-link:hover \{[^}]*border-bottom-color/);
+});
+
+test('the nav block starts on the same line as the lockup and page heading', () => {
+  const header = source('../src/components/AppHeader.tsx');
+  const css = source('../src/index.css');
+
+  // No pull-left on the nav, and no per-item padding exception, so every hover
+  // fill and underline is the same shape and the first one starts on the line.
+  assert.doesNotMatch(header, /<nav className="-ml-3/);
+  assert.doesNotMatch(css, /\.main-nav-link:first-child/);
 });
 
 test('the footer centres its compact logo against the link line boxes', () => {

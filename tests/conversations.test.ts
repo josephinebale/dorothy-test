@@ -5,6 +5,8 @@ import test from 'node:test';
 import {
   buildAllConversations,
   totalUnreadMessages,
+  unreadMessagesFromDescription,
+  unreadWorkerNamesForLocation,
 } from '../src/data/conversations.ts';
 import { LOCATIONS, getLocationData } from '../src/data/locations.ts';
 
@@ -43,6 +45,24 @@ test('the list reads newest first across locations, not grouped by location', ()
 
   const firstFive = conversations.slice(0, 5).map((item) => item.locationId);
   assert.ok(new Set(firstFive).size > 1, 'the top of the list should mix locations');
+});
+
+test('unread message copy names the workers with unread threads', () => {
+  for (const location of LOCATIONS) {
+    const names = unreadWorkerNamesForLocation(location.id);
+    const expectedCount = getLocationData(location.id).unreadMessages;
+
+    assert.equal(names.length, expectedCount);
+    assert.equal(new Set(names).size, names.length);
+
+    const description = unreadMessagesFromDescription(location.id);
+    for (const name of names) {
+      assert.match(description, new RegExp(name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+    }
+    assert.match(description, new RegExp(`on the ${location.name} team`));
+    assert.doesNotMatch(description, /workers at/);
+    assert.doesNotMatch(description, / at /);
+  }
 });
 
 test('the unread total covers all locations, not just the selected one', () => {

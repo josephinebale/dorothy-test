@@ -500,6 +500,16 @@ body {
   opacity: 1;
 }
 
+/* A card clips its contents so rows stay inside its rounded corners, which also
+   cuts off a tooltip hanging below a row action near the card's edge. Inside a
+   card the tooltip sits beside the trigger, where it stays within the clip. */
+.ui-card .ui-tooltip::after {
+  top: 50%;
+  right: calc(100% + var(--space-2));
+  left: auto;
+  transform: translateY(-50%);
+}
+
 /* The underline sits on the tier's bottom edge, so the label is nudged down to
    stay optically centred against it. */
 .main-nav-link {
@@ -511,9 +521,14 @@ body {
   padding-top: 3px;
 }
 
+/* Every item keeps the same padding, so the hover fill and active underline are
+   the label plus a consistent margin rather than a different shape per item. The
+   nav is not pulled left, so that block starts on the page's inline padding, in
+   line with the lockup above and the page heading below. The label itself sits a
+   padding-width in from that line. */
+
 /* The hover fill is the block, not the label, so it runs the full tier height
-   and the padding gives it width. The nav is pulled left by the same padding so
-   the first label still aligns with the lockup on the rail above. */
+   and the padding gives it width. */
 .main-nav-link:hover {
   background: var(--color-info-surface);
 }
