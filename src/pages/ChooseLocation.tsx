@@ -33,7 +33,7 @@ export function ChooseLocation({
               key={location.id}
               type="button"
               onClick={() => onSelect(location.id)}
-            className="flex w-full items-center gap-3 px-4 py-4 text-left hover:bg-surface-subtle"
+              className="ui-inset-row flex w-full items-center gap-3 text-left hover:bg-surface-subtle"
           >
             <LocationMarker location={location} />
             <span className="min-w-0 flex-1">

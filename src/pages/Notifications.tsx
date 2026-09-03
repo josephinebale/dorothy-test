@@ -78,7 +78,10 @@ export function Notifications({ data }: { data: LocationData }) {
           />
           <Card as="ul" divided>
             {items.map(({ title, description, Icon, date, path }) => (
-              <li key={title} className="ui-target-row flex items-start gap-3 p-4">
+              <li
+                key={title}
+                className="ui-inset-row ui-target-row flex items-start gap-3"
+              >
                 <Icon className="h-5 w-5 shrink-0 text-text-strong" />
                 <div className="min-w-0 flex-1">
                   <a

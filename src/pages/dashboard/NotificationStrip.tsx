@@ -83,7 +83,9 @@ export function NotificationStrip({ data }: { data: LocationData }) {
         {cards.map(({ title, description, Icon, path }) => (
           <div
             key={title}
-            className={`flex items-start justify-between gap-2 p-4 ${path ? 'ui-target-row' : ''}`}
+            className={`ui-inset-card flex items-start justify-between gap-2 ${
+              path ? 'ui-target-row' : ''
+            }`}
           >
             <div className="min-w-0">
               {path ? (

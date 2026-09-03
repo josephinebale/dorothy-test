@@ -34,7 +34,7 @@ function plural(count: number, singular: string, pluralForm: string): string {
 
 function BookingCard({ booking, suburb, state }: { booking: Booking; suburb: string; state: string }) {
   return (
-    <Card tone={CARD_TONES[booking.status]} className="!rounded-sm p-2">
+    <Card tone={CARD_TONES[booking.status]} className="ui-inset-compact !rounded-sm">
       <p className="text-xs text-text">
         {formatTime(booking.start)} - {formatTime(booking.end)}
       </p>
@@ -135,7 +135,7 @@ export function BookingsWeek({ data }: { data: LocationData }) {
             return (
               <div
                 key={day.toISOString()}
-                className={`border-t-2 border-b border-l border-border-subtle px-2 py-2 first:border-l-0 ${
+                className={`ui-inset-compact border-t-2 border-b border-l border-border-subtle first:border-l-0 ${
                   isToday ? 'border-t-brand' : 'border-t-transparent'
                 }`}
               >
@@ -170,7 +170,7 @@ export function BookingsWeek({ data }: { data: LocationData }) {
               return (
                 <div
                   key={day.toISOString()}
-                  className="space-y-2 border-l border-border-subtle p-2 first:border-l-0"
+                  className="ui-inset-compact space-y-2 border-l border-border-subtle first:border-l-0"
                 >
                   {dayBookings.length === 0 ? (
                     <p className="py-4 text-center text-xs text-text-tertiary">

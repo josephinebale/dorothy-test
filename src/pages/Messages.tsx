@@ -193,7 +193,7 @@ export function Messages({ onUnreadChange }: MessagesProps) {
                 return (
                   <li key={conversation.id} className="border-b border-border-subtle last:border-b-0">
                     <div
-                      className={`ui-target-row flex w-full items-start gap-3 px-3 py-3 text-left ${
+                      className={`ui-inset-row ui-target-row flex w-full items-start gap-3 text-left ${
                         active ? 'ui-target-row--active' : ''
                       }`}
                     >

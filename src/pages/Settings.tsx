@@ -309,7 +309,7 @@ function PeopleList({
         {PEOPLE.map((person) => (
           <li
             key={person.name}
-            className="flex entity-row items-center gap-3 p-3"
+            className="ui-inset-row flex entity-row items-center gap-3"
           >
             <Avatar name={person.name} size="md" />
             <div className="min-w-0 flex-1">

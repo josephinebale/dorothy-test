@@ -35,7 +35,10 @@ export function Team({ data }: { data: LocationData }) {
       {workers.length > 0 ? (
         <Card as="ul" divided>
           {workers.map((worker, index) => (
-            <li key={worker.id} className="ui-target-row flex entity-row items-center gap-3 p-3">
+            <li
+              key={worker.id}
+              className="ui-inset-row ui-target-row flex entity-row items-center gap-3"
+            >
               <Avatar name={worker.name} size="md" />
               <div className="min-w-0 flex-1">
                 <EntityLink

@@ -60,9 +60,9 @@ test('dashboard row actions are icons with accessible labels, not both', () => {
 
 test('dashboard worker rows keep actions on the avatar line, aligned right', () => {
   const panel = source('../src/pages/dashboard/TeamPanel.tsx');
-  const row = panel.slice(panel.indexOf('<li key={worker.id}'), panel.indexOf('</li>'));
+  const row = panel.slice(panel.indexOf('<li'), panel.indexOf('</li>'));
 
-  assert.match(row, /<li key=\{worker\.id\}[^>]*flex items-center gap-3 p-3/);
+  assert.match(row, /ui-inset-row ui-target-row flex items-center gap-3/);
   assert.match(row, /ui-target-row__action ml-auto flex shrink-0 items-center gap-1/);
   assert.doesNotMatch(row, /mt-3/);
   assert.doesNotMatch(row, /size="small"/);

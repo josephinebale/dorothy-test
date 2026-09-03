@@ -38,7 +38,10 @@ export function TeamPanel({ data }: { data: LocationData }) {
       ) : (
         <Card as="ul" divided className="mt-3">
           {workers.map((worker) => (
-            <li key={worker.id} className="ui-target-row flex items-center gap-3 p-3">
+            <li
+              key={worker.id}
+              className="ui-inset-row ui-target-row flex items-center gap-3"
+            >
               <Avatar name={worker.name} size="md" />
               <EntityLink
                 href={href(workerProfilePath(worker.id))}

@@ -216,6 +216,22 @@ body {
   background: var(--color-surface);
 }
 
+/* One inset scale, chosen by how dense the container is rather than a single
+   number everywhere. Dense data cells stay tight; list rows keep a compact
+   vertical rhythm while their content still aligns to the card's 16px edge;
+   a card that holds prose or several blocks gets the full inset. */
+.ui-inset-compact {
+  padding: var(--space-2);
+}
+
+.ui-inset-row {
+  padding: var(--space-3) var(--space-4);
+}
+
+.ui-inset-card {
+  padding: var(--space-4);
+}
+
 .ui-card--divided > * + * {
   border-top: 1px solid var(--color-border-subtle);
 }

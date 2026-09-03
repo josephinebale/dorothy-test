@@ -114,7 +114,7 @@ function BookingCard({ booking, data }: { booking: Booking; data: LocationData }
       : href('/bookings');
 
   return (
-    <Card as="article" className="ui-target-row p-4">
+    <Card as="article" className="ui-inset-card ui-target-row">
       <h3>
         <a href={detailHref} className="ui-target-row__link">
           {bookingTitle(booking)}
@@ -124,7 +124,7 @@ function BookingCard({ booking, data }: { booking: Booking; data: LocationData }
         {priceFor(booking)}
       </Tag>
 
-      <Card tone="subtle" className="mt-4 flex items-center gap-3 p-3">
+      <Card tone="subtle" className="ui-inset-row mt-4 flex items-center gap-3">
         <Avatar name={booking.workerName} size="lg" />
         <div>
           <EntityLink
