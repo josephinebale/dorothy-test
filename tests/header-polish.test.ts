@@ -162,6 +162,28 @@ test('the account trigger ends on the edge the logo starts from', () => {
   assert.match(header, /className="header-menu-trigger -mr-4"/);
 });
 
+/*
+ * Mirror of the account pull-back, on the other end of the row. The trigger's
+ * own 8px inset sits inside the row's 16px gap, so without a matching pull the
+ * marker lands 24px from the divider while the logo sits 16px from it.
+ */
+test('the location marker sits the same distance from the divider as the logo', () => {
+  const header = source('../src/components/AppHeader.tsx');
+  const css = source('../src/index.css');
+
+  assert.match(
+    css,
+    /\.header-menu-trigger \{[\s\S]*?padding: 0 var\(--space-2\);/,
+  );
+  assert.match(
+    css,
+    /\.location-switcher-trigger \{[\s\S]*?margin-inline-start: calc\(-1 \* var\(--space-2\)\);/,
+  );
+  // One gap token governs both sides of the divider.
+  assert.match(header, /items-center justify-between gap-4 px-8/);
+  assert.match(header, /<div className="flex min-w-0 items-center gap-4">/);
+});
+
 test('every nav link fills the row so one underline serves them all', () => {
   const header = source('../src/components/AppHeader.tsx');
   const css = source('../src/index.css');

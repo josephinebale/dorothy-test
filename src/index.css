@@ -487,6 +487,10 @@ body {
 .location-switcher-trigger {
   max-width: 16rem;
   text-align: left;
+  /* The trigger's own 8px inset stacks on the row's 16px gap, which would set
+     the marker 24px from the divider while the logo sits 16px from it. Pull the
+     inset back so both gaps read 16px and the hover fill keeps its padding. */
+  margin-inline-start: calc(-1 * var(--space-2));
 }
 
 .ui-tooltip {
