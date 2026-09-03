@@ -9,7 +9,12 @@ import {
   LOCATION_PROFILE_PREVIEW_ROUTE,
   clearLocationProfiles,
 } from './lib/locationProfiles';
-import { TEAM_ROUTE, bookingViewFromPath, workerIdFromPath } from './lib/pageContent';
+import {
+  BOOKING_DETAIL_ROUTE,
+  TEAM_ROUTE,
+  bookingViewFromPath,
+  workerIdFromPath,
+} from './lib/pageContent';
 import { navigate, useHashRoute } from './lib/router';
 import {
   clearLastLocationId,
@@ -160,7 +165,9 @@ export default function App() {
 
       <div className="relative flex flex-1 flex-col">
         <main className="mx-auto w-full max-w-page flex-1 px-8 pt-8 pb-4">
-          {path === '/request-booking' || path.startsWith('/bookings/request/') ? (
+          {path === '/request-booking' ||
+          path.startsWith('/bookings/request/') ||
+          path.startsWith(BOOKING_DETAIL_ROUTE) ? (
             <BookingRequest
               path={path}
               data={visibleData}

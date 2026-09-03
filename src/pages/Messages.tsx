@@ -202,7 +202,7 @@ export function Messages({ onUnreadChange }: MessagesProps) {
                         <span className="flex items-start justify-between gap-2">
                           <EntityLink
                             href={href('/messages')}
-                            className="ui-target-row__link truncate"
+                            className="ui-entity-link--plain ui-target-row__link truncate"
                             onClick={(event) => {
                               event.preventDefault();
                               selectConversation(conversation);
@@ -287,7 +287,7 @@ export function Messages({ onUnreadChange }: MessagesProps) {
                   data-tooltip="More actions"
                   className="ui-tooltip"
                 >
-                  <MoreHorizontal className="h-5 w-5" />
+                  <MoreHorizontal className="h-4 w-4" />
                 </IconButton>
               </div>
 

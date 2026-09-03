@@ -129,7 +129,7 @@ function BookingCard({ booking, data }: { booking: Booking; data: LocationData }
         <div>
           <EntityLink
             href={href(worker ? workerProfilePath(worker.id) : TEAM_ROUTE)}
-            className="ui-target-row__action ui-target-row__link--text"
+            className="ui-target-row__action ui-target-row__link--text ui-nested-link"
           >
             {booking.workerName}
           </EntityLink>

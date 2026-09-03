@@ -20,7 +20,7 @@ export function TeamPanel({ data }: { data: LocationData }) {
         </div>
         <a
           href={href(TEAM_ROUTE)}
-          className="rounded text-sm text-brand underline hover:text-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+          className="ui-link rounded text-sm"
         >
           View team
         </a>
@@ -49,22 +49,24 @@ export function TeamPanel({ data }: { data: LocationData }) {
               >
                 {worker.name}
               </EntityLink>
-              <div className="ui-target-row__action ml-auto flex shrink-0 items-center gap-1">
+              <div className="ui-target-row__action ml-auto flex shrink-0 items-center gap-2">
                 <IconButton
                   href={href('/messages')}
+                  size="small"
                   aria-label={`Message ${worker.name}`}
                   data-tooltip={`Message ${worker.name}`}
                   className="ui-tooltip"
                 >
-                  <MessageSquare className="h-5 w-5" />
+                  <MessageSquare className="h-4 w-4" />
                 </IconButton>
                 <IconButton
                   href={href('/request-booking')}
+                  size="small"
                   aria-label={`Book ${worker.name}`}
                   data-tooltip={`Book ${worker.name}`}
                   className="ui-tooltip"
                 >
-                  <Calendar className="h-5 w-5" />
+                  <Calendar className="h-4 w-4" />
                 </IconButton>
               </div>
             </li>

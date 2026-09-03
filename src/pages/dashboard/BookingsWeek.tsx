@@ -7,7 +7,8 @@ import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
 import { IconButton } from '../../components/ui/IconButton';
 import { Tag } from '../../components/ui/Tag';
-import { EMPTY_STATES } from '../../lib/pageContent';
+import { bookingDetailPath, EMPTY_STATES } from '../../lib/pageContent';
+import { href } from '../../lib/router';
 import {
   addDays,
   formatTime,
@@ -34,21 +35,30 @@ function plural(count: number, singular: string, pluralForm: string): string {
 
 function BookingCard({ booking, suburb, state }: { booking: Booking; suburb: string; state: string }) {
   return (
-    <Card tone={CARD_TONES[booking.status]} className="ui-inset-compact !rounded-sm">
-      <p className="text-xs text-text">
-        {formatTime(booking.start)} - {formatTime(booking.end)}
-      </p>
-      {booking.sleepover && (
-        <p className="mt-1 text-xs font-bold text-text">Sleepover</p>
-      )}
-      <p className="mt-1 text-xs text-text-strong">
-        {suburb}, {state}
-      </p>
-      <p className="mt-1 text-xs text-text-strong">{booking.workerName}</p>
-      <div className="mt-3">
-        <StatusPill status={booking.status} />
-      </div>
-    </Card>
+    <a
+      href={href(bookingDetailPath(booking.id))}
+      aria-label={`Open booking for ${booking.workerName}`}
+      className="ui-linked-surface"
+    >
+      <Card
+        tone={CARD_TONES[booking.status]}
+        className="ui-inset-compact !rounded-sm"
+      >
+        <p className="text-xs text-text">
+          {formatTime(booking.start)} - {formatTime(booking.end)}
+        </p>
+        {booking.sleepover && (
+          <p className="mt-1 text-xs font-bold text-text">Sleepover</p>
+        )}
+        <p className="mt-1 text-xs text-text-strong">
+          {suburb}, {state}
+        </p>
+        <p className="mt-1 text-xs text-text-strong">{booking.workerName}</p>
+        <div className="mt-3">
+          <StatusPill status={booking.status} />
+        </div>
+      </Card>
+    </a>
   );
 }
 
@@ -99,7 +109,6 @@ export function BookingsWeek({ data }: { data: LocationData }) {
           </Button>
           <IconButton
             type="button"
-            bordered
             size="small"
             onClick={() => {
               setWeekOffset((value) => value - 1);
@@ -109,11 +118,10 @@ export function BookingsWeek({ data }: { data: LocationData }) {
             aria-label="Previous week"
             data-tooltip="Previous week"
           >
-            <ChevronLeft className="h-5 w-5" />
+            <ChevronLeft className="h-4 w-4" />
           </IconButton>
           <IconButton
             type="button"
-            bordered
             size="small"
             onClick={() => {
               setWeekOffset((value) => value + 1);
@@ -123,7 +131,7 @@ export function BookingsWeek({ data }: { data: LocationData }) {
             aria-label="Next week"
             data-tooltip="Next week"
           >
-            <ChevronRight className="h-5 w-5" />
+            <ChevronRight className="h-4 w-4" />
           </IconButton>
         </div>
       </div>
@@ -196,7 +204,7 @@ export function BookingsWeek({ data }: { data: LocationData }) {
                 aria-expanded={expanded}
                 aria-controls="dashboard-bookings-grid"
                 onClick={() => setExpanded((value) => !value)}
-                className="flex w-full items-center justify-center gap-1 border-t border-border-subtle px-4 py-3 text-sm font-medium text-brand underline hover:text-brand-hover focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-brand"
+                className="ui-link ui-link--flush flex w-full items-center justify-center gap-1 border-t border-border-subtle px-4 py-3 text-sm font-medium"
               >
                 {expanded
                   ? 'Show less'

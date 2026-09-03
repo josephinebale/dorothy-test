@@ -10,6 +10,16 @@ export function workerIdFromPath(path: string): string | null {
 }
 
 export const BOOKINGS_ROUTE = '/bookings';
+export const BOOKING_DETAIL_ROUTE = `${BOOKINGS_ROUTE}/detail/`;
+
+export function bookingDetailPath(bookingId: string): string {
+  return `${BOOKING_DETAIL_ROUTE}${bookingId}`;
+}
+
+export function bookingIdFromDetailPath(path: string): string | null {
+  if (!path.startsWith(BOOKING_DETAIL_ROUTE)) return null;
+  return path.slice(BOOKING_DETAIL_ROUTE.length) || null;
+}
 
 /** Each rail status is addressable, so a notification can open the right one. */
 export const BOOKING_VIEW_IDS = [

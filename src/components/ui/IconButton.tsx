@@ -9,7 +9,6 @@ import { iconButtonClasses, type IconButtonSize } from './classes';
 type CommonProps = {
   children: ReactNode;
   className?: string;
-  bordered?: boolean;
   size?: IconButtonSize;
 };
 
@@ -27,12 +26,11 @@ type IconAnchorProps = CommonProps &
 
 export function IconButton({
   className = '',
-  bordered = false,
   size = 'default',
   children,
   ...props
 }: IconButtonProps | IconAnchorProps) {
-  const classes = `${iconButtonClasses(size)} ${bordered ? 'ui-icon-button--bordered' : ''} ${className}`.trim();
+  const classes = `${iconButtonClasses(size)} ${className}`.trim();
 
   if ('href' in props && props.href !== undefined) {
     return (

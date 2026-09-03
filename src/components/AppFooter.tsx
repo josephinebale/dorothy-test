@@ -8,20 +8,20 @@ export function AppFooter() {
         <a href={href('/')} aria-label="Hireup for Providers dashboard">
           <Logo compact />
         </a>
-        <a href="#/help-centre" className="text-text-secondary hover:underline">
+        <a href="#/help-centre" className="ui-link ui-link--muted">
           Help Centre
         </a>
-        <a href="#/knowledge-hub" className="text-text-secondary hover:underline">
+        <a href="#/knowledge-hub" className="ui-link ui-link--muted">
           Knowledge hub
         </a>
-        <a href="#/contact" className="text-text-secondary hover:underline">
+        <a href="#/contact" className="ui-link ui-link--muted">
           Contact Us
         </a>
         <div className="ml-auto flex items-center gap-6 text-text-secondary">
-          <a href="#/terms" className="text-text-secondary hover:underline">
+          <a href="#/terms" className="ui-link ui-link--muted">
             Terms of Use
           </a>
-          <a href="#/privacy" className="text-text-secondary hover:underline">
+          <a href="#/privacy" className="ui-link ui-link--muted">
             Privacy Policy
           </a>
           <span>© {new Date().getFullYear()} Hireup Pty Ltd</span>

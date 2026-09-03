@@ -3,7 +3,8 @@ import { readdirSync, readFileSync } from 'node:fs';
 import test from 'node:test';
 
 const SRC = new URL('../src/', import.meta.url);
-const ICON_SIZE = 'h-5 w-5';
+const DEFAULT_ICON = 'h-5 w-5';
+const SMALL_ICON = 'h-4 w-4';
 
 function sourceFiles(directory: URL): URL[] {
   return readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
@@ -28,7 +29,13 @@ function iconNames(source: string): string[] {
   return [...new Set(names)];
 }
 
-test('every decorative icon renders at one size', () => {
+/*
+ * One size everywhere, with a single sanctioned exception: a glyph inside the
+ * 32px IconButton drops to 16px so it keeps the same 8px inset that a 20px glyph
+ * gets in the 36px one. The exception is checked against its enclosing control
+ * rather than allowed outright, so 16px cannot spread to loose icons.
+ */
+test('every icon renders at the size its control calls for', () => {
   const offenders: string[] = [];
 
   for (const file of sourceFiles(SRC)) {
@@ -40,13 +47,29 @@ test('every decorative icon renders at one size', () => {
       const usages = source.matchAll(
         new RegExp(`<${name}\\s+className="([^"]*)"`, 'g'),
       );
-      for (const [, className] of usages) {
-        if (!className.includes(ICON_SIZE)) {
-          offenders.push(`${file.pathname.split('/src/')[1]} <${name} class="${className}">`);
+      for (const usage of usages) {
+        const [, className] = usage;
+        const where = `${file.pathname.split('/src/')[1]} <${name} class="${className}">`;
+
+        if (className.includes(DEFAULT_ICON)) continue;
+
+        if (className.includes(SMALL_ICON)) {
+          const before = source.slice(0, usage.index);
+          const opening = before.lastIndexOf('<IconButton');
+          if (opening === -1 || !/size="small"/.test(before.slice(opening))) {
+            offenders.push(`${where} — ${SMALL_ICON} outside a small IconButton`);
+          }
+          continue;
         }
+
+        offenders.push(where);
       }
     }
   }
 
-  assert.deepEqual(offenders, [], `icons must be ${ICON_SIZE}`);
+  assert.deepEqual(
+    offenders,
+    [],
+    `icons must be ${DEFAULT_ICON}, or ${SMALL_ICON} inside a small IconButton`,
+  );
 });

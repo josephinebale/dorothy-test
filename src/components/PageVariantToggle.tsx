@@ -20,7 +20,6 @@ export function PageVariantToggle({
       <div className="page-variant-control pointer-events-auto">
         <IconButton
           type="button"
-          bordered
           onClick={onToggle}
           aria-label={label}
           data-tooltip={label}

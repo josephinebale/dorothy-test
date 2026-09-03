@@ -14,11 +14,11 @@ test('location markers use the medium square token without a border or ring', ()
   assert.doesNotMatch(marker, /\b(?:border|ring)(?:-\S+)?\b/);
 });
 
-test('the account control shows a medium photo avatar without a text label', () => {
+test('the account control shows a photo avatar without a text label', () => {
   const header = source('../src/components/AppHeader.tsx');
   const avatars = source('../src/data/avatars.ts');
 
-  assert.match(header, /<Avatar name=\{MANAGER_NAME\} size="md" \/>/);
+  assert.match(header, /<Avatar name=\{MANAGER_NAME\} size="sm" \/>/);
   assert.doesNotMatch(header, />Helen<\/span>/);
   assert.match(avatars, /import helenDawson from '\.\.\/assets\/avatars\/helen-dawson\.jpg';/);
   assert.match(avatars, /'Helen Dawson': helenDawson/);
@@ -29,7 +29,7 @@ test('the account trigger is 36px tall with no extra vertical padding', () => {
   const css = source('../src/index.css');
   const avatar = source('../src/components/Avatar.tsx');
 
-  assert.match(header, /<Avatar name=\{MANAGER_NAME\} size="md" \/>/);
+  assert.match(header, /<Avatar name=\{MANAGER_NAME\} size="sm" \/>/);
   assert.match(header, /size="default"/);
   assert.match(css, /\.ui-button--default \{\s*height: 2\.25rem;\s*padding: 0 var\(--space-4\);/);
   assert.match(avatar, /\bblock shrink-0\b/);
@@ -45,10 +45,35 @@ test('the account and location triggers share one centred treatment', () => {
     css,
     /\.header-menu-trigger \{[\s\S]*?height: 2\.25rem;[\s\S]*?align-items: center;[\s\S]*?gap: var\(--space-3\);/,
   );
-  assert.match(header, /className="header-menu-trigger -mr-4"/);
+  assert.match(header, /className="header-menu-trigger"/);
   assert.match(switcher, /className="header-menu-trigger location-switcher-trigger/);
   assert.doesNotMatch(header, /items-baseline/);
   assert.doesNotMatch(avatar, /\balign-(?:middle|baseline|top|bottom|text-\S+)\b/);
+});
+
+/*
+ * Both selectors are contained like the icon buttons beside them. At 36px the
+ * avatar and location marker filled the 36px trigger edge to edge, so the border
+ * would cut through them — both step down to 28px to leave a content box.
+ */
+test('the selectors are contained, so their contents step down to 28px', () => {
+  const header = source('../src/components/AppHeader.tsx');
+  const switcher = source('../src/components/LocationSwitcher.tsx');
+  const marker = source('../src/components/LocationMarker.tsx');
+  const css = source('../src/index.css');
+
+  assert.match(
+    css,
+    /\.header-menu-trigger \{[\s\S]*?border: 1px solid var\(--color-border\);[\s\S]*?background: var\(--color-surface\);/,
+  );
+  assert.match(css, /--avatar-sm: 1\.75rem;/);
+  assert.match(header, /<Avatar name=\{MANAGER_NAME\} size="sm" \/>/);
+  assert.match(switcher, /<LocationMarker location=\{location\} size="sm" \/>/);
+
+  // Only the header trigger shrinks; list rows keep 36px next to a 36px avatar.
+  assert.match(marker, /sm: 'h-7 w-7'/);
+  assert.match(marker, /md: 'h-9 w-9'/);
+  assert.match(marker, /size = 'md'/);
 });
 
 test('the identity tier is 56px and the nav tier is 48px', () => {
@@ -123,12 +148,17 @@ test('the account control is a flex child so no baseline gap offsets it', () => 
   assert.match(header, /<div className="relative flex items-center">/);
 });
 
-test('tier one has one divider between the logo and location switcher', () => {
+/*
+ * The hairline between the logo and the location switcher is gone. It existed to
+ * separate the logo from a borderless trigger; now the trigger is a bordered box,
+ * so the line and the border were two separators doing one job.
+ */
+test('tier one separates the logo from the switcher with the trigger border alone', () => {
   const header = source('../src/components/AppHeader.tsx');
   const [identityTier] = header.split('app-header-nav-row');
 
-  assert.equal(identityTier.match(/h-6 w-px/g)?.length, 1);
-  assert.match(identityTier, /<Logo \/>[\s\S]*?h-6 w-px[\s\S]*?<LocationSwitcher/);
+  assert.doesNotMatch(identityTier, /h-6 w-px/);
+  assert.match(identityTier, /<Logo \/>[\s\S]*?<LocationSwitcher/);
 });
 
 test('badge digits sit on a zero line-height flex centre', () => {
@@ -150,24 +180,14 @@ test('the location switcher sits in tier one without a negative margin', () => {
   assert.doesNotMatch(switcher, /-ml-2/);
 });
 
-/**
- * The pull-back has to match whatever the control actually pads by. `.ui-button--default`
- * is unlayered, so it beats a Tailwind `px-*` utility: the real inset is --space-4.
- */
-test('the account trigger ends on the edge the logo starts from', () => {
-  const header = source('../src/components/AppHeader.tsx');
-  const css = source('../src/index.css');
-
-  assert.match(css, /\.ui-button--default \{[\s\S]*?padding: 0 var\(--space-4\);/);
-  assert.match(header, /className="header-menu-trigger -mr-4"/);
-});
-
 /*
- * Mirror of the account pull-back, on the other end of the row. The trigger's
- * own 8px inset sits inside the row's 16px gap, so without a matching pull the
- * marker lands 24px from the divider while the logo sits 16px from it.
+ * Both pull-backs are gone. They existed because each trigger's inset was
+ * invisible, so the marker and avatar had to be dragged out to the page edge and
+ * the lockup gap to line up with the logo. Now the bordered box is the visible
+ * edge and aligns on those itself; keeping the pulls would overhang the page
+ * padding and crowd the divider.
  */
-test('the location marker sits the same distance from the divider as the logo', () => {
+test('the contained selectors align on their own edges, with no pull-back', () => {
   const header = source('../src/components/AppHeader.tsx');
   const css = source('../src/index.css');
 
@@ -175,13 +195,13 @@ test('the location marker sits the same distance from the divider as the logo', 
     css,
     /\.header-menu-trigger \{[\s\S]*?padding: 0 var\(--space-2\);/,
   );
-  assert.match(
-    css,
-    /\.location-switcher-trigger \{[\s\S]*?margin-inline-start: calc\(-1 \* var\(--space-2\)\);/,
-  );
-  // One gap token governs both sides of the divider.
+  assert.doesNotMatch(header, /-mr-4/);
+  assert.doesNotMatch(css, /margin-inline-start: calc\(-1 \* var\(--space-2\)\)/);
+
+  // One 24px gap token governs both sides of the divider. The outer row stays
+  // at 16px — that gap is between the lockup cluster and the utilities.
   assert.match(header, /items-center justify-between gap-4 px-8/);
-  assert.match(header, /<div className="flex min-w-0 items-center gap-4">/);
+  assert.match(header, /<div className="flex min-w-0 items-center gap-6">/);
 });
 
 test('every nav link fills the row so one underline serves them all', () => {

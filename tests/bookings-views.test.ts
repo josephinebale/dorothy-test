@@ -5,6 +5,8 @@ import test from 'node:test';
 import {
   BOOKINGS_ROUTE,
   BOOKING_VIEW_IDS,
+  bookingDetailPath,
+  bookingIdFromDetailPath,
   bookingViewFromPath,
   bookingsViewPath,
 } from '../src/lib/pageContent.ts';
@@ -24,8 +26,16 @@ test('each booking status has its own address under the bookings route', () => {
 
 test('a view path never collides with a requested-booking detail path', () => {
   assert.equal(bookingViewFromPath(`${BOOKINGS_ROUTE}/request/b-12`), null);
+  assert.equal(bookingViewFromPath(bookingDetailPath('b-12')), null);
   assert.equal(bookingViewFromPath(BOOKINGS_ROUTE), null);
   assert.equal(bookingViewFromPath('/bookings/nonsense'), null);
+});
+
+test('every booking has a neutral detail address', () => {
+  assert.equal(bookingDetailPath('b-12'), '/bookings/detail/b-12');
+  assert.equal(bookingIdFromDetailPath('/bookings/detail/b-12'), 'b-12');
+  assert.equal(bookingIdFromDetailPath('/bookings/request/b-12'), null);
+  assert.equal(bookingIdFromDetailPath('/bookings/detail/'), null);
 });
 
 test('the app renders Bookings for a status path and passes the view down', () => {

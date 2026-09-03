@@ -48,7 +48,7 @@ export function LocationSwitcher({ location, onSelect }: LocationSwitcherProps) 
         aria-label={`Switch location. Current location: ${location.name}`}
         className="header-menu-trigger location-switcher-trigger"
       >
-        <LocationMarker location={location} />
+        <LocationMarker location={location} size="sm" />
         <span className="min-w-0 truncate text-sm font-medium text-text">
           {location.name}
         </span>

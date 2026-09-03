@@ -70,7 +70,7 @@ export function WorkerProfile({
     <div>
       <a
         href={href(TEAM_ROUTE)}
-        className="mb-4 inline-block rounded text-sm text-brand underline hover:text-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+        className="ui-link mb-4 inline-block rounded text-sm"
       >
         Back to team
       </a>

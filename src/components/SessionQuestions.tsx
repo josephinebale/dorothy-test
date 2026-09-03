@@ -46,7 +46,6 @@ export function SessionQuestions({ onRestart }: { onRestart: () => void }) {
       <div className="session-questions-controls pointer-events-auto">
         <IconButton
           type="button"
-          bordered
           onClick={toggleAnnotations}
           aria-label={annotationsVisible ? 'Hide annotations' : 'Show annotations'}
           data-tooltip={annotationsVisible ? 'Hide annotations' : 'Show annotations'}
@@ -63,7 +62,6 @@ export function SessionQuestions({ onRestart }: { onRestart: () => void }) {
 
         <IconButton
           type="button"
-          bordered
           onClick={confirmRestart}
           aria-label="Restart prototype"
           data-tooltip="Restart prototype"

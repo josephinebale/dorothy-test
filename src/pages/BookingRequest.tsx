@@ -17,7 +17,7 @@ import { EntityLink } from '../components/ui/EntityLink';
 import { Tag } from '../components/ui/Tag';
 import { LOCATIONS, type Booking, type LocationData } from '../data/locations';
 import { formatTime } from '../lib/date';
-import { workerProfilePath } from '../lib/pageContent';
+import { bookingIdFromDetailPath, workerProfilePath } from '../lib/pageContent';
 import { href, navigate } from '../lib/router';
 
 type Step = 1 | 2 | 3;
@@ -553,31 +553,35 @@ function StepThree({
   );
 }
 
-function StatusSteps() {
+function StatusSteps({ status }: { status: Booking['status'] }) {
   const steps = [
     'Booking was requested',
-    'Worker to accept request',
-    'Worker to submit their hours and shift notes',
+    status === 'requested' ? 'Worker to accept request' : 'Worker accepted request',
+    status === 'ended' ? 'Shift ended' : 'Worker to submit their hours and shift notes',
     'Location manager to review and approve booking',
     'Payment to be processed',
   ];
+  const currentStep = status === 'requested' ? 0 : status === 'confirmed' ? 1 : 2;
 
   return (
     <Card as="aside" className="p-5">
       <h2 className="text-md font-bold text-text">Booking status</h2>
       <ol className="mt-4 space-y-4">
-        {steps.map((label, index) => (
-          <li key={label} className="flex items-start gap-3">
-            <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-medium ${
-              index === 0 ? 'bg-info-surface text-brand' : 'bg-surface-selected text-text-secondary'
-            }`}>
-              {index === 0 ? <Check className="h-5 w-5" /> : index + 1}
-            </span>
-            <span className={`text-sm ${index === 0 ? 'font-bold text-text' : 'text-text-strong'}`}>
-              {label}
-            </span>
-          </li>
-        ))}
+        {steps.map((label, index) => {
+          const reached = index <= currentStep;
+          return (
+            <li key={label} className="flex items-start gap-3">
+              <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-medium ${
+                reached ? 'bg-info-surface text-brand' : 'bg-surface-selected text-text-secondary'
+              }`}>
+                {reached ? <Check className="h-5 w-5" /> : index + 1}
+              </span>
+              <span className={`text-sm ${index === currentStep ? 'font-bold text-text' : 'text-text-strong'}`}>
+                {label}
+              </span>
+            </li>
+          );
+        })}
       </ol>
     </Card>
   );
@@ -598,6 +602,13 @@ function BookingRequestDetail({
   const end = booking?.end ?? draftEnd ?? new Date(start.getTime() + 2 * 36e5);
   const hours = Math.max(0, (end.getTime() - start.getTime()) / 36e5);
   const estimate = hours * HOURLY_RATE;
+  const isRequested = !booking || booking.status === 'requested';
+  const isConfirmed = booking?.status === 'confirmed';
+  const heading = isRequested
+    ? 'Requested booking'
+    : isConfirmed
+      ? 'Confirmed booking'
+      : 'Completed booking';
   const requestedWorkerNames = booking?.requestedWorkerNames ?? (
     booking ? [booking.workerName] : []
   );
@@ -608,10 +619,10 @@ function BookingRequestDetail({
   return (
     <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
       <section className="min-w-0">
-        <a href={href('/bookings')} className="text-sm text-brand underline hover:text-brand-hover">
+        <a href={href('/bookings')} className="ui-link text-sm">
           Back to bookings
         </a>
-        <h1 className="mt-4 text-xl font-bold text-text">Requested booking</h1>
+        <h1 className="mt-4 text-xl font-bold text-text">{heading}</h1>
         <p className="mt-3 text-lg font-bold text-text">
           {longDate(`${start.getFullYear()}-${String(start.getMonth() + 1).padStart(2, '0')}-${String(start.getDate()).padStart(2, '0')}`)}, {formatTime(start)}–{formatTime(end)}
         </p>
@@ -633,8 +644,12 @@ function BookingRequestDetail({
         </dl>
 
         <div className="mt-5 flex flex-wrap gap-2">
-          <Button type="button" variant="secondary">Edit</Button>
-          <Button type="button" variant="secondary">Cancel request</Button>
+          {booking?.status !== 'ended' && (
+            <Button type="button" variant="secondary">Edit</Button>
+          )}
+          {isRequested && (
+            <Button type="button" variant="secondary">Cancel request</Button>
+          )}
           <Button href={href('/request-booking')} variant="secondary">Duplicate</Button>
         </div>
 
@@ -654,10 +669,16 @@ function BookingRequestDetail({
           <h2 className="text-md font-bold text-text">Support workers</h2>
           <Card tone="subtle" className="mt-3 p-4">
             <p className="text-sm font-bold text-text">
-              Sent to {selectedWorkers.length || 1} {selectedWorkers.length === 1 ? 'worker' : 'workers'} in your team
+              {isRequested
+                ? `Sent to ${selectedWorkers.length || 1} ${selectedWorkers.length === 1 ? 'worker' : 'workers'} in your team`
+                : 'Support worker'}
             </p>
             <p className="mt-1 text-sm text-text-secondary">
-              Waiting for a worker to accept this booking request.
+              {isRequested
+                ? 'Waiting for a worker to accept this booking request.'
+                : isConfirmed
+                  ? 'Worker confirmed for this booking.'
+                  : 'This shift has ended.'}
             </p>
             <div className="mt-4 space-y-3">
               {(selectedWorkers.length > 0
@@ -689,7 +710,7 @@ function BookingRequestDetail({
           </Card>
         </div>
       </section>
-      <StatusSteps />
+      <StatusSteps status={booking?.status ?? 'requested'} />
     </div>
   );
 }
@@ -724,11 +745,27 @@ export function BookingRequest({
   const requestId = path.startsWith('/bookings/request/')
     ? path.slice('/bookings/request/'.length)
     : null;
-  const existingBooking = requestId && requestId !== 'new-request'
-    ? data.bookings.find((booking) => booking.id === requestId) ?? null
+  const detailId = bookingIdFromDetailPath(path);
+  const bookingId = requestId ?? detailId;
+  const existingBooking = bookingId && bookingId !== 'new-request'
+    ? data.bookings.find((booking) => booking.id === bookingId) ?? null
     : null;
 
-  if (requestId) {
+  if (detailId && !existingBooking) {
+    return (
+      <div>
+        <h1 className="text-xl font-bold text-text">Booking not found</h1>
+        <p className="mt-2 text-sm text-text-secondary">
+          This booking may no longer be available for the selected location.
+        </p>
+        <Button href={href('/bookings')} className="mt-5">
+          Back to bookings
+        </Button>
+      </div>
+    );
+  }
+
+  if (bookingId) {
     return <BookingRequestDetail booking={existingBooking} draft={draft} data={data} />;
   }
 
@@ -788,7 +825,7 @@ export function BookingRequest({
             setStep((step - 1) as Step);
             setShowErrors(false);
           }}
-          className="mt-3 text-sm text-brand underline hover:text-brand-hover"
+          className="ui-link mt-3 text-sm"
         >
           ← Back to {step === 2 ? 'location, date and time' : 'details'}
         </button>

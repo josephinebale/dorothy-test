@@ -27,7 +27,7 @@ function PrivacyNote({ extra }: { extra?: string }) {
     <p className="mt-1 text-sm text-text-strong">
       {extra}
       More information on how we keep your personal details secure can be found in our{' '}
-      <a href={href('/privacy')} className="text-brand underline">
+      <a href={href('/privacy')} className="ui-link">
         privacy policy
       </a>
       .

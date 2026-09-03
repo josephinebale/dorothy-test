@@ -73,7 +73,7 @@ export function NotificationStrip({ data }: { data: LocationData }) {
         </div>
         <a
           href={href('/notifications')}
-          className="rounded text-sm text-brand underline hover:text-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+          className="ui-link rounded text-sm"
         >
           View all
         </a>

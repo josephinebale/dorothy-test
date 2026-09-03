@@ -126,6 +126,7 @@ body {
 .ui-button:focus-visible,
 .ui-icon-button:focus-visible,
 .ui-entity-link:focus-visible,
+.ui-link:focus-visible,
 .header-menu-trigger:focus-visible,
 .main-nav-link:focus-visible {
   outline: 2px solid var(--color-brand);
@@ -176,14 +177,23 @@ body {
   color: var(--color-text);
 }
 
+/* An icon alone cannot say whether it is a control, so the outline is the tell
+   and it is the base rather than an opt-in. A grey fill was tried and reads as a
+   tag or a location marker; no chrome at all reads as decoration. */
 .ui-icon-button {
   display: inline-flex;
   flex: 0 0 auto;
   align-items: center;
   justify-content: center;
-  border: 1px solid transparent;
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
+  background: var(--color-surface);
   color: var(--color-text);
+}
+
+.ui-icon-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
 }
 
 .ui-icon-button--default {
@@ -202,11 +212,6 @@ body {
   border-color: var(--color-border);
   border-radius: 9999px;
   background: var(--color-neutral-surface);
-}
-
-.ui-icon-button--bordered {
-  border-color: var(--color-border);
-  background: var(--color-surface);
 }
 
 .ui-card {
@@ -234,6 +239,25 @@ body {
 
 .ui-card--divided > * + * {
   border-top: 1px solid var(--color-border-subtle);
+}
+
+/* A row fill runs the card's full width, so the card clipped it to keep the
+   corners round — which also cut off a tooltip under a row action. Rounding the
+   end rows themselves does the same job and lets the tooltip out, so a row
+   action reads with one placement wherever it sits. Inset by the 1px border so
+   the fill follows the card's curve rather than crossing it. */
+.ui-card--divided {
+  overflow: visible;
+}
+
+.ui-card--divided > :first-child {
+  border-start-start-radius: calc(var(--radius-lg) - 1px);
+  border-start-end-radius: calc(var(--radius-lg) - 1px);
+}
+
+.ui-card--divided > :last-child {
+  border-end-start-radius: calc(var(--radius-lg) - 1px);
+  border-end-end-radius: calc(var(--radius-lg) - 1px);
 }
 
 .ui-card--success {
@@ -268,16 +292,129 @@ body {
   color: var(--color-text);
 }
 
-.ui-target-row {
-  position: relative;
+/* An entity name that navigates is a link and says so at rest. This is keyed to
+   the element rather than an opt-in class, so a name that opens a profile cannot
+   ship looking like dead text — which is how the Team list read while the
+   dashboard list beside it was blue. Rendered as a span (Settings people, Choose
+   location) it is a label and keeps the plain treatment above. */
+a.ui-entity-link {
+  color: var(--color-brand);
+  text-decoration: underline;
 }
 
-.ui-target-row:hover {
+a.ui-entity-link:hover {
+  color: var(--color-brand-hover);
+  text-decoration: none;
+}
+
+/* The standard text link, for anything that is not an entity name or a row's own
+   link: brand blue and underlined at rest, and the same hover as every other
+   link. Use this instead of hand-rolling `text-brand underline
+   hover:text-brand-hover`, which is how six links ended up without a hover. */
+.ui-link {
+  color: var(--color-brand);
+  text-decoration: underline;
+}
+
+.ui-link:hover {
+  color: var(--color-brand-hover);
+  text-decoration: none;
+}
+
+/* Footer utility links stay quiet — secondary grey rather than brand blue — but
+   follow the same underline rule as every other link, so hovering never means
+   two different things. Colour only; the underline comes from `.ui-link`. */
+.ui-link--muted {
+  color: var(--color-text-secondary);
+}
+
+.ui-link--muted:hover {
+  color: var(--color-text);
+}
+
+/* The week grid's expand control spans the card and sits on its bottom edge, so
+   its focus ring has to sit inside the border rather than outside it. */
+.ui-link--flush:focus-visible {
+  outline-offset: -2px;
+}
+
+/* The conversation list opts out: its name selects a conversation in the pane
+   beside it rather than navigating away, and the row already carries the
+   selected state. Matches the specificity above and must stay after it. */
+a.ui-entity-link--plain {
+  color: var(--color-text-strong);
+  text-decoration: none;
+}
+
+a.ui-entity-link--plain:hover {
+  color: var(--color-text);
+}
+
+.ui-linked-surface {
+  display: block;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.ui-target-row,
+.ui-linked-surface > .ui-card {
+  position: relative;
+  transition: background-color 150ms ease, border-color 150ms ease;
+}
+
+/* A row highlights as one target, so a link inside it that leads somewhere else
+   must not highlight at the same time — two lit surfaces and no way to tell
+   which one a click follows. While the pointer is on a nested link the row holds
+   its rest state and the link answers alone. Active rows are excluded rather
+   than out-specified, so they keep their own colour through hover. */
+.ui-target-row:not(.ui-target-row--active):hover:not(:has(.ui-nested-link:hover)),
+.ui-linked-surface:hover > .ui-card {
   background: var(--color-surface-subtle);
 }
 
+/* A grid card is a link with no text inside it that could carry the cue — the
+   worker name in it opens the booking, not a profile, so styling it as a link
+   would promise the wrong destination. The tile itself carries the affordance:
+   a full-strength border at rest rather than the quiet one a static card uses.
+   Hover then moves the fill, the way a pending card in the same grid does, so
+   the border does not need a darker step it has no token for. */
+.ui-linked-surface > .ui-card--default {
+  border-color: var(--color-border);
+}
+
+.ui-target-row:not(.ui-target-row--active):active:not(:has(.ui-nested-link:hover)),
+.ui-linked-surface:active > .ui-card {
+  background: var(--color-surface-selected);
+}
+
+/* Requested is the decision state, so its yellow cannot disappear just because
+   the card is a link. Mix the existing status tokens for the same quiet lift. */
+.ui-linked-surface:hover > .ui-card--pending {
+  border-color: var(--color-pending);
+  background: color-mix(
+    in srgb,
+    var(--color-pending-surface) 94%,
+    var(--color-pending)
+  );
+}
+
+.ui-linked-surface:active > .ui-card--pending {
+  background: color-mix(
+    in srgb,
+    var(--color-pending-surface) 88%,
+    var(--color-pending)
+  );
+}
+
+.ui-linked-surface:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+}
+
 .ui-target-row--active,
-.ui-target-row--active:hover {
+.ui-target-row--active:hover,
+.ui-target-row--active:active {
   background: var(--color-info-surface);
 }
 
@@ -296,6 +433,15 @@ body {
 
 .ui-target-row__link--text:hover {
   color: var(--color-brand-hover);
+  text-decoration: none;
+}
+
+/* The nested link carries an underline at rest, so dropping it is a state change
+   only the link can make — it reads as local rather than as the surface behind
+   it lighting up. Pair it with the deeper brand colour the text link already
+   uses. */
+.ui-nested-link:hover {
+  text-decoration: none;
 }
 
 .ui-target-row__link::after {
@@ -317,6 +463,14 @@ body {
 .ui-target-row__action {
   position: relative;
   z-index: 2;
+}
+
+/* That z-index also makes each row's actions a stacking context, which traps the
+   tooltip inside its own row — the next row's actions then paint over it however
+   high the tooltip's own z-index goes. Lift the row being pointed at instead. */
+.ui-target-row__action:hover,
+.ui-target-row__action:focus-within {
+  z-index: 3;
 }
 
 /* The row already tints on hover, so a row action needs a deeper tint of its own
@@ -362,6 +516,12 @@ body {
 .ui-badge--attention {
   background: var(--color-badge);
   color: var(--color-surface);
+}
+
+/* `.ui-icon-button` is unlayered, so its background beats a Tailwind utility.
+   The selected state has to be plain CSS or it never paints. */
+.header-utility--active {
+  background: var(--color-surface-selected);
 }
 
 .header-utility .ui-badge {
@@ -468,15 +628,19 @@ body {
   height: var(--header-nav-height);
 }
 
+/* Contained like every other control in the row. The 36px trigger leaves a 34px
+   content box once the border is drawn, so the marker and avatar inside step
+   down to 28px (`--avatar-sm`) — at 36px they filled the trigger edge to edge
+   and the border cut straight through them. */
 .header-menu-trigger {
   display: inline-flex;
   height: 2.25rem;
   align-items: center;
   gap: var(--space-3);
   padding: 0 var(--space-2);
-  border: 0;
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
-  background: transparent;
+  background: var(--color-surface);
   color: var(--color-text);
 }
 
@@ -484,13 +648,12 @@ body {
   background: var(--color-surface-subtle);
 }
 
+/* No pull-back. The old one existed because the trigger's 8px inset was
+   invisible, so the marker had to be dragged out to the lockup's 24px gap. Now
+   the bordered box is the visible edge and it aligns on that gap itself. */
 .location-switcher-trigger {
   max-width: 16rem;
   text-align: left;
-  /* The trigger's own 8px inset stacks on the row's 16px gap, which would set
-     the marker 24px from the divider while the logo sits 16px from it. Pull the
-     inset back so both gaps read 16px and the hover fill keeps its padding. */
-  margin-inline-start: calc(-1 * var(--space-2));
 }
 
 .ui-tooltip {
@@ -518,16 +681,6 @@ body {
 .ui-tooltip:hover::after,
 .ui-tooltip:focus-visible::after {
   opacity: 1;
-}
-
-/* A card clips its contents so rows stay inside its rounded corners, which also
-   cuts off a tooltip hanging below a row action near the card's edge. Inside a
-   card the tooltip sits beside the trigger, where it stays within the clip. */
-.ui-card .ui-tooltip::after {
-  top: 50%;
-  right: calc(100% + var(--space-2));
-  left: auto;
-  transform: translateY(-50%);
 }
 
 /* The underline sits on the tier's bottom edge, so the label is nudged down to

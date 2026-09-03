@@ -9,7 +9,7 @@ import {
   MANAGER_NAME,
   PERSONAL_MENU_ITEMS,
 } from '../lib/informationArchitecture';
-import { TEAM_ROUTE } from '../lib/pageContent';
+import { BOOKING_DETAIL_ROUTE, TEAM_ROUTE } from '../lib/pageContent';
 import { href } from '../lib/router';
 import { useKeyboardMenu } from '../lib/useKeyboardMenu';
 import { Avatar } from './Avatar';
@@ -69,7 +69,7 @@ export function AppHeader({
           className="app-header-row mx-auto flex max-w-page items-center justify-between gap-4 px-8"
           style={{ height: 'var(--header-identity-height)' }}
         >
-          <div className="flex min-w-0 items-center gap-4">
+          <div className="flex min-w-0 items-center gap-6">
             <a
               href={href('/')}
               aria-label="Hireup for Providers dashboard"
@@ -77,11 +77,7 @@ export function AppHeader({
             >
               <Logo />
             </a>
-            <span
-              aria-hidden="true"
-              className="h-6 w-px shrink-0 self-center bg-border-subtle"
-            />
-            <LocationSwitcher location={location} onSelect={onSelectLocation} />
+          <LocationSwitcher location={location} onSelect={onSelectLocation} />
           </div>
 
           <div className="flex flex-1 items-center justify-end gap-3">
@@ -90,7 +86,7 @@ export function AppHeader({
               aria-label={messagesName}
               data-tooltip={messagesName}
               className={`header-utility relative ui-tooltip ${
-                path === '/messages' ? 'bg-surface-selected' : ''
+                path === '/messages' ? 'header-utility--active' : ''
               }`}
             >
               <MessageSquare className="h-5 w-5" />
@@ -102,7 +98,7 @@ export function AppHeader({
               aria-label={notificationsName}
               data-tooltip={notificationsName}
               className={`header-utility relative ui-tooltip ${
-                path === '/notifications' ? 'bg-surface-selected' : ''
+                path === '/notifications' ? 'header-utility--active' : ''
               }`}
             >
               <Bell className="h-5 w-5" />
@@ -120,9 +116,9 @@ export function AppHeader({
                 aria-haspopup="menu"
                 aria-expanded={accountMenu.open}
                 aria-label={accountName}
-                className="header-menu-trigger -mr-4"
+                className="header-menu-trigger"
               >
-                <Avatar name={MANAGER_NAME} size="md" />
+                <Avatar name={MANAGER_NAME} size="sm" />
                 <ChevronDown
                   className={`h-5 w-5 shrink-0 text-text-tertiary transition-transform ${
                     accountMenu.open ? 'rotate-180' : ''
@@ -184,7 +180,8 @@ export function AppHeader({
               const bookingRequestRoute =
                 item.path === '/bookings' &&
                 (path === '/request-booking' ||
-                  path.startsWith('/bookings/request/'));
+                  path.startsWith('/bookings/request/') ||
+                  path.startsWith(BOOKING_DETAIL_ROUTE));
               const active =
                 bookingRequestRoute ||
                 (item.path === '/' ? path === '/' : path.startsWith(item.path));

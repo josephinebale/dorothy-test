@@ -65,12 +65,28 @@ test('requested booking cards link to their detail screens', () => {
   );
 });
 
+test('every dashboard shift opens its matching booking detail', () => {
+  const app = source('../src/App.tsx');
+  const week = source('../src/pages/dashboard/BookingsWeek.tsx');
+  const flow = source('../src/pages/BookingRequest.tsx');
+
+  assert.match(week, /href=\{href\(bookingDetailPath\(booking\.id\)\)\}/);
+  assert.match(week, /aria-label=\{`Open booking for \$\{booking\.workerName\}`\}/);
+  assert.match(app, /path\.startsWith\(BOOKING_DETAIL_ROUTE\)/);
+  assert.match(flow, /bookingIdFromDetailPath\(path\)/);
+  assert.match(flow, /booking\.status === 'requested'/);
+  assert.match(flow, /booking\?\.status === 'confirmed'/);
+  assert.match(flow, /'Confirmed booking'/);
+  assert.match(flow, /'Completed booking'/);
+});
+
 test('Bookings remains active throughout request creation and detail routes', () => {
   const header = source('../src/components/AppHeader.tsx');
 
   assert.match(header, /item\.path === '\/bookings'/);
   assert.match(header, /path === '\/request-booking'/);
   assert.match(header, /path\.startsWith\('\/bookings\/request\/'\)/);
+  assert.match(header, /path\.startsWith\(BOOKING_DETAIL_ROUTE\)/);
 });
 
 test('the booking request layout includes empty, error, and summary states', () => {
